@@ -1,0 +1,25 @@
+.PlayButton {background-image:url('../images/control_pause.png');}
+.PlayButton.paused {background-image:url('../images/control_play.png');}
+
+.FullscreenButton {background-image:url('../images/fullscreenbw.png');}
+.FullscreenButton:hover {background-image:url('../images/fullscreenbw_over.png');}
+
+.MasterVolume {
+	background: url('../images/mastervolume_scale.png') repeat-x;
+}
+.volumeSlider{
+	pointer-events:none;
+}
+
+.volumeSlider{
+	background-color:#bbb;
+	border:none;
+	border-radius:4px;
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	-moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
+	
+	
+ 	box-shadow: -2px -2px 10px rgba(0,0,0,.25) inset, 2px 2px 10px white inset;
+	-webkit-box-shadow:-2px -2px 10px rgba(0,0,0,.25) inset, 2px 2px 10px white inset;
+}
