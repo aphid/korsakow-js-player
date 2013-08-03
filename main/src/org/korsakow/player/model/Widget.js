@@ -21,6 +21,7 @@ org.korsakow.domain.widget.MainMedia = Class.register('org.korsakow.domain.widge
 	initialize: function($super, id, keywords, type, x, y, width, height) {
 		$super(id, keywords, type, x, y, width, height);
 	}
+	
 });
 
 org.korsakow.domain.widget.Preview= Class.register('org.korsakow.domain.widget.Preview', org.korsakow.domain.Widget, {
@@ -97,6 +98,26 @@ org.korsakow.domain.widget.MasterVolume = Class.register('org.korsakow.domain.wi
 org.korsakow.domain.widget.PlayButton = Class.register('org.korsakow.domain.widget.PlayButton', org.korsakow.domain.Widget, {
 	initialize: function($super, id, keywords, type, x, y, width, height) {
 		$super(id, keywords, type, x, y, width, height);
+	}
+});
+
+org.korsakow.domain.widget.Subtitles = Class.register('org.korsakow.domain.widget.Subtitles', org.korsakow.domain.Widget, {
+	initialize: function($super, id, keywords, type, x, y, width, height, subtitleCueArray) {
+		$super(id, keywords, type, x, y, width, height);
+		this.subtitles = new Array();
+		this.subtitles = subtitleCueArray.slice(0);
+	}
+});
+
+org.korsakow.domain.widget.SubtitleCuePoint = Class.register('org.korsakow.domain.widget.SubtitleCuePoint', org.korsakow.domain.Widget, {
+	initialize: function($super, id, keywords, type, x, y, width, height, name, subtitles, startTime, endTime) {
+		$super(id, keywords, type, x, y, width, height);
+		this.name = name;
+		this.subtitles = new Array();
+		this.subtitles = subtitles.slice(0);
+		//for(var i = 0; i < subtitles.length; i++){this.subtitles[i] = subtitles[i];} //Alternate deep copy
+		this.startTime = startTime;
+		this.endTime = endTime;
 	}
 });
 
