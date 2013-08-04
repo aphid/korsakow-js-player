@@ -28,7 +28,6 @@ function NS(ns) {
 	}
 	return ctx;
 }
-
 NS('org.korsakow');
 NS('org.korsakow.domain');
 NS('org.korsakow.domain.rule');

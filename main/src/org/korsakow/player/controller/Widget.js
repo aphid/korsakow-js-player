@@ -68,7 +68,7 @@ org.korsakow.controller.MainMediaWidgetController = Class.register('org.korsakow
 		$super(env);
 		var snu = env.getCurrentSnu();
 		var media = snu.mainMedia;
-		
+
 		this.element.addClass("MainMediaWidget");
 		var mediaUI = this.view = org.korsakow.ui.MediaUIFactory.create(media.getClass().className);
 		this.element.append(mediaUI.element);
@@ -91,8 +91,7 @@ org.korsakow.controller.MainMediaWidgetController = Class.register('org.korsakow
 			video.pause();
 			return false;
 		}
-	},
-	
+	}
 });
 
 org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.controller.PreviewWidgetController', org.korsakow.controller.AbstractWidgetController, {
@@ -440,106 +439,6 @@ org.korsakow.controller.MasterVolumeWidgetController = Class.register('org.korsa
 
 });
 
-org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.controller.SubtitlesController', org.korsakow.controller.AbstractWidgetController, {
-	initialize: function($super, model) {
-		$super(model);
-	},
-	setup: function($super, env){
-		$super(env);	
-	},
-	getSubtitles: function (){
-		return this.model.subtitles; //Returns an array of subtitles
-	},
-	parseSubtitles: function(filePath){
-		
-		var cuePoints = new Array();
-		
-			jQuery.ajax({
-				url: filePath,
-				success: function(data) {
-				var lines = data.split(/(?:\r\n)|\n|\r/);
-				for(var i=0; i < lines.length; i++){
-					$.trim(lines[i]);
-				}
-				if(filePath.match("srt")){ //TODO create better regular expression
-					cuePoints = this.parseSRTCuePoints(lines);
-					var subtitles = cuePoints;
-					for(var i = 0; i < subtitles.length; i++){
-					$("#test").append(subtitles.name+"<br />");
-					}
-					return cuePoints;
-				}else if(filePath.match("k3")){
-					cuePoints = this.parseK3CuePoints(lines);
-					return cuePoints;
-				}else{
-					throw "Improper Parse File Type";
-				}
-			 	}}); //ajax request
-			
-	},
-	parseSRTCuePoints: function(lineArray){
-		var timeLinePattern = "([0-9]{2}):([0-9]{2}):([0-9]{2}),([0-9]{3}) --> ([0-9]{2}):([0-9]{2}):([0-9]{2}),([0-9]{3})";	
-		var subLines = new Array();
-		
-		for(var i = 0; i < lineArray.length; i++){
-			if(lineArray[i].search(timeLinePattern) != -1){
-				
-				var startT;
-				var endT;
-				
-				startT = this.getSubTime(lineArray[i].slice(0,11)); //this part is a little hard coded for my liking
-				endT = this.getSubTime(lineArray[i].slice(17,28));  //this part is a little hard coded for my liking
-				
-				var j = 1;
-				while(lineArray[(i+j)] != null && lineArray[(i+j)].search('^[\s]*$') == -1 && lineArray[(i+j)] != " "){ //TODO //Whitespace left in a line is not being caught properly by regex 
-					//console.log(lineArray[(i+j)]+ " counter:"+ j);
-					subLines.push(lineArray[(i+j)]); //issue
-					j++;
-					}
-				
-				//console.log(subLines);
-				subtitleCuePoint(lineArray[(i-1)], subLines, startT, endT);
-				subLines.length = 0;
-			}
-		}
-		return subLines;
-	},
-	parseK3CuePoint: function(line){
-		//Need k3 example file to parse
-	},
-	getSubTime: function(timeStr){
-		//this part is a little hard coded for my liking
-		hh = timeStr.slice(0,2);
-		mm = timeStr.slice(3,5);
-		ss = timeStr.slice(6,8);
-		ms = timeStr.slice(9);
-		return ((hh*60*60) + (mm*60) + (ss * 1000) + ms);	 
-	}
-});
-
-org.korsakow.controller.SubtitlesCuePointController = Class.register('org.korsakow.controller.SubtitlesCuePointController', org.korsakow.controller.AbstractWidgetController, {
-	initialize: function($super, model) {
-		$super(model);
-	},
-	setup: function($super, env){
-		$super(env);
-	},
-	getName: function () {
-		return this.model.name;
-	},
-	getStartTime: function(){
-		return this.model.startTime;
-	},
-	getEndTime: function(){
-		return this.model.endTime;
-	},
-	getSubtitles: function(){
-		return this.model.subtitles;
-	}
-});
-
-org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.SubtitleCuePoint", org.korsakow.controller.SubtitlesCuePointWidgetController);
-org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.Subtitles", org.korsakow.controller.SubtitlesWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.MainMedia", org.korsakow.controller.MainMediaWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.SnuAutoLink", org.korsakow.controller.PreviewWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.InsertText", org.korsakow.controller.InsertTextWidgetController);
