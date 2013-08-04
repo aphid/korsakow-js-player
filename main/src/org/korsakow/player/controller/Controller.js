@@ -65,6 +65,10 @@ function start(dao) {
 	//env.currentSnu = dao.find({type: "Snu"})[0];
 	//var interf = dao.find({type:"Interface"})[0];
 	//loadInterface(interf);
+	
+	
+	
+	
 	view.css({
 		width: env.project.width,
 		height: env.project.height,
@@ -101,9 +105,8 @@ function start(dao) {
 	
 	view.append(splashScreenUI.element);
 	
-
+	
 	//	env.executeSnu( dao.find({type: "Snu"})[0] );
 }
-
 
 }catch(e){alert(e);throw e;}

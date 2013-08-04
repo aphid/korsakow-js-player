@@ -88,7 +88,8 @@ org.korsakow.domain.rule.KeywordLookup = Class.register('org.korsakow.domain.rul
 	execute: function(env, searchResults) {
 		org.korsakow.log.debug("KeywordLookup...");
 		// for each time a snu appears in a list, increase its searchResults
-		// (thus, snus searchResults proportionally to the number of keywords they match)
+		// (thus, snus searchResults proportionally to the number of keywords
+		// they match)
 		var currentSnu = env.currentSnu;
 		
 		$.each(this.keywords, function(i, keyword) {
@@ -268,7 +269,7 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 		this.project = null;
 		this.interfaceController = null;
 		this.backgroundSoundUI = null;
-		//this.globalVolume = 1.0;
+		// this.globalVolume = 1.0;
 		
 		this.view = view;
 		this.dao = dao;
@@ -289,6 +290,9 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 	getCurrentSnu: function() {
 		return this.currentSnu;
 	},
+	/*getCurrentSubtitles: function(){
+		return this.currentSnu; //THIS IS NOT CORRECT!!
+	},*/
 	getSearchResults: function() {
 		return this.searchResults;
 	},
@@ -333,7 +337,7 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 	setGlobalVolume: function(vol){
 		if(vol < 0) vol = 0;
 		if(vol > 1) vol = 1.0;
-		//this.globalVolume = vol;
+		// this.globalVolume = vol;
 		org.korsakow.Audio.globalVolume = vol;
 		
 		this.applyGlobalVolume();
@@ -344,10 +348,10 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 		this.view.find('video').each(function(){
 			$(this)[0].volume = vol;
 		});
-		/*this.view.find('audio').each(function(){
-			$(this)[0].volume = vol;
-		});*/
-		//adjust position of all MV widgets in case there are multiple
+		/*
+		 * this.view.find('audio').each(function(){ $(this)[0].volume = vol; });
+		 */
+		// adjust position of all MV widgets in case there are multiple
 		var volumeControllers = this.getWidgetsOfType('org.korsakow.widget.MasterVolume');
 		for(var i = 0; i<volumeControllers.length;i++){
 			volumeControllers[i].updateSlider(vol);
@@ -377,7 +381,7 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 		this.view.append(this.interfaceController.element);
 	
 
-		//handle BG sound
+		// handle BG sound
 		switch(this.currentSnu.backgroundSoundMode){
 			case "keep":
 				break;
@@ -408,7 +412,7 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 			snu.rules[i].execute(this);
 		}
 
-		//set all audio/video components to the appropriate volume
+		// set all audio/video components to the appropriate volume
 		this.applyGlobalVolume();
 	},
 	toString: function() {
