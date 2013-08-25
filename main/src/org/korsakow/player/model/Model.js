@@ -2,7 +2,9 @@ try {
 
 NS('org.korsakow.domain.rule');
 
-
+/* Parent class for all domain objects (models)
+ * 
+ */
 org.korsakow.domain.DomainObject = Class.register('org.korsakow.domain.DomainObject', org.korsakow.Object, {
 	initialize: function($super, id) {
 		$super();
@@ -24,6 +26,10 @@ org.korsakow.domain.Keyword = Class.register('org.korsakow.domain.Keyword', org.
 	}
 });
 
+/* Parent class for all Media types
+ * 
+ * TODO: is this class useful?
+ */
 org.korsakow.domain.Media = Class.register('org.korsakow.domain.Media', org.korsakow.domain.DomainObject, {
 	initialize: function($super, id, filename) {
 		$super(id);
@@ -70,6 +76,10 @@ org.korsakow.domain.Snu = Class.register('org.korsakow.domain.Snu', org.korsakow
 	}
 });
 
+/* Parent class for rules
+ * 
+ * TODO: is this class useful?
+ */
 org.korsakow.domain.Rule = Class.register('org.korsakow.domain.Rule', org.korsakow.domain.DomainObject, {
 	initialize: function($super, id, keywords, type) {
 		$super(id);
@@ -81,10 +91,17 @@ org.korsakow.domain.Rule = Class.register('org.korsakow.domain.Rule', org.korsak
 	}
 });
 
+/* Finds SNUs that contain this rule's keywords. SNU's scores increases for
+ * each keyword that matches.
+ */
 org.korsakow.domain.rule.KeywordLookup = Class.register('org.korsakow.domain.rule.KeywordLookup', org.korsakow.domain.Rule, {
 	initialize: function($super, id, keywords, type) {
 		$super(id, keywords, type);
+		// TODO: assert type == org.korsakow.rule.KeywordLookup
 	},
+	/*
+	 * @param searchResults {org.korsakow.SearchResults}
+	 */
 	execute: function(env, searchResults) {
 		org.korsakow.log.debug("KeywordLookup...");
 		// for each time a snu appears in a list, increase its searchResults
@@ -112,6 +129,9 @@ org.korsakow.domain.rule.KeywordLookup = Class.register('org.korsakow.domain.rul
 		});
 	}
 });
+/* Filters from the list any SNU that has any of this rule's keywords
+ * 
+ */
 org.korsakow.domain.rule.ExcludeKeywords = Class.register('org.korsakow.domain.rule.ExcludeKeywords', org.korsakow.domain.Rule, {
 	initialize: function($super, id, keywords, type) {
 		$super(id, keywords, type);
@@ -128,6 +148,9 @@ org.korsakow.domain.rule.ExcludeKeywords = Class.register('org.korsakow.domain.r
 	}
 });
 
+/* Performs a search by running a series of subrules. Results are displayed
+ * in Preview widgets.
+ */
 org.korsakow.domain.rule.Search = Class.register('org.korsakow.domain.rule.Search', org.korsakow.domain.Rule, {
 	initialize: function($super, id, keywords, type, rules, maxLinks) {
 		$super(id, keywords, type);
@@ -153,6 +176,9 @@ org.korsakow.domain.rule.Search = Class.register('org.korsakow.domain.rule.Searc
 		return searchResults;
 	},
 	processSearchResults: function(env, searchResults) {
+		// TODO: this logic feels like it belongs in a controller
+		// or something other than a model class
+		
 		var previews = env.getWidgetsOfType('org.korsakow.widget.SnuAutoLink');
 		// TODO: support for keeplinks
 		jQuery.each(previews, function(i, preview) {

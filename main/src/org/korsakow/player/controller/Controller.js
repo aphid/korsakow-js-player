@@ -4,6 +4,12 @@ NS('org.korsakow.controller');
 
 var W = org.korsakow.WrapCallback;
 
+/* Abstract parent for Widget controllers
+ * 
+ * Each controller has a DIV to which its view gets added. This DIV establishes the view's
+ * position and size.
+ * 
+ */
 org.korsakow.controller.AbstractController = Class.register('org.korsakow.controller.AbstractController', {
 	initialize: function($super, model) {
 		if (!model) throw new org.korsakow.NullPointerException('AbstractController.model');
@@ -26,6 +32,9 @@ org.korsakow.controller.AbstractController = Class.register('org.korsakow.contro
 });
 
 
+/* Handles creating an interface's view based on it's widgets.
+ * 
+ */
 var InterfaceController = org.korsakow.controller.InterfaceController = Class.register('org.korsakow.controller.InterfaceController', org.korsakow.controller.AbstractController, {
 	initialize: function($super, model) {
 		$super(model);
@@ -55,6 +64,10 @@ var InterfaceController = org.korsakow.controller.InterfaceController = Class.re
 	}
 });
 
+/* Bootstraps the application.
+ * 
+ * @param dao an {org.korsakow.domain.Dao}
+ */
 function start(dao) {
 	var view = jQuery("#view");
 	view.empty();
@@ -84,6 +97,7 @@ function start(dao) {
 	splashScreenUI.element.click(W(function() {
 		$(this).remove();
 		
+		// TODO: if no starter found, use any random SNU
 		env.executeSnu( dao.find({
 			type: "Snu",
 			props: {
@@ -95,7 +109,7 @@ function start(dao) {
 		if(env.project.backgroundSoundMedia){
 			env.soundManager.playSound({
 				uri:env.resolvePath(env.project.backgroundSoundMedia.filename),
-				channel:"backgroundSound",
+				channel:"backgroundSound", // TODO: make into const
 				fade:0,
 				loop: env.project.backgroundSoundLooping,
 				volume: env.project.backgroundSoundVolume
@@ -103,10 +117,10 @@ function start(dao) {
 		}
 	}));
 	
+	// TODO: handle spashscreen timeout
+	
 	view.append(splashScreenUI.element);
 	
-	
-	//	env.executeSnu( dao.find({type: "Snu"})[0] );
 }
 
 }catch(e){alert(e);throw e;}

@@ -4,6 +4,9 @@ NS('org.korsakow.controller.widget');
 
 var W = org.korsakow.WrapCallback;
 
+/* Factory that creates widgets based on widgetId's. See the mapping at the bottom of file.
+ * 
+ */
 org.korsakow.controller.WidgetControllerFactory = Class.register('org.korsakow.controller.WidgetControllerFactory', {
 	initialize: function($super) {
 		$super();
@@ -107,7 +110,7 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 		this.element.addClass("PreviewWidget").addClass('clickable');
 		var This = this;
 		this.element.click(W(function() {
-			if (!This.snu)
+			if (!This.snu) // TODO: only bind click when This.snu!=null
 				return;
 			if (env.getClickSound())
 				env.soundManager.playSound({
@@ -115,6 +118,7 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 					channel: "clickSound",
 					fade: 1000
 				});
+			// TODO: unbind click as a safeguard?
 			env.executeSnu(This.snu);
 		}));
 
@@ -163,6 +167,7 @@ org.korsakow.controller.InsertTextWidgetController = Class.register('org.korsako
 			'text-decoration' : this.model.textDecoration
 
 		});
+		// TODO: maybe just use a DIV instead of P
 		var insertTextContent = jQuery("<p>").html(env.getCurrentSnu().insertText).css({
 			'width' : '100%',
 			'height' : '100%'

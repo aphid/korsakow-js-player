@@ -1,13 +1,30 @@
 try {
-/* Custom jQuery selectors */
+/* Custom jQuery selector
+ * 
+ * Compares the text content
+ * 
+ * usage: $(document).find("id:contenteq(1234)");
+ * 		would find all <id>1234</id>
+ */
 $.expr[":"].contenteq = function(obj, index, meta, stack){
 	return (obj.textContent || obj.innerText || $(obj).text() || "") == meta[3];
 };
+
+/* Custom jQuery selector
+ * 
+ * Compares the tag name
+ * 
+ * usage: $(someElem).find("*:tagName(foo)");
+ * 		would find all <foo> tags
+ * 
+ * TODO: why didn't we just do $().find("foo")?
+ */
 $.expr[":"].tagName = function(obj, index, meta, stack){
 	return (obj.tagName || "") == meta[3];
 };
 
-/* */
+/* Browser compatibility as per http://tokenposts.blogspot.com.au/2012/04/javascript-objectkeys-browser.html
+ */
 if(!Object.keys) Object.keys = function(o){
 	if (o !== Object(o))
 		throw new TypeError('Object.keys called on non-object');
@@ -17,6 +34,28 @@ if(!Object.keys) Object.keys = function(o){
 };
 /* */
 
+/* NameSpace
+ * 
+ * Creates a hierarchy of objects matching the given path,
+ * used to scope definitions. The first path element is created
+ * as a property of window.
+ * 
+ * Only creates missing parts of the path, so
+ * NS('org.korsakow') will create two objects but a subsequent
+ * NS('org.korsakow.domain') will only create one.
+ * 
+ * @param ns a dot separated string of namespaces
+ * 
+ * e.g. NS('org.korsakow.domain') is equivalent to
+ * window.org = {
+ *         korsakow: {
+ *             domain: {}
+ *         }
+ *     }
+ * 
+ * Subsequently you might define class MyDomainObject as
+ * org.korsakow.domain.MyDomainObject = ...
+ */
 function NS(ns) {
 	ns = ns.split('.');
 	var ctx = window;
@@ -34,6 +73,15 @@ NS('org.korsakow.domain');
 NS('org.korsakow.domain.rule');
 NS('org.korsakow.domain.widget');
 
+
+/* Wrapper around Prototype.Class.create
+ * (see http://prototypejs.org/learn/class-inheritance)
+ * 
+ * - Applies org.korskow.Object as the supertype of all registered classes
+ * - Creates the property class.className
+ * 
+ * @param name the fully qualified name of the class
+ */
 Class.register = function(name) {
 	var className = name;
 	var args = jQuery.makeArray(arguments);
@@ -45,6 +93,13 @@ Class.register = function(name) {
 	return clazz;
 };
 
+/* Exception-safe wrapper for a function.
+ * 
+ * Will catch and rethrow any exceptions after alerting. This is used to facilitate debugging.
+ * In the future we might not rethrow - throwing from jQuery callbacks can have unexpected
+ * results, for example.
+ * 
+ */
 org.korsakow.WrapCallback = function(f) {
 	return function() {
 		try {
@@ -56,7 +111,11 @@ org.korsakow.WrapCallback = function(f) {
 	};
 };
 
-
+/* The supertype of all classes.
+ * 
+ * Defines methods and properties useful for debugging.
+ * 
+ */
 org.korsakow.Object = Class.register('org.korsakow.Object', {
 	initialize: function(name) {
 		this._uniqueId = ++org.korsakow.Object._uniqueIdGen;
@@ -70,6 +129,9 @@ org.korsakow.Object = Class.register('org.korsakow.Object', {
 });
 org.korsakow.Object._uniqueIdGen = 0;
 
+/* Exception hierarchy is not currently used because we could not reliably
+ * get file and line-number info this way.
+ */
 org.korsakow.Exception = Class.register('org.korsakow.Exception', {
 	initialize: function($super, message) {
 		$super();
@@ -79,12 +141,16 @@ org.korsakow.Exception = Class.register('org.korsakow.Exception', {
 		return "Exception: "+this.message;
 	}
 });
+
+// for now we just throw regular javascript errors
 org.korsakow.Exception = Error;
 org.korsakow.NullPointerException = org.korsakow.Exception;
 org.korsakow.Exception.getStackString = function() {
 	return org.korsakow.Exception.getStackTrace().join("\n");
 };
-/*
+
+/* Browser-compatible stack trace
+ * 
  * http://www.eriwen.com/javascript/js-stack-trace/
  */
 org.korsakow.Exception.getStackTrace = function() {
@@ -133,8 +199,12 @@ org.korsakow.Exception.getStackTrace = function() {
     }
     return callstack;	// dr
 };
-org.korsakow.NullPointerException = org.korsakow.Exception;
 
+/* Supertype for factories
+ * 
+ * Provides functionality for registering a class to an ID and creating
+ * instances of classes by ID.
+ */
 org.korsakow.Factory = Class.register('org.korsakow.Factory', org.korsakow.Object, {
 	initialize: function($super, name) {
 		$super();
@@ -172,6 +242,13 @@ org.korsakow.Factory = Class.register('org.korsakow.Factory', org.korsakow.Objec
 	}
 });
 
+/* Wrapper around logging.
+ * 
+ * Currently trivially forwards to console, but eventually would check
+ * if the browser even supports console and allow for the toggling of
+ * the different log levels.
+ * 
+ */
 org.korsakow.Logger = Class.register('org.korsakow.Logger', org.korsakow.Object, {
 	initialize: function($super) {
 		$super();
@@ -198,6 +275,9 @@ org.korsakow.Utility = Class.register('org.korsakow.Utility', org.korsakow.Objec
 	}
 });
 
+/* Converts the number to a string and pads to the number of zeros
+ * 
+ */
 org.korsakow.Utility.leadingZeros = function(number, zeros){
 	var n = "" + number;
 	while(n.length < zeros){
@@ -205,6 +285,15 @@ org.korsakow.Utility.leadingZeros = function(number, zeros){
 	}
 	return n;
 };
+
+/* Creates a string representation of a timestamp.
+ * 
+ * Format: hh:mm:ss, or mm:ss
+ * 
+ * 
+ * @param time the time in seconds
+ * @param if false then the number of hours is computed in minutes (minutes do not wrap at 60)
+ */
 org.korsakow.Utility.formatTime = function(time, hours){
 	var m,s;
 	if (hours) {
@@ -222,12 +311,27 @@ org.korsakow.Utility.formatTime = function(time, hours){
         return this.leadingZeros(m,2) + ":" + this.leadingZeros(s,2);
     }
 };
+
+/* Gets the value of property on target, whether it is a value or a function.
+ * 
+ * if the property is a function, the result of its invocation is returned,
+ * otherwise the property is returned.
+ * 
+ */
 org.korsakow.Utility.apply = function(target, property) {
 	if (typeof target[property] == "function")
 		return target[property]();
 	else
 		return target[property];
 };
+
+/* Sets the value of property on target, whether it is a value or a function.
+ * 
+ * if the property is a function, the function is called with value as an argument
+ * otherwise the property is assigned to
+ * 
+ * @param value the value to assign
+ */
 org.korsakow.Utility.update = function(target, property, value) {
 	var current = target[property];
 	if (typeof target[property] == "function")
@@ -235,9 +339,21 @@ org.korsakow.Utility.update = function(target, property, value) {
 	else
 		target[property] = value;
 };
+
+/* Performs string interpolation of operators.
+ * 
+ * Allows for smart accessors.
+ * 
+ * e.g. applyOperators("+=10", 1) yields 11
+ * 
+ * TODO: is this currently even used?
+ * 
+ * @param value the value to assign
+ */
 org.korsakow.Utility.applyOperators = function(value, current) {
 	var t;
 	var vs = value?value.toString():"";
+	// TODO: this looks broken since we don't strip off the operation
 	if (vs.indexOf("+=") === 0)
 		t = current + value;
 	else if (vs.indexOf("-=") === 0)
@@ -251,8 +367,11 @@ org.korsakow.Utility.applyOperators = function(value, current) {
 	return t;
 };
 
+/* Browser compatible fullscreen toggling.
+ * 
+ * derived from: http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/
+ */
 org.korsakow.FullScreenAPI = Class.register('org.korsakow.FullScreenAPI',org.korsakow.Object,{
-	//derived from: http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/
 	initialize: function($super){
 		$super();
 		
@@ -305,12 +424,20 @@ org.korsakow.FullScreenAPI = Class.register('org.korsakow.FullScreenAPI',org.kor
 	}
 });
 
-
+/* This class is poorly named. It actually has utility methods.
+ * 
+ */
 org.korsakow.Assert = Class.register('org.korsakow.Assert', org.korsakow.Object, {
+	/* Returns whether the argument is a javascript array
+	 */
 	isArray: function(a) {
 		// http://stackoverflow.com/questions/1058427/how-to-detect-if-a-variable-is-an-array
 		return Object.prototype.toString.call(obj) === '[object Array]';
 	},
+	/* Returns whether the argument is a Map
+	 * 
+	 * We consider a map/dictionary to be a POJsO
+	 */
 	isMap: function(m) {
 		if (typeof(m) != "Object")
 			return false;
@@ -319,8 +446,26 @@ org.korsakow.Assert = Class.register('org.korsakow.Assert', org.korsakow.Object,
 		return true;
 	}
 });
-org.korsakow.assert = new org.korsakow.Assert();
+org.korsakow.assert = new org.korsakow.Assert(); // singleton
 
+/* Ties a function to an object.
+ * 
+ * Returns a function wrapper that guarantees a specific value for "this"
+ * when the actual target function is called. Useful when providing a callback.
+ * 
+ * e.g.
+ *     var foo = {
+ *         value: 10
+ *     };
+ *     var bar = function() { return this.value; }
+ *     var f = ftor(foo, bar);
+ *     
+ *     f() // returns 10
+ * }
+ * 
+ * @param This the object which will be "this" in the execution context
+ * @param func the function to call
+ */
 org.korsakow.Functor = Class.register('org.korsakow.Functor', {
 });
 org.korsakow.ftor =
@@ -330,10 +475,17 @@ org.korsakow.Functor.create = function(This, func) {
 	};
 };
 
+/* TODO: unused?
+ * 
+ */
 org.korsakow.domain.Player = Class.register('org.korsakow.domain.Player', {
 	
 });
 
+/* Browser compatible wrapper around the HTML5 <audio> element.
+ * 
+ * TODO: move this to the UI package next to ImageUI and VideoUI
+ */
 org.korsakow.Audio = Class.register('org.korsakow.domain.Audio', {
 	initialize: function($super, url, vol) {
 		$super();
@@ -351,6 +503,7 @@ org.korsakow.Audio = Class.register('org.korsakow.domain.Audio', {
 		.bind('error', function(event) {
 			alert('Audio error: ' + org.korsakow.Audio.errorToString(event.currentTarget.error.code) + "\n" + org.korsakow.Exception.getStackString());
 		});
+		// TODO: better handling of browser-specific media formats
 		$.each([
 			{
 				type: 'audio/mpeg',
@@ -383,9 +536,16 @@ org.korsakow.Audio = Class.register('org.korsakow.domain.Audio', {
 	stop: function() {
 		this.elem.stop();
 	},
+	/*
+	 * If no arguments are supplied, retrieves the current volume.
+	 * If there is an argument the volume is first set, then returned.
+	 * 
+	 * @param v [0,1], supports operations, e.g. "+=0.5"
+	 */
 	volume: function(v) {
 		if (arguments.length) {
 			var t = org.korsakow.Utility.applyOperators(v, this.innerVolume);
+			// TODO: remove this debug code or clean it up
 			if (isNaN(t)) {
 				console.log(v,t);
 			}
@@ -394,6 +554,12 @@ org.korsakow.Audio = Class.register('org.korsakow.domain.Audio', {
 		}
 		return this.innerVolume;
 	},
+	/* Completely cancels the audio, stopping it and preventing any further download.
+	 * 
+	 * @param opts {
+	 *     fade [optional]: duration (milliseconds) to fade out over before stopping, default is 0
+	 * }
+	 */
 	cancel: function(opts) {
 		opts = opts || {};
 		org.korsakow.Fade.fade({
@@ -404,6 +570,7 @@ org.korsakow.Audio = Class.register('org.korsakow.domain.Audio', {
 			property: 'volume',
 			complete: org.korsakow.ftor(this, function() {
 				if (this.elem) {
+					// stops any ongoing browser download of the media
 					// https://developer.mozilla.org/en-US/docs/Using_HTML5_audio_and_video
 					this.elem[0].pause();
 					this.elem[0].src = "";
@@ -413,6 +580,10 @@ org.korsakow.Audio = Class.register('org.korsakow.domain.Audio', {
 			})
 		});
 	},
+	/* Gets or sets the current time in seconds
+	 * 
+	 * Supports operators.
+	 */
 	currentTime: function() {
 		if (arguments.length) {
 			var t = org.korsakow.Utility.applyOperators(v, this.elem[0].currentTime);
@@ -448,14 +619,30 @@ org.korsakow.Audio.errorToString = function(e) {
 	}
 };
 
+/*
+ * Utility class for time functions
+ */
 org.korsakow.Time = Class.register('org.korsakow.Time', {
 });
+
+/* Gets the current data/time in milliseconds.
+ * 
+ * TODO: why call it getTimer? why not getTime or just time()
+ * 
+ */
 org.korsakow.getTimer =
 org.korsakow.Time.getTimer = function() {
 	return new Date().getTime() - org.korsakow.Time.init;
 };
 org.korsakow.Time.init = new Date().getTime();
 
+/* Interpolates a value over a period of time at a fixed rate.
+ * 
+ * Events:
+ *     change: called once per iteration
+ *     complete: called once on the last iteration
+ * 
+ */
 org.korsakow.Tween = Class.register('org.korsakow.Tween', {
 	initialize: function($super, duration, begin, end) {
 		$super();
@@ -503,6 +690,19 @@ org.korsakow.Tween = Class.register('org.korsakow.Tween', {
 org.korsakow.Fade = Class.register('org.korsakow.Fade', {
 	
 });
+/* Creates a fading tween.
+ * 
+ * @param opts {
+ *     duration: see Tween
+ *     begin: see Tween
+ *     end: see Tween
+ *     target: the object whose property will be faded
+ *     property: the property which will be faded (may be a property or accessor)
+ *     complete: a callback invoked when the tween completes
+ * }
+ * 
+ * @return the tween object
+ */
 org.korsakow.Fade.fade = function(opts) {
 	var t = new org.korsakow.Tween(opts.duration, opts.begin, opts.end);
 	var init = org.korsakow.Utility.apply(opts.target, opts.property);

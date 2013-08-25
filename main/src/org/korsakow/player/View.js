@@ -1,6 +1,14 @@
+/* Wrappers for the media types.
+ * 
+ * An attempt is made at creating a consistent API.
+ * 
+ */
 try {
 NS('org.korsakow.ui');
 
+/* Wrapper around HTML images.
+ * 
+ */
 org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', {
 	initialize: function($super, opts) {
 		$super();
@@ -15,6 +23,10 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', {
 		return this.element.attr("src");
 	}
 });
+
+/* Wrapper around HTML videos.
+ * 
+ */
 org.korsakow.ui.VideoUI = Class.register('org.korsakow.ui.VideoUI', {
 	initialize: function($super, opts) {
 		$super();
@@ -128,6 +140,9 @@ org.korsakow.ui.VideoUI = Class.register('org.korsakow.ui.VideoUI', {
 	}
 });*/
 
+/* Maps the domain objects' class names to the UI classes.
+ * 
+ */
 org.korsakow.ui.MediaUIFactory = Class.register("org.korsakow.ui.MediaUIFactory", org.korsakow.Factory, {
 	initialize: function($super) {
 		$super("MediaUIFactory");

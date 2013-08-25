@@ -1,14 +1,32 @@
+/* Classes related to unmarshalling domain objects
+ * 
+ * Finder: a finder knows how to locate a certain type of domain object in various ways from the project.xml
+ * 		finder methods return a jQuery-wrapped XML node
+ * 
+ * Mapper: knows how to create a domain object from an XML node
+ * 
+ */
 try {
 
 NS('org.korsakow.domain.rule');
 NS('org.korsakow.domain.widget');
 
 
+/* Locates XML nodes by various criteria
+ * 
+ */
 org.korsakow.domain.Finder = Class.register('org.korsakow.domain.Finder', {
+	/*
+	 * @param data jQuery-wrapped XML
+	 */
 	initialize: function($super, data) {
 		$super();
 		this.data = data;
 	},
+	/**
+	 * @param id the id of the object to find, corresponds to the <id> tag in the xml
+	 * @param opts currently not used
+	 */
 	findById: function(id, opts) {
 		opts = opts || {};
 		var result = this.data;
@@ -80,7 +98,15 @@ org.korsakow.domain.Finder = Class.register('org.korsakow.domain.Finder', {
 org.korsakow.domain.MapperException = org.korsakow.Exception;
 org.korsakow.domain.DomainObjectNotFoundException = org.korsakow.Exception;
 
+/* Data Access Object
+ * Finds domain objects
+ */
 org.korsakow.domain.Dao = Class.register('org.korsakow.domain.Dao', {
+	/*
+	 * @param $super
+	 * @param finder
+	 * @param mappers Array[{org.korsakow.Mapper}
+	 */
 	initialize: function($super, finder, mappers) {
 		$super();
 		this.idmap = {};
@@ -157,6 +183,10 @@ org.korsakow.domain.Dao = Class.register('org.korsakow.domain.Dao', {
 		return result;
 	}
 });
+/* Factory method
+ * @param data jQuery-wrapped XML
+ * @returns {org.korsakow.domain.Dao}
+ */
 org.korsakow.domain.Dao.create = function(data) {
 	
 	var dao = new org.korsakow.domain.Dao();
