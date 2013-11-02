@@ -1,9 +1,13 @@
-korsakow-js-player
-==================
+# Korsakow
 
-The player is the web front end for a Korsakow film. It reads in a project exported by the desktop publisher.
+Korsakow is an open-source application for creating web docs and other kinds of nonlinear, interactive narratives. For more information please visit [http://korsakow.org]()
 
-# Structure of a Korsakow film
+
+## The Korsakow Player
+
+The player is the web front end for a Korsakow film. It reads in a project exported by the desktop editor [github project](https://github.com/korsakow/korsakow-editor).
+
+## Structure of a Korsakow film
 
 * Static content
 
@@ -25,8 +29,6 @@ The player is the web front end for a Korsakow film. It reads in a project expor
         This is the core of a Korsakow film. It describes all the media and how they are connected and presented.
 
 
-# Information for developers
+## Information for developers
 
 See [DEVELOPERS.md](DEVELOPERS.md)
-
-
