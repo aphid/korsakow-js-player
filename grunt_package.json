@@ -1,0 +1,23 @@
+{
+  "name": "korsakow-js-player",
+  "version": "0.1.0",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.6.3",
+    "grunt-contrib-nodeunit": "~0.2.0",
+    "grunt-contrib-uglify": "~0.2.2"
+  },
+  "gitHead": "e97f269f6130ed6da68b5b4df59cb50a52cc5454",
+  "readmeFilename": "README.md",
+  "description": "korsakow-js-player ==================",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "ls"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dreisch/korsakow-js-player.git"
+  },
+  "author": "",
+  "license": "BSD"
+}
