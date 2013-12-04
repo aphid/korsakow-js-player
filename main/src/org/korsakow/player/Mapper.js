@@ -420,6 +420,23 @@ org.korsakow.domain.PreviewInputMapper = Class.register('org.korsakow.domain.Pre
 	}
 });
 
+org.korsakow.domain.FixedLinkMapper = Class.register('org.korsakow.domain.FixedLinkMapper', org.korsakow.domain.InputMapper, {
+	initialize: function($super, dao) {
+		$super(dao);
+	},
+	map: function(data) {
+		var type = PU.parseString(data.children("type"), "FixedPreview.type");
+		var id = PU.parseInt(data.children("id"), "FixedPreview.id");
+		var x = PU.parseInt(data.children("x"), "FixedPreview.x");
+		var y = PU.parseInt(data.children("y"), "FixedPreview.y");
+		var width = PU.parseInt(data.children("width"), "FixedPreview.width");
+		var height = PU.parseInt(data.children("height"), "FixedPreview.height");
+		var snuId = PU.parseInt(data.children("snuId"), "FixedPreview.snuId");
+		var widget = new org.korsakow.domain.widget.FixedPreview(id, [], type, x, y, width, height, snuId);
+		return widget;
+	}
+});
+
 org.korsakow.domain.InsertTextInputMapper = Class.register('org.korsakow.domain.InsertTextInputMapper', org.korsakow.domain.InputMapper, {
 	initialize: function($super, dao) {
 		$super(dao);
@@ -668,6 +685,7 @@ org.korsakow.domain.InputMapperFactory = Class.register('org.korsakow.domain.Inp
 org.korsakow.domain.InputMapperFactory.instance = new org.korsakow.domain.InputMapperFactory();
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.widget.MainMedia", org.korsakow.domain.MainMediaInputMapper);
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.widget.SnuAutoLink", org.korsakow.domain.PreviewInputMapper);
+org.korsakow.domain.InputMapperFactory.register("org.korsakow.widget.SnuFixedLink", org.korsakow.domain.FixedLinkMapper);
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.widget.InsertText", org.korsakow.domain.InsertTextInputMapper);
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.widget.PlayTime", org.korsakow.domain.PlayTimeInputMapper);
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.widget.TotalTime", org.korsakow.domain.TotalTimeInputMapper);

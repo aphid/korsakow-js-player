@@ -24,10 +24,17 @@ org.korsakow.domain.widget.MainMedia = Class.register('org.korsakow.domain.widge
 	
 });
 
-org.korsakow.domain.widget.Preview= Class.register('org.korsakow.domain.widget.Preview', org.korsakow.domain.Widget, {
+org.korsakow.domain.widget.Preview = Class.register('org.korsakow.domain.widget.Preview', org.korsakow.domain.Widget, {
 	initialize: function($super, id, keywords, type, x, y, width, height, index) {
 		$super(id, keywords, type, x, y, width, height);
 		this.index = index;
+	}
+});
+
+org.korsakow.domain.widget.FixedPreview = Class.register('org.korsakow.domain.widget.FixedPreview', org.korsakow.domain.Widget, {
+	initialize: function($super, id, keywords, type, x, y, width, height, snuId) {
+		$super(id, keywords, type, x, y, width, height);
+		this.snuId = snuId;
 	}
 });
 

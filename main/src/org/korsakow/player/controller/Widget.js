@@ -547,6 +547,7 @@ org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.Su
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.Subtitles", org.korsakow.controller.SubtitlesWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.MainMedia", org.korsakow.controller.MainMediaWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.SnuAutoLink", org.korsakow.controller.PreviewWidgetController);
+org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.SnuFixedLink", org.korsakow.controller.PreviewWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.InsertText", org.korsakow.controller.InsertTextWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.PlayButton", org.korsakow.controller.PlayButtonWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.PlayTime", org.korsakow.controller.PlayTimeWidgetController);
