@@ -1,3 +1,4 @@
+window.Class = Prototype.Class;
 try {
 /* Custom jQuery selector
  * 

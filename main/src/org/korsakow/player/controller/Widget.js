@@ -543,8 +543,8 @@ org.korsakow.controller.SubtitlesCuePointController = Class.register('org.korsak
 	}
 });
 
-org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.SubtitleCuePoint", org.korsakow.controller.SubtitlesCuePointWidgetController);
-org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.Subtitles", org.korsakow.controller.SubtitlesWidgetController);
+//org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.SubtitleCuePoint", org.korsakow.controller.SubtitlesCuePointWidgetController);
+//org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.Subtitles", org.korsakow.controller.SubtitlesWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.MainMedia", org.korsakow.controller.MainMediaWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.SnuAutoLink", org.korsakow.controller.PreviewWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.SnuFixedLink", org.korsakow.controller.PreviewWidgetController);
