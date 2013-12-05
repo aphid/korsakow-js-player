@@ -438,15 +438,6 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 			snu.rules[i].execute(this);
 		}
 
-		var fixedLinks = this.getWidgetsOfType('org.korsakow.widget.SnuFixedLink');
-		var fixedLink;
-		var targetSnu;
-		for (var k = 0; k < fixedLinks.length; ++k) {
-			fixedLink = fixedLinks[k];
-			targetSnu = this.dao.findById(fixedLink.model.snuId);
-			fixedLink.setSnu(targetSnu);
-		}
-
 		// set all audio/video components to the appropriate volume
 		this.applyGlobalVolume();
 	},
