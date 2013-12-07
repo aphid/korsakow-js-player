@@ -2,7 +2,7 @@ module.exports = function(grunt) {
 
   // Project configuration.
     grunt.initConfig({
-        pkg: grunt.file.readJSON('grunt_package.json'),
+        pkg: grunt.file.readJSON('package.json'),
         concat: {
         	player: {
         		src: [
@@ -15,10 +15,20 @@ module.exports = function(grunt) {
         		src: ['tests-unit/src/**/*.js'],
         		dest: 'dist/tests-unit.js'
         	}
-        }
-    });
+        },
+        watch: {
+		    scripts: {
+			    files: ['main/src/**/*.*', 'tests-unit/src/**/*.*'],
+			    tasks: ['concat'],
+			    options: {
+				    interrupt: true,
+			    },
+		    },
+    	},
+	});
 
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-watch');
   
     // Default task(s).
     grunt.registerTask('default', ['concat']);

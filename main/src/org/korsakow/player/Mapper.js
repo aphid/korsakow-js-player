@@ -43,7 +43,10 @@ org.korsakow.domain.Finder = Class.register('org.korsakow.domain.Finder', {
 	 * @param opts {
 	 * 	parent: id of containing element
 	 *  keyword
-	 *  path: the list / separates path of elements to find 
+	 *  type: element name to match on
+	 *  path: the list / separates path of elements to find
+	 *  	one of type or path is requred
+	 *  props: key/value map to match on
 	 * }
 	 * @returns {Array}
 	 */
@@ -67,8 +70,9 @@ org.korsakow.domain.Finder = Class.register('org.korsakow.domain.Finder', {
 				p = p.children("*:tagName(" + path + "):");
 			}
 			result = p;
-		} else
+		} else if (opts.type) {
 			result = result.find("*:tagName(" + opts.type + "):");
+		}
 		
 		if (opts.keyword) {
 			result = result.filter(function() {
@@ -89,7 +93,6 @@ org.korsakow.domain.Finder = Class.register('org.korsakow.domain.Finder', {
 				});
 			});
 		}
-		
 		
 		return result;
 	}
