@@ -73,7 +73,7 @@ org.korsakow.controller.MainMediaWidgetController = Class.register('org.korsakow
 		var media = snu.mainMedia;
 		
 		this.element.addClass("MainMediaWidget");
-		var mediaUI = this.view = org.korsakow.ui.MediaUIFactory.create(media.getClass().className);
+		var mediaUI = this.view = env.createMediaUI(media.getClass().className);
 		this.element.append(mediaUI.element);
 		mediaUI.element.css({
 			width: "100%",
@@ -124,9 +124,8 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 	},
 	setSnu: function(snu) {
 		this.clear();
-		
 		var media = snu.previewMedia;
-		var mediaUI = org.korsakow.ui.MediaUIFactory.create(media.getClass().className);
+		var mediaUI = this.env.createMediaUI(media.getClass().className);
 		this.element.append(mediaUI.element);
 		mediaUI.element.css({
 			width: "100%",
@@ -151,8 +150,8 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 org.korsakow.controller.FixedPreviewWidgetController = Class.register('org.korsakow.controller.FixedPreviewWidgetController', org.korsakow.controller.PreviewWidgetController, {
 	setup: function ($super, env) {
 		$super(env);
-		this.snu = env.dao.findById(this.model.snuId);
-		this.setSnu(this.snu);
+		var snu = env.dao.findById(this.model.snuId);
+		this.setSnu(snu);
 	}
 });
 

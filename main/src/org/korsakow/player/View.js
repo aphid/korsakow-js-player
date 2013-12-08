@@ -15,6 +15,11 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', {
 		this.element = jQuery("<img />");
 		if (opts && opts.src)
 			this.element.attr("src", opts.src);
+		this.isPlaying = false;
+		this.isEnded = false;
+	},
+	bind: function() {
+		this.element.bind.apply(this.element, arguments);
 	},
 	load: function(src) {
 		this.element.attr("src", src);
@@ -22,7 +27,10 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', {
 	source: function() {
 		return this.element.attr("src");
 	},
-	play: function () { }
+	play: function () { this.isPlaying = true; },
+	pause: function() { this.isPlaying = false; },
+	paused: function() { return !this.isPlaying; },
+	ended: function() { return this.isEnded; }
 });
 
 /* Wrapper around HTML videos.

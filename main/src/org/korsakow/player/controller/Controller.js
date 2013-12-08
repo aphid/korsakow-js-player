@@ -12,9 +12,8 @@ var W = org.korsakow.WrapCallback;
  */
 org.korsakow.controller.AbstractController = Class.register('org.korsakow.controller.AbstractController', {
 	initialize: function($super, model) {
-		if (!model) throw new org.korsakow.NullPointerException('AbstractController.model');
 		$super();
-		this.model = model;
+		this.model = model || {}; // default value is for jsmock limitation in tests (Object.setPrototypeOf should fix this)
 		this.element = null;
 		this.env = null;
 
