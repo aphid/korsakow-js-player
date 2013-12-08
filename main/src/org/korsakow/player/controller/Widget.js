@@ -121,7 +121,6 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 			// TODO: unbind click as a safeguard?
 			env.executeSnu(This.snu);
 		}));
-
 	},
 	setSnu: function(snu) {
 		this.clear();
@@ -146,6 +145,14 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 		}
 		this.mediaUI = null;
 		this.snu = null;
+	}
+});
+
+org.korsakow.controller.FixedPreviewWidgetController = Class.register('org.korsakow.controller.FixedPreviewWidgetController', org.korsakow.controller.PreviewWidgetController, {
+	setup: function ($super, env) {
+		$super(env);
+		this.snu = env.dao.findById(this.model.snuId);
+		this.setSnu(this.snu);
 	}
 });
 
@@ -543,10 +550,11 @@ org.korsakow.controller.SubtitlesCuePointController = Class.register('org.korsak
 	}
 });
 
-org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.SubtitleCuePoint", org.korsakow.controller.SubtitlesCuePointWidgetController);
-org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.Subtitles", org.korsakow.controller.SubtitlesWidgetController);
+//org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.SubtitleCuePoint", org.korsakow.controller.SubtitlesCuePointWidgetController);
+//org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.Subtitles", org.korsakow.controller.SubtitlesWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.MainMedia", org.korsakow.controller.MainMediaWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.SnuAutoLink", org.korsakow.controller.PreviewWidgetController);
+org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.SnuFixedLink", org.korsakow.controller.FixedPreviewWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.InsertText", org.korsakow.controller.InsertTextWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.PlayButton", org.korsakow.controller.PlayButtonWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.PlayTime", org.korsakow.controller.PlayTimeWidgetController);

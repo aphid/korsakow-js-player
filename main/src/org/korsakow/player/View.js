@@ -21,7 +21,8 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', {
 	},
 	source: function() {
 		return this.element.attr("src");
-	}
+	},
+	play: function () { }
 });
 
 /* Wrapper around HTML videos.
