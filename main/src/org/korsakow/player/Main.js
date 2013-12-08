@@ -73,7 +73,7 @@ NS('org.korsakow.domain');
 NS('org.korsakow.domain.rule');
 NS('org.korsakow.domain.widget');
 
-
+var Class = Prototype.Class;
 /* Wrapper around Prototype.Class.create
  * (see http://prototypejs.org/learn/class-inheritance)
  * 

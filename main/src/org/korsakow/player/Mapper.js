@@ -43,7 +43,10 @@ org.korsakow.domain.Finder = Class.register('org.korsakow.domain.Finder', {
 	 * @param opts {
 	 * 	parent: id of containing element
 	 *  keyword
-	 *  path: the list / separates path of elements to find 
+	 *  type: element name to match on
+	 *  path: the list / separates path of elements to find
+	 *  	one of type or path is requred
+	 *  props: key/value map to match on
 	 * }
 	 * @returns {Array}
 	 */
@@ -67,8 +70,9 @@ org.korsakow.domain.Finder = Class.register('org.korsakow.domain.Finder', {
 				p = p.children("*:tagName(" + path + "):");
 			}
 			result = p;
-		} else
+		} else if (opts.type) {
 			result = result.find("*:tagName(" + opts.type + "):");
+		}
 		
 		if (opts.keyword) {
 			result = result.filter(function() {
@@ -89,7 +93,6 @@ org.korsakow.domain.Finder = Class.register('org.korsakow.domain.Finder', {
 				});
 			});
 		}
-		
 		
 		return result;
 	}
@@ -242,16 +245,25 @@ org.korsakow.domain.ParseUtil.parseColor = function(expr, message) {
 	return expr.text();
 };
 
-org.korsakow.domain.ParseUtil.parseFloat = function(expr,message) {
-	if(!expr.length)
-		throw new org.korsakow.domain.ParseException("Not found: " + message);
-	return parseFloat(expr.text());
-};
-
 org.korsakow.domain.InputMapper = Class.register('org.korsakow.domain.InputMapper', {
 	initialize: function($super, dao) {
 		$super();
 		this.dao = dao;
+	},
+	parseInt: function(data, prop) {
+		return PU.parseInt(data.children(prop), this.getClass().className + "." + prop);
+	},
+	parseFloat: function(data, prop) {
+		return PU.parseFloat(data.children(prop), this.getClass().className + "." + prop);
+	},
+	parseString: function(data, prop) {
+		return PU.parseString(data.children(prop), this.getClass().className + "." + prop);
+	},
+	parseBoolean: function(data, prop) {
+		return PU.parseBoolean(data.children(prop), this.getClass().className + "." + prop);
+	},
+	parseColor: function(data, prop) {
+		return PU.parseColor(data.children(prop), this.getClass().className + "." + prop);
 	}
 });
 
@@ -260,8 +272,8 @@ org.korsakow.domain.KeywordInputMapper = Class.register('org.korsakow.domain.Key
 		$super(dao);
 	},
 	map: function(data) {
-//		var value = PU.parseString(data.children("value"), "Keyword.value");
-//		var weight = PU.parseString(data.children("weight"), "Keyword.weight");
+//		var value = this.parseString(data, "value");
+//		var weight = this.parseString(data, "weight");
 		var value = PU.parseString(data, "Keyword.value");
 		var weight = 1;
 		return new org.korsakow.domain.Keyword(value, weight);
@@ -273,8 +285,8 @@ org.korsakow.domain.VideoInputMapper = Class.register('org.korsakow.domain.Video
 		$super(dao);
 	},
 	map: function(data) {
-		var id = PU.parseInt(data.children("id"), "Video.id");
-		var filename = PU.parseString(data.children("filename"), "Video.filename");
+		var id = this.parseInt(data, "id");
+		var filename = this.parseString(data, "filename");
 		filename = filename.substring(0, filename.lastIndexOf('.'));
 		return new org.korsakow.domain.Video(id, filename);
 	}
@@ -285,8 +297,8 @@ org.korsakow.domain.VideoInputMapper = Class.register('org.korsakow.domain.Video
 		$super(dao);
 	},
 	map: function(data) {
-		var id = PU.parseInt(data.children("id"), "Sound.id");
-		var filename = PU.parseString(data.children("filename"), "Sound.filename");
+		var id = this.parseInt(data, "id");
+		var filename = this.parseString(data, "filename");
 		filename = filename.substring(0, filename.lastIndexOf('.'));
 		return new org.korsakow.domain.Sound(id, filename);
 	}
@@ -297,8 +309,8 @@ org.korsakow.domain.ImageInputMapper = Class.register('org.korsakow.domain.Image
 		$super(dao);
 	},
 	map: function(data) {
-		var id = PU.parseInt(data.children("id"), "Image.id");
-		var filename = PU.parseString(data.children("filename"), "Image.filename");
+		var id = this.parseInt(data, "id");
+		var filename = this.parseString(data, "filename");
 		return new org.korsakow.domain.Image(id, filename);
 	}
 });
@@ -308,8 +320,8 @@ org.korsakow.domain.SoundInputMapper = Class.register('org.korsakow.domain.Sound
 		$super(dao);
 	},
 	map: function(data) {
-		var id = PU.parseInt(data.children("id"), "Sound.id");
-		var filename = PU.parseString(data.children("filename"), "Sound.filename");
+		var id = this.parseInt(data, "id");
+		var filename = this.parseString(data, "filename");
 		return new org.korsakow.domain.Sound(id, filename);
 	}
 });
@@ -319,12 +331,12 @@ org.korsakow.domain.SnuInputMapper = Class.register('org.korsakow.domain.SnuInpu
 		$super(dao);
 	},
 	map: function(data) {
-		var id = PU.parseInt(data.children("id"), "Snu.id");
-		var name = PU.parseString(data.children("name"), "Snu.name");
-		var mainMedia = this.dao.findMediaById(PU.parseInt(data.children("mainMediaId"), "Snu.mainMedia"));
-		var previewMedia = this.dao.findMediaById(PU.parseInt(data.children("previewMediaId"), "Snu.previewMedia"));
-		var interface = this.dao.findById(PU.parseInt(data.children("interfaceId"), "Snu.interface"));
-		var starter = PU.parseBoolean(data.children("starter"), "Snu.starter");
+		var id = this.parseInt(data, "id");
+		var name = this.parseString(data, "name");
+		var mainMedia = this.dao.findMediaById(this.parseInt(data, "mainMediaId"));
+		var previewMedia = this.dao.findMediaById(this.parseInt(data, "previewMediaId"));
+		var interface = this.dao.findById(this.parseInt(data, "interfaceId"));
+		var starter = this.parseBoolean(data, "starter");
 		var rules = this.dao.find({parent:id, path: 'events/Event/Rule', ignoreError: true});
 		var lives = (function(){
 			var temp = data.children("lives");
@@ -333,16 +345,16 @@ org.korsakow.domain.SnuInputMapper = Class.register('org.korsakow.domain.SnuInpu
 			else
 				return PU.parseInt(temp, "Snu.lives");
 		}).apply(this);
-		var looping = PU.parseBoolean(data.children("looping"), "Snu.looping");
-		var insertText = PU.parseString(data.children("insertText"), "Snu.insertText");
-		var rating = PU.parseFloat(data.children("rating"), "Snu.rating");
-		var backgroundSoundMode = PU.parseString(data.children("backgroundSoundMode"), "Snu.backgroundSoundMode");
-		var backgroundSoundLooping = PU.parseString(data.children("backgroundSoundLooping"), "Snu.backgroundSoundLooping");
+		var looping = this.parseBoolean(data, "looping");
+		var insertText = this.parseString(data, "insertText");
+		var rating = this.parseFloat(data, "rating");
+		var backgroundSoundMode = this.parseString(data, "backgroundSoundMode");
+		var backgroundSoundLooping = this.parseString(data, "backgroundSoundLooping");
 		var backgroundSoundVolume = 1.0;
 		var backgroundSoundMedia = (function(){
 			if(data.children("backgroundSoundId").length){
-				backgroundSoundVolume = PU.parseFloat(data.children("backgroundSoundVolume"), "Snu.backgroundSoundVolume");
-				return this.dao.findById(PU.parseInt(data.children("backgroundSoundId"), "Snu.backgroundSoundMedia"));
+				backgroundSoundVolume = this.parseFloat(data, "backgroundSoundVolume");
+				return this.dao.findById(this.parseInt(data, "backgroundSoundId"));
 			} else
 				return null;
 		}).apply(this);
@@ -356,18 +368,18 @@ org.korsakow.domain.InterfaceInputMapper = Class.register('org.korsakow.domain.I
 		$super(dao);
 	},
 	map: function(data) {
-		var id = PU.parseInt(data.children("id"), "Interface.id");
-		var name = PU.parseString(data.children("name"), "Interface.id");
+		var id = this.parseInt(data, "id");
+		var name = this.parseString(data, "name");
 		var keywords = [];
 		var widgets = this.dao.find({parent:id, path: 'widgets/Widget', ignoreError: true});
 		var clickSound = (function() {
 			if (data.children("clickSoundId").length) {
-				var clickSoundId = PU.parseInt(data.children("clickSoundId"), "Interface.clickSound");
+				var clickSoundId = this.parseInt(data, "clickSoundId");
 				return this.dao.findById(clickSoundId);
 			} else
 				return null;
 		}).apply(this);
-		var backgroundColor = data.children("backgroundColor").length?PU.parseColor(data.children("backgroundColor"), "Interface.backgroundColor"):null;
+		var backgroundColor = data.children("backgroundColor").length?this.parseColor(data, "backgroundColor"):null;
 		return new org.korsakow.domain.Interface(id, name, keywords, widgets, clickSound, backgroundColor);
 	}
 });
@@ -381,7 +393,7 @@ org.korsakow.domain.WidgetInputMapper = Class.register('org.korsakow.domain.Widg
 		$super(dao);
 	},
 	map: function(data) {
-		var type = PU.parseString(data.children("type"), "Widget.type");
+		var type = this.parseString(data, "type");
 		var mapper = org.korsakow.domain.InputMapperFactory.create(type, this.dao);
 		return mapper.map(data);
 	}
@@ -392,12 +404,12 @@ org.korsakow.domain.MainMediaInputMapper = Class.register('org.korsakow.domain.M
 		$super(dao);
 	},
 	map: function(data) {
-		var type = PU.parseString(data.children("type"), "MainMedia.type");
-		var id = PU.parseInt(data.children("id"), "MainMedia.id");
-		var x = PU.parseInt(data.children("x"), "MainMedia.x");
-		var y = PU.parseInt(data.children("y"), "MainMedia.y");
-		var width = PU.parseInt(data.children("width"), "MainMedia.width");
-		var height = PU.parseInt(data.children("height"), "MainMedia.height");
+		var type = this.parseString(data, "type");
+		var id = this.parseInt(data, "id");
+		var x = this.parseInt(data, "x");
+		var y = this.parseInt(data, "y");
+		var width = this.parseInt(data, "width");
+		var height = this.parseInt(data, "height");
 		var widget = new org.korsakow.domain.widget.MainMedia(id, [], type, x, y, width, height);
 		return widget;
 	}
@@ -408,13 +420,13 @@ org.korsakow.domain.PreviewInputMapper = Class.register('org.korsakow.domain.Pre
 		$super(dao);
 	},
 	map: function(data) {
-		var type = PU.parseString(data.children("type"), "Preview.type");
-		var id = PU.parseInt(data.children("id"), "Preview.id");
-		var x = PU.parseInt(data.children("x"), "Preview.x");
-		var y = PU.parseInt(data.children("y"), "Preview.y");
-		var width = PU.parseInt(data.children("width"), "Preview.width");
-		var height = PU.parseInt(data.children("height"), "Preview.height");
-		var index = PU.parseInt(data.children("index"), "Preview.index");
+		var type = this.parseString(data, "type");
+		var id = this.parseInt(data, "id");
+		var x = this.parseInt(data, "x");
+		var y = this.parseInt(data, "y");
+		var width = this.parseInt(data, "width");
+		var height = this.parseInt(data, "height");
+		var index = this.parseInt(data, "index");
 		var widget = new org.korsakow.domain.widget.Preview(id, [], type, x, y, width, height, index);
 		return widget;
 	}
@@ -442,19 +454,19 @@ org.korsakow.domain.InsertTextInputMapper = Class.register('org.korsakow.domain.
 		$super(dao);
 	},
 	map: function(data) {
-		var type = PU.parseString(data.children("type"), "InsertText.type");
-		var id = PU.parseInt(data.children("id"), "InsertText.id");
-		var x = PU.parseInt(data.children("x"), "InsertText.x");
-		var y = PU.parseInt(data.children("y"), "InsertText.y");
-		var width = PU.parseInt(data.children("width"), "InsertText.width");
-		var height = PU.parseInt(data.children("height"), "InsertText.height");
-		var fontColor = PU.parseString(data.children("fontColor"), "InsertText.fontColor");
-		var fontBackgroundColor = PU.parseString(data.children("fontBackgroundColor"), "InsertText.fontBackgroundColor");
-		var fontFamily = PU.parseString(data.children("fontFamily"), "InsertText.fontFamily");
-		var fontSize = PU.parseInt(data.children("fontSize"), "InsertText.fontSize");
-		var fontStyle = PU.parseString(data.children("fontStyle"), "InsertText.fontStyle");
-		var fontWeight = PU.parseString(data.children("fontWeight"), "InsertText.fontWeight");
-		var textDecoration = PU.parseString(data.children("textDecoration"), "InsertText.textDecoration");
+		var type = this.parseString(data, "type");
+		var id = this.parseInt(data, "id");
+		var x = this.parseInt(data, "x");
+		var y = this.parseInt(data, "y");
+		var width = this.parseInt(data, "width");
+		var height = this.parseInt(data, "height");
+		var fontColor = this.parseString(data, "fontColor");
+		var fontBackgroundColor = this.parseString(data, "fontBackgroundColor");
+		var fontFamily = this.parseString(data, "fontFamily");
+		var fontSize = this.parseInt(data, "fontSize");
+		var fontStyle = this.parseString(data, "fontStyle");
+		var fontWeight = this.parseString(data, "fontWeight");
+		var textDecoration = this.parseString(data, "textDecoration");
 		
 		var widget = new org.korsakow.domain.widget.InsertText(id, [], type, x, y, width, height, fontColor, fontBackgroundColor, fontFamily, fontSize, fontStyle, fontWeight, textDecoration);
 		return widget;
@@ -465,12 +477,12 @@ org.korsakow.domain.PlayButtonInputMapper = Class.register('org.korsakow.domain.
 		$super(dao);
 	},
 	map: function(data) {
-		var type = PU.parseString(data.children("type"), "PlayButton.type");
-		var id = PU.parseInt(data.children("id"), "PlayButton.id");
-		var x = PU.parseInt(data.children("x"), "PlayButton.x");
-		var y = PU.parseInt(data.children("y"), "PlayButton.y");
-		var width = PU.parseInt(data.children("width"), "PlayButton.width");
-		var height = PU.parseInt(data.children("height"), "PlayButton.height");
+		var type = this.parseString(data, "type");
+		var id = this.parseInt(data, "id");
+		var x = this.parseInt(data, "x");
+		var y = this.parseInt(data, "y");
+		var width = this.parseInt(data, "width");
+		var height = this.parseInt(data, "height");
 		
 		var widget = new org.korsakow.domain.widget.PlayButton(id, [], type, x, y, width, height);
 		return widget;
@@ -482,19 +494,19 @@ org.korsakow.domain.PlayTimeInputMapper = Class.register('org.korsakow.domain.Pl
 		
 	},
 	map: function(data) {
-		var type = PU.parseString(data.children("type"), "PlayTime.type");
-		var id = PU.parseInt(data.children("id"), "PlayTime.id");
-		var x = PU.parseInt(data.children("x"), "PlayTime.x");
-		var y = PU.parseInt(data.children("y"), "PlayTime.y");
-		var width = PU.parseInt(data.children("width"), "PlayTime.width");
-		var height = PU.parseInt(data.children("height"), "PlayTime.height");
-		var fontColor = PU.parseString(data.children("fontColor"), "PlayTime.fontColor");
-		//var fontBackgroundColor = PU.parseString(data.children("fontBackgroundColor"), "PlayTime.fontBackgroundColor");
-		var fontFamily = PU.parseString(data.children("fontFamily"), "PlayTime.fontFamily");
-		var fontSize = PU.parseInt(data.children("fontSize"), "PlayTime.fontSize");
-		var fontStyle = PU.parseString(data.children("fontStyle"), "PlayTime.fontStyle");
-		var fontWeight = PU.parseString(data.children("fontWeight"), "PlayTime.fontWeight");
-		var textDecoration = PU.parseString(data.children("textDecoration"), "PlayTime.textDecoration");
+		var type = this.parseString(data, "type");
+		var id = this.parseInt(data, "id");
+		var x = this.parseInt(data, "x");
+		var y = this.parseInt(data, "y");
+		var width = this.parseInt(data, "width");
+		var height = this.parseInt(data, "height");
+		var fontColor = this.parseString(data, "fontColor");
+		//var fontBackgroundColor = this.parseString(data, "fontBackgroundColor");
+		var fontFamily = this.parseString(data, "fontFamily");
+		var fontSize = this.parseInt(data, "fontSize");
+		var fontStyle = this.parseString(data, "fontStyle");
+		var fontWeight = this.parseString(data, "fontWeight");
+		var textDecoration = this.parseString(data, "textDecoration");
 		
 		var widget = new org.korsakow.domain.widget.PlayTime(id, [], type, x, y, width, height, fontColor, fontFamily, fontSize, fontStyle, fontWeight, textDecoration);
 		return widget;
@@ -507,19 +519,19 @@ org.korsakow.domain.TotalTimeInputMapper = Class.register('org.korsakow.domain.T
 		
 	},
 	map: function(data) {
-		var type = PU.parseString(data.children("type"), "TotalTime.type");
-		var id = PU.parseInt(data.children("id"), "TotalTime.id");
-		var x = PU.parseInt(data.children("x"), "TotalTime.x");
-		var y = PU.parseInt(data.children("y"), "TotalTime.y");
-		var width = PU.parseInt(data.children("width"), "TotalTime.width");
-		var height = PU.parseInt(data.children("height"), "TotalTime.height");
-		var fontColor = PU.parseString(data.children("fontColor"), "TotalTime.fontColor");
-		//var fontBackgroundColor = PU.parseString(data.children("fontBackgroundColor"), "TotalTime.fontBackgroundColor");
-		var fontFamily = PU.parseString(data.children("fontFamily"), "TotalTime.fontFamily");
-		var fontSize = PU.parseInt(data.children("fontSize"), "TotalTime.fontSize");
-		var fontStyle = PU.parseString(data.children("fontStyle"), "TotalTime.fontStyle");
-		var fontWeight = PU.parseString(data.children("fontWeight"), "TotalTime.fontWeight");
-		var textDecoration = PU.parseString(data.children("textDecoration"), "TotalTime.textDecoration");
+		var type = this.parseString(data, "type");
+		var id = this.parseInt(data, "id");
+		var x = this.parseInt(data, "x");
+		var y = this.parseInt(data, "y");
+		var width = this.parseInt(data, "width");
+		var height = this.parseInt(data, "height");
+		var fontColor = this.parseString(data, "fontColor");
+		//var fontBackgroundColor = this.parseString(data, "fontBackgroundColor");
+		var fontFamily = this.parseString(data, "fontFamily");
+		var fontSize = this.parseInt(data, "fontSize");
+		var fontStyle = this.parseString(data, "fontStyle");
+		var fontWeight = this.parseString(data, "fontWeight");
+		var textDecoration = this.parseString(data, "textDecoration");
 		
 		var widget = new org.korsakow.domain.widget.TotalTime(id, [], type, x, y, width, height, fontColor, fontFamily, fontSize, fontStyle, fontWeight, textDecoration);
 		return widget;
@@ -532,19 +544,19 @@ org.korsakow.domain.ScrubberInputMapper = Class.register('org.korsakow.domain.Sc
 		
 	},
 	map: function(data) {
-		var type = PU.parseString(data.children("type"), "Scrubber.type");
-		var id = PU.parseInt(data.children("id"), "Scrubber.id");
-		var x = PU.parseInt(data.children("x"), "Scrubber.x");
-		var y = PU.parseInt(data.children("y"), "Scrubber.y");
-		var width = PU.parseInt(data.children("width"), "Scrubber.width");
-		var height = PU.parseInt(data.children("height"), "Scrubber.height");
-		var backgroundColor = PU.parseString(data.children("backgroundColor"), "Scrubber.backgroundColor");
-		var foregroundColor = PU.parseString(data.children("foregroundColor"), "Scrubber.backgroundColor");
-		var interactive = PU.parseBoolean(data.children("interactive"), "Scrubber.interactive");
-		var loading = PU.parseBoolean(data.children("loading"), "Scrubber.loading");
-		var loadingColor = PU.parseString(data.children("loadingColor"), "Scrubber.loadingColor");
-		var barWidth = PU.parseInt(data.children("barWidth"), "Scrubber.barWidth");
-		var barHeight = PU.parseInt(data.children("barHeight"), "Scrubber.barHeight");
+		var type = this.parseString(data, "type");
+		var id = this.parseInt(data, "id");
+		var x = this.parseInt(data, "x");
+		var y = this.parseInt(data, "y");
+		var width = this.parseInt(data, "width");
+		var height = this.parseInt(data, "height");
+		var backgroundColor = this.parseString(data, "backgroundColor");
+		var foregroundColor = this.parseString(data, "foregroundColor");
+		var interactive = this.parseBoolean(data, "interactive");
+		var loading = this.parseBoolean(data, "loading");
+		var loadingColor = this.parseString(data, "loadingColor");
+		var barWidth = this.parseInt(data, "barWidth");
+		var barHeight = this.parseInt(data, "barHeight");
 		
 		var widget = new org.korsakow.domain.widget.Scrubber(id, [], type, x, y, width, height, backgroundColor, foregroundColor, interactive, loading, loadingColor, barWidth, barHeight);
 		return widget;
@@ -556,12 +568,12 @@ org.korsakow.domain.FullscreenButtonInputMapper = Class.register('org.korsakow.d
 		
 	},
 	map: function(data) {
-		var type = PU.parseString(data.children("type"), "FullscreenButton.type");
-		var id = PU.parseInt(data.children("id"), "FullscreenButton.id");
-		var x = PU.parseInt(data.children("x"), "FullscreenButton.x");
-		var y = PU.parseInt(data.children("y"), "FullscreenButton.y");
-		var width = PU.parseInt(data.children("width"), "FullscreenButton.width");
-		var height = PU.parseInt(data.children("height"), "FullscreenButton.height");
+		var type = this.parseString(data, "type");
+		var id = this.parseInt(data, "id");
+		var x = this.parseInt(data, "x");
+		var y = this.parseInt(data, "y");
+		var width = this.parseInt(data, "width");
+		var height = this.parseInt(data, "height");
 		
 		var widget = new org.korsakow.domain.widget.FullscreenButton(id, [], type, x, y, width, height);
 		return widget;
@@ -574,12 +586,12 @@ org.korsakow.domain.MasterVolumeInputMapper = Class.register('org.korsakow.domai
 		
 	},
 	map: function(data) {
-		var type = PU.parseString(data.children("type"), "FullscreenButton.type");
-		var id = PU.parseInt(data.children("id"), "FullscreenButton.id");
-		var x = PU.parseInt(data.children("x"), "FullscreenButton.x");
-		var y = PU.parseInt(data.children("y"), "FullscreenButton.y");
-		var width = PU.parseInt(data.children("width"), "FullscreenButton.width");
-		var height = PU.parseInt(data.children("height"), "FullscreenButton.height");
+		var type = this.parseString(data, "type");
+		var id = this.parseInt(data, "id");
+		var x = this.parseInt(data, "x");
+		var y = this.parseInt(data, "y");
+		var width = this.parseInt(data, "width");
+		var height = this.parseInt(data, "height");
 		
 		var widget = new org.korsakow.domain.widget.MasterVolume(id, [], type, x, y, width, height);
 		return widget;
@@ -595,7 +607,7 @@ org.korsakow.domain.RuleInputMapper = Class.register('org.korsakow.domain.RuleIn
 		$super(dao);
 	},
 	map: function(data) {
-		var type = PU.parseString(data.children("type"), "Rule.type");
+		var type = this.parseString(data, "type");
 		var mapper = org.korsakow.domain.InputMapperFactory.create(type, this.dao);
 		return mapper.map(data);
 	}
@@ -606,8 +618,8 @@ org.korsakow.domain.KeywordLookupInputMapper = Class.register('org.korsakow.doma
 		$super(dao);
 	},
 	map: function(data) {
-		var type = PU.parseString(data.children("type"), "KeywordLookupe.type");
-		var id = PU.parseInt(data.children("id"), "KeywordLookup.id");
+		var type = this.parseString(data, "type");
+		var id = this.parseInt(data, "id");
 		var keywords = this.dao.find({parent: id, path: 'keywords/Keyword', });
 		var rule = new org.korsakow.domain.rule.KeywordLookup(id, keywords, type);
 		return rule;
@@ -618,8 +630,8 @@ org.korsakow.domain.ExcludeKeywordsInputMapper = Class.register('org.korsakow.do
 		$super(dao);
 	},
 	map: function(data) {
-		var type = PU.parseString(data.children("type"), "ExcludeKeywords.type");
-		var id = PU.parseInt(data.children("id"), "ExcludeKeywords.id");
+		var type = this.parseString(data, "type");
+		var id = this.parseInt(data, "id");
 		var keywords = this.dao.find({parent: id, path: 'keywords/Keyword'});
 		var rule = new org.korsakow.domain.rule.ExcludeKeywords(id, keywords, type);
 		return rule;
@@ -631,10 +643,10 @@ org.korsakow.domain.SearchInputMapper = Class.register('org.korsakow.domain.Sear
 		$super(dao);
 	},
 	map: function(data) {
-		var type = PU.parseString(data.children("type"), "Search.type");
-		var id = PU.parseInt(data.children("id"), "Search.id");
+		var type = this.parseString(data, "type");
+		var id = this.parseInt(data, "id");
 		var rules = this.dao.find({parent:id, path: 'rules/Rule'});
-		var maxLinks = data.children("maxLinks").length?PU.parseInt(data.children("maxLinks"), "Search.maxLinks"):null;
+		var maxLinks = data.children("maxLinks").length?this.parseInt(data, "maxLinks"):null;
 		var rule = new org.korsakow.domain.rule.Search(id, [], type, rules, maxLinks);
 		return rule;
 	}
@@ -646,31 +658,31 @@ org.korsakow.domain.ProjectInputMapper = Class.register('org.korsakow.domain.Pro
 		$super(dao);
 	},
 	map: function(data) {
-		var id = PU.parseInt(data.children("id"), "Project.id");
-		var name = PU.parseString(data.children("name"), "Project.name");
-		var width = PU.parseInt(data.children("movieWidth"), "Project.width");
-		var height = PU.parseInt(data.children("movieHeight"), "Projec.height");
-		var splashScreenMedia = this.dao.findById(PU.parseInt(data.children("splashScreenMediaId"), "Project.splashScreenMedia"));
+		var id = this.parseInt(data, "id");
+		var name = this.parseString(data, "name");
+		var width = this.parseInt(data, "movieWidth");
+		var height = this.parseInt(data, "movieHeight");
+		var splashScreenMedia = this.dao.findById(this.parseInt(data, "splashScreenMediaId"));
 		
 		var backgroundSoundVolume = 1.0;
 		var backgroundSoundLooping = true;
 		var backgroundSoundMedia = (function(){
 			if(data.children("backgroundSoundId").length){
-				backgroundSoundVolume = PU.parseFloat(data.children("backgroundSoundVolume"), "Project.backgroundSoundVolume");
-				backgroundSoundLooping = PU.parseBoolean(data.children("backgroundSoundLooping"), "Project.backgroundSoundLooping");
-				return this.dao.findById(PU.parseInt(data.children("backgroundSoundId"), "Project.backgroundSoundMedia"));
+				backgroundSoundVolume = this.parseFloat(data, "backgroundSoundVolume");
+				backgroundSoundLooping = this.parseBoolean(data, "backgroundSoundLooping");
+				return this.dao.findById(this.parseInt(data, "backgroundSoundId"));
 			} else
 				return null;
 		}).apply(this);
 
 		var clickSound = (function() {
 			if (data.children("clickSoundId").length) {
-				var clickSoundId = PU.parseInt(data.children("clickSoundId"), "Project.clickSound");
+				var clickSoundId = this.parseInt(data, "clickSoundId");
 				return this.dao.findById(clickSoundId);
 			} else
 				return null;
 		}).apply(this);
-		var backgroundColor = data.children("backgroundColor").length?PU.parseColor(data.children("backgroundColor"), "Project.backgroundColor"):null;
+		var backgroundColor = data.children("backgroundColor").length?this.parseColor(data, "backgroundColor"):null;
 		return new org.korsakow.domain.Project(id, name, width, height, splashScreenMedia, backgroundSoundMedia, backgroundSoundVolume, backgroundSoundLooping, clickSound, backgroundColor);
 
 	}

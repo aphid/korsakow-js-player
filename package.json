@@ -6,7 +6,9 @@
     "grunt-contrib-jshint": "~0.6.3",
     "grunt-contrib-nodeunit": "~0.2.0",
     "grunt-contrib-uglify": "~0.2.2",
-    "grunt-contrib-concat": "~0.1.2-rc6"
+    "grunt-contrib-concat": "~0.1.2-rc6",
+    "grunt-contrib-watch": "~0.2.0-rc7",
+    "grunt-contrib-copy": "~0.4.1"
   },
   "gitHead": "e97f269f6130ed6da68b5b4df59cb50a52cc5454",
   "readmeFilename": "README.md",

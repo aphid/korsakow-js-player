@@ -2,25 +2,69 @@ module.exports = function(grunt) {
 
   // Project configuration.
     grunt.initConfig({
-        pkg: grunt.file.readJSON('grunt_package.json'),
+        pkg: grunt.file.readJSON('package.json'),
         concat: {
         	player: {
         		src: [
-        		      'main/src/lib/*.js',
+        		      // TODO: review where order of concat matters
         		      'main/src/org/korsakow/player/Main.js',
         		      'main/src/org/**/*.js'],
-        		dest: 'dist/korsakow_player.js'
+        		dest: 'dist/lib/korsakow_player.js'
         	},
         	tests: {
         		src: ['tests-unit/src/**/*.js'],
-        		dest: 'dist/tests-unit.js'
+        		dest: 'dist/tests-unit/lib/korsakow-tests-unit.js'
         	}
-        }
-    });
+        },
+        copy: {
+        	main: {
+        		files: [{
+        			expand: true,
+        			cwd: 'main/src',
+    				src: 'lib/*',
+    				dest: 'dist/'
+    			}, {
+        			expand: true,
+        			cwd: 'main/src',
+    				src: 'css/*',
+    				dest: 'dist/'
+    			}, {
+        			expand: true,
+        			cwd: 'main/src',
+    				src: 'images/*',
+    				dest: 'dist/'
+    			}, {
+        			expand: true,
+        			cwd: 'main/src',
+    				src: 'index.html',
+    				dest: 'dist/'
+    			}]
+        	},
+        	tests: {
+        		files: [{
+        			expand: true,
+        			cwd: 'tests-unit',
+    				src: 'lib/**/*',
+    				dest: 'dist/tests-unit'
+    			}]
+        	}
+        },
+        watch: {
+		    scripts: {
+			    files: ['main/**/*', 'tests-unit/**/*'],
+			    tasks: ['concat', 'copy'],
+			    options: {
+				    interrupt: true,
+			    },
+		    },
+    	},
+	});
 
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-watch');
   
     // Default task(s).
-    grunt.registerTask('default', ['concat']);
+    grunt.registerTask('default', ['concat', 'copy']);
 
 };

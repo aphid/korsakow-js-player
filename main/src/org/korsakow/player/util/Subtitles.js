@@ -37,7 +37,7 @@ org.korsakow.util.StrSubtitleParser = Class.register('org.korsakow.SubtitleParse
 		var lines = rawLines.split( /(?:\r\n)|\n|\r/ ).map( jQuery.trim ); // the defacto standard seems to be CRLF but users have such a hard time with this so we're leanient
 		var line = 0;
 		var counter = 0;
-		console.log(lines);
+
 		while (line < lines.length) {
 			if (!lines[line].length) {
 				++line;
