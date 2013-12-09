@@ -49,6 +49,8 @@ describe("org.korsakow.controller.PreviewWidgetController", function() {
 		
 		var img = controller.element.find("img");
 		expect(img.attr('src')).toEqual(image.filename);
+
+		controller.clear();
 	});
 	
 });

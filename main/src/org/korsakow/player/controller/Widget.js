@@ -137,8 +137,8 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 		this.mediaUI = mediaUI;
 	},
 	clear: function() {
-		if (this.mediaUI) {
-			this.mediaUI.stop();
+		if (this.mediaUI !== null) {
+			this.mediaUI.pause();
 			this.mediaUI = null;
 			this.element.empty();
 		}

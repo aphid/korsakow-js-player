@@ -533,9 +533,6 @@ org.korsakow.Audio = Class.register('org.korsakow.domain.Audio', {
 	pause: function() {
 		this.elem[0].pause();
 	},
-	stop: function() {
-		this.elem.stop();
-	},
 	/*
 	 * If no arguments are supplied, retrieves the current volume.
 	 * If there is an argument the volume is first set, then returned.
