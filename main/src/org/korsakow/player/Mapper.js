@@ -201,6 +201,9 @@ org.korsakow.domain.Dao.create = function(data) {
 		'Snu': new org.korsakow.domain.SnuInputMapper(dao),
 		'Interface': new org.korsakow.domain.InterfaceInputMapper(dao),
 		'Widget': new org.korsakow.domain.WidgetInputMapper(dao),
+		'Event': new org.korsakow.domain.EventInputMapper(dao),
+		'Predicate': new org.korsakow.domain.PredicateInputMapper(dao),
+		'Trigger': new org.korsakow.domain.TriggerInputMapper(dao),
 		'Rule': new org.korsakow.domain.RuleInputMapper(dao),
 		'Project': new org.korsakow.domain.ProjectInputMapper(dao)
 	});
@@ -337,6 +340,8 @@ org.korsakow.domain.SnuInputMapper = Class.register('org.korsakow.domain.SnuInpu
 		var previewMedia = this.dao.findMediaById(this.parseInt(data, "previewMediaId"));
 		var interface = this.dao.findById(this.parseInt(data, "interfaceId"));
 		var starter = this.parseBoolean(data, "starter");
+		var events = this.dao.find({parent:id, path: 'events/Event'});
+		console.log(events);
 		var rules = this.dao.find({parent:id, path: 'events/Event/Rule', ignoreError: true});
 		var lives = (function(){
 			var temp = data.children("lives");
@@ -595,6 +600,52 @@ org.korsakow.domain.MasterVolumeInputMapper = Class.register('org.korsakow.domai
 		
 		var widget = new org.korsakow.domain.widget.MasterVolume(id, [], type, x, y, width, height);
 		return widget;
+	}
+});
+
+org.korsakow.domain.EventInputMapper = Class.register('org.korsakow.domain.EventInputMapper', org.korsakow.domain.InputMapper, {
+	initialize: function($super, dao) {
+		$super(dao);
+	},
+	map: function(data) {
+		var id = this.parseInt(data, "id");
+		var predicate = this.dao.find({parent: id, path: 'Predicate'})[0];
+		var trigger = this.dao.find({parent: id, path: 'Trigger'})[0];
+		var rule = this.dao.find({parent: id, path: 'Rule'})[0];
+
+		var event = {
+			id: id,
+			predicate: predicate,
+			trigger: trigger,
+			rule: rule
+		};
+		console.log(event);
+		return event;
+	}
+});
+
+org.korsakow.domain.PredicateInputMapper = Class.register('org.korsakow.domain.PredicateInputMapper', org.korsakow.domain.InputMapper, {
+	initialize: function($super, dao) {
+		$super(dao);
+	},
+	map: function(data) {
+		// TODO: map to an actual Predicate class.
+		var id = this.parseInt(data, "id");
+		var type = this.parseString(data, "type");
+		var pred = {id: id, type: type};
+		return pred;
+	}
+});
+
+org.korsakow.domain.TriggerInputMapper = Class.register('org.korsakow.domain.TriggerInputMapper', org.korsakow.domain.InputMapper, {
+	initialize: function($super, dao) {
+		$super(dao);
+	},
+	map: function(data) {
+		// TODO: map to an actual Trigger class.
+		var id = this.parseInt(data, "id");
+		var type = this.parseString(data, "type");
+		return {id: id, type: type};
 	}
 });
 
