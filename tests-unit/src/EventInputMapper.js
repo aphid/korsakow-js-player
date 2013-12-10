@@ -1,28 +1,41 @@
 describe("org.korsakow.domain.EventInputMapper", function() {
 	it("should map an event XML node to an Event object", function specEventMap () {
-		var node = createExampleEvent();
-		var dao = new org.korsakow.domain.Dao(node);
+		var data = createExampleEvent();
+		var dao = org.korsakow.domain.Dao.create(data);
 		var mapper = new org.korsakow.domain.EventInputMapper(dao);
-		var event = mapper.map(node);
+		var event = mapper.map(data.children());
 
+		console.log('hello sir', event);
 		expect(event.id).toEqual(35);
-		expect(event.predicate.id).toEqual(254);
 		expect(event.trigger.id).toEqual(253);
 		expect(event.trigger.type).toEqual('org.korsakow.trigger.SnuTime');
-		expect(event.rule.id).toEqual(118);
+		expect(event.trigger.time).toEqual(0);
+//		expect(event.predicate.id).toEqual(254);
+//		expect(event.rule.id).toEqual(118);
 	});
 
 	function createExampleEvent() {
-		var node = $('<Event/>');
-		var id_node = $('<id>35</id>');
-		var trigger_node = $('<Trigger> <id>253</id> <type>org.korsakow.trigger.SnuTime</type> <time>0</time> </Trigger>');
-		var pred_node = $('<Predicate> <id>254</id> <type>org.korsakow.predicate.True</type> <predicates/> </Predicate>');
-		var rule_node = $('<Rule> <id>118</id> <type>org.korsakow.rule.Search</type> <keywords/> <rules> <Rule> <id>120</id> <type>org.korsakow.rule.KeywordLookup</type> <keywords> <Keyword>couple</Keyword> </keywords> <rules/> </Rule> </rules> <keepLinks>false</keepLinks> </Rule>');
-		node.append(id_node);
-		node.append(trigger_node);
-		node.append(pred_node);
-		node.append(rule_node);
+		var root = jQuery(jQuery.parseXML(
+			'<Event> <id><![CDATA[252]]></id> </Event>'));
+		var trigger = createExampleTrigger();
+		root[0].appendChild(trigger[0]);
+		return root;
+		var node = jQuery.parseXML('<Event/>');
+		var id_node = jQuery.parseXML('<id>35</id>');
+		var trigger_node = jQuery.parseXML('<Trigger> <id>253</id> <type>org.korsakow.trigger.SnuTime</type> <time>0</time> </Trigger>');
+		var pred_node = jQuery.parseXML('<Predicate> <id>254</id> <type>org.korsakow.predicate.True</type> <predicates/> </Predicate>');
+		var rule_node = jQuery.parseXML('<Rule> <id>118</id> <type>org.korsakow.rule.Search</type> <keywords/> <rules> <Rule> <id>120</id> <type>org.korsakow.rule.KeywordLookup</type> <keywords> <Keyword>couple</Keyword> </keywords> <rules/> </Rule> </rules> <keepLinks>false</keepLinks> </Rule>');
+		node.appendChild(id_node);
+		node.appendChild(trigger_node);
+		node.appendChild(pred_node);
+		node.appendChild(rule_node);
 		return node;
+	}
+
+	function createExampleTrigger() {
+		var trigger = jQuery(jQuery.parseXML(
+			'<Trigger> <id><![CDATA[253]]></id> <type><![CDATA[org.korsakow.trigger.SnuTime]]></type> <time><![CDATA[0]]></time> </Trigger>'));
+		return trigger;
 	}
 });
 
@@ -38,7 +51,7 @@ describe('org.korsakow.domain.PredicateInputMapper', function () {
 	});
 
 	function createExamplePredicate() {
-		var pred_node = $('<Predicate> <id>254</id> <type>org.korsakow.predicate.True</type> <predicates/> </Predicate>');
+		var pred_node = jQuery.parseXML('<Predicate> <id>254</id> <type>org.korsakow.predicate.True</type> <predicates/> </Predicate>');
 		return pred_node;
 	}
 });
@@ -55,7 +68,7 @@ describe('org.korsakow.domain.TriggerInputMapper', function () {
 	});
 
 	function createExampleTrigger() {
-		var trigger_node = $('<Trigger> <id>253</id> <type>org.korsakow.trigger.SnuTime</type> <time>0</time> </Trigger>');
+		var trigger_node = jQuery.parseXML('<Trigger> <id>253</id> <type>org.korsakow.trigger.SnuTime</type> <time>0</time> </Trigger>');
 		return trigger_node;
 	}
 });
