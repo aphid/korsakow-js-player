@@ -103,29 +103,28 @@ org.korsakow.domain.rule.KeywordLookup = Class.register('org.korsakow.domain.rul
 	 * @param searchResults {org.korsakow.SearchResults}
 	 */
 	execute: function(env, searchResults) {
-		org.korsakow.log.debug("KeywordLookup...");
 		// for each time a snu appears in a list, increase its searchResults
 		// (thus, snus searchResults proportionally to the number of keywords
 		// they match)
-		var currentSnu = env.currentSnu;
-		
+		var currentSnu = env.getCurrentSnu();
 		$.each(this.keywords, function(i, keyword) {
 			var dao = env.getDao();
 			var snus = dao.find({type: 'Snu', keyword: keyword.value});
+
 			for (var j = 0; j < snus.length; ++j) {
 				var snu = snus[j];
-				if (snu == currentSnu || snu.lives ===0)
+				if (snu == currentSnu || snu.lives === 0)
 					continue;
 				var result;
 				var index = searchResults.indexOfSnu(snu);
+
 				if ( index == -1 ) {
 					result = new org.korsakow.SearchResult(snu, 0);
 					searchResults.results.push(result);
 				} else
-					result = searchResults[index];
+					result = searchResults.results[index];
 				result.score += env.getDefaultSearchResultIncrement() * snu.rating;
 			}
-			org.korsakow.log.debug("KeywordLookup", keyword.value, snus.length);
 		});
 	}
 });
@@ -137,11 +136,9 @@ org.korsakow.domain.rule.ExcludeKeywords = Class.register('org.korsakow.domain.r
 		$super(id, keywords, type);
 	},
 	execute: function(env, searchResults) {
-		org.korsakow.log.debug("ExcludeKeywords...");
 		jQuery.each(this.keywords, function(i, keyword) {
 			var snusToExclude = env.dao.find({type: 'Snu', keyword: keyword.value});
 			jQuery.each(snusToExclude, function(j, snu) {
-				org.korsakow.log.debug("ExcludeKeywords", keyword.value, snu.id);
 				searchResults.results.splice( searchResults.indexOfSnu(snu), 1 );
 			});
 		});
@@ -162,11 +159,9 @@ org.korsakow.domain.rule.Search = Class.register('org.korsakow.domain.rule.Searc
 		this.processSearchResults(env, searchResults);
 	},
 	doSearch: function(env) {
-		org.korsakow.log.debug("Search");
 		var searchResults = new org.korsakow.SearchResults();
 		$.each(this.rules, function(i, rule) {
 			rule.execute(env, searchResults);
-			org.korsakow.log.debug("SearchResults", searchResults.results);
 		});
 		searchResults.results.sort(function(a, b) {
 			if (b.score == a.score)
@@ -185,7 +180,6 @@ org.korsakow.domain.rule.Search = Class.register('org.korsakow.domain.rule.Searc
 			preview.clear();
 		});
 		
-		org.korsakow.log.debug("PostSearch","searchResults#"+searchResults.results.length,"previews#"+previews.length,"maxLinks#"+this.maxLinks);
 		for (var i = 0; (i < searchResults.results.length) && previews.length && (this.maxLinks == null || i < this.maxLinks); ++i) {
 			var snu = searchResults.results[i].snu;
 			var preview = previews.shift();
@@ -229,6 +223,12 @@ org.korsakow.SearchResults = Class.register('org.korsakow.SearchResults', {
 			if (this.results[i].snu.id == snu.id)
 				return i;
 		return -1;
+	},
+	resultOfSnu: function(snu) {
+		for (var i = 0; i < this.results.length; ++i)
+			if (this.results[i].snu.id == snu.id)
+				return this.results[i];
+		return null;
 	},
 	toString: function() {
 		return "[org.korsakow.SearchResults]";
@@ -391,7 +391,6 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 	},
 	
 	executeSnu: function(snu) {
-		org.korsakow.log.debug("execute snu: ", snu);
 		
 		this.view.empty();
 		this.currentSnu = snu;
