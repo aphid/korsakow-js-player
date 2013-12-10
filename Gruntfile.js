@@ -46,6 +46,11 @@ module.exports = function(grunt) {
         			cwd: 'tests-unit',
     				src: 'lib/**/*',
     				dest: 'dist/tests-unit'
+    			}, {
+        			expand: true,
+        			cwd: 'tests-unit',
+    				src: '*.html',
+    				dest: 'dist'
     			}]
         	}
         },
