@@ -342,8 +342,6 @@ org.korsakow.domain.SnuInputMapper = Class.register('org.korsakow.domain.SnuInpu
 		var interface = this.dao.findById(this.parseInt(data, "interfaceId"));
 		var starter = this.parseBoolean(data, "starter");
 		var events = this.dao.find({parent:id, path: 'events/Event'});
-		console.log(events);
-		var rules = this.dao.find({parent:id, path: 'events/Event/Rule', ignoreError: true});
 		var lives = (function(){
 			var temp = data.children("lives");
 			if(temp == "NaN")
@@ -364,7 +362,7 @@ org.korsakow.domain.SnuInputMapper = Class.register('org.korsakow.domain.SnuInpu
 			} else
 				return null;
 		}).apply(this);
-		return new org.korsakow.domain.Snu(id, name, [], mainMedia, previewMedia, interface, rules, lives, looping, starter, insertText, rating,
+		return new org.korsakow.domain.Snu(id, name, [], mainMedia, previewMedia, interface, events, lives, looping, starter, insertText, rating,
 			backgroundSoundMode,backgroundSoundLooping, backgroundSoundMedia, backgroundSoundVolume);
 	}
 });
@@ -610,17 +608,10 @@ org.korsakow.domain.EventInputMapper = Class.register('org.korsakow.domain.Event
 	},
 	map: function(data) {
 		var id = this.parseInt(data, "id");
-		var predicate = this.dao.find({parent: id, path: 'Predicate'});
-		var trigger = this.dao.find({parent: id, path: 'Trigger'});
-		var rule = this.dao.find({parent: id, path: 'Rule'});
-
-		var event = {
-			id: id,
-			predicate: predicate,
-			trigger: trigger,
-			rule: rule
-		};
-		console.log(event);
+		var predicate = this.dao.find({parent: id, path: 'Predicate'})[0];
+		var trigger = this.dao.find({parent: id, path: 'Trigger'})[0];
+		var rule = this.dao.find({parent: id, path: 'Rule'})[0];
+		var event = new org.korsakow.domain.Event(id, predicate, trigger, rule);
 		return event;
 	}
 });
@@ -656,15 +647,8 @@ org.korsakow.domain.trigger.SnuTimeInputMapper = Class.register('org.korsakow.do
 	},
 	map: function(data) {
 		var id = this.parseInt(data, "id");
-		var type = this.parseString(data, "type");
 		var time = this.parseInt(data, "time");
-
-		// TODO use actual trigger class
-		var trigger = {
-			id: id,
-			type: type,
-			time: time
-		};
+		var trigger = new org.korsakow.domain.trigger.SnuTime(id, time);
 		return trigger;
 	}
 });

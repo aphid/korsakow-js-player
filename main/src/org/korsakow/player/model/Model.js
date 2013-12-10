@@ -1,6 +1,7 @@
 try {
 
 NS('org.korsakow.domain.rule');
+NS('org.korsakow.domain.trigger');
 
 /* Parent class for all domain objects (models)
  * 
@@ -56,14 +57,14 @@ org.korsakow.domain.Image = Class.register('org.korsakow.domain.Image', org.kors
 });
 
 org.korsakow.domain.Snu = Class.register('org.korsakow.domain.Snu', org.korsakow.domain.DomainObject, {
-	initialize: function($super, id, name, keywords, mainMedia, previewMedia, interface, rules, lives, looping, starter, insertText, rating, backgroundSoundMode, backgroundSoundLooping, backgroundSoundMedia, backgroundSoundVolume) {
+	initialize: function($super, id, name, keywords, mainMedia, previewMedia, interface, events, lives, looping, starter, insertText, rating, backgroundSoundMode, backgroundSoundLooping, backgroundSoundMedia, backgroundSoundVolume) {
 		$super(id);
 		this.name = name;
 		this.keyword = keywords;
 		this.mainMedia = mainMedia;
 		this.previewMedia = previewMedia;
 		this.interface = interface;
-		this.rules = rules;
+		this.events = events;
 		this.lives = lives;
 		this.looping = looping;
 		this.start = starter;
@@ -75,6 +76,42 @@ org.korsakow.domain.Snu = Class.register('org.korsakow.domain.Snu', org.korsakow
 		this.backgroundSoundVolume = backgroundSoundVolume;
 	}
 });
+
+org.korsakow.domain.Event = Class.register('org.korsakow.domain.Event', org.korsakow.domain.DomainObject, {
+	initialize: function($super, id, predicate, trigger, rule) {
+		$super(id);
+		this.id = id;
+		this.predicate = predicate;
+		this.trigger = trigger;
+		this.rule = rule;
+	},
+	setup: function (env) {
+		var This = this;
+		this.trigger.setup(function triggeredRule () {
+			This.rule.execute(env);
+		});
+	}
+});
+
+/**
+ * Executes an event's rules after <time> seconds.
+ */
+org.korsakow.domain.trigger.SnuTime = Class.register('org.korsakow.domain.trigger.SnuTime', org.korsakow.domain.DomainObject, {
+	initialize: function($super, id, time) {
+		$super(id);
+		this.id = id;
+		this.time = time;
+		this.cancelled = false;
+	},
+	setup: function (callback) {
+		var This = this;
+		this.timeoutID = setTimeout(callback, this.time*1000);
+	},
+	reset: function () {
+		clearTimeout(this.timeoutID);
+	}
+});
+
 
 /* Parent class for rules
  * 
@@ -435,8 +472,8 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 				break;
 		}
 		
-		for (var i = 0; i < snu.rules.length; ++i) {
-			snu.rules[i].execute(this);
+		for (var i = 0; i < snu.events.length; ++i) {
+			snu.events[i].setup(this);
 		}
 
 		// set all audio/video components to the appropriate volume
