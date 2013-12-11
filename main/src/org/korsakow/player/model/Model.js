@@ -107,7 +107,7 @@ org.korsakow.domain.trigger.SnuTime = Class.register('org.korsakow.domain.trigge
 		var This = this;
 		this.timeoutID = setTimeout(callback, this.time*1000);
 	},
-	reset: function () {
+	cancel: function () {
 		clearTimeout(this.timeoutID);
 	}
 });
