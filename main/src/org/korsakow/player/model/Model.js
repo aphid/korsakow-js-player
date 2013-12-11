@@ -88,8 +88,12 @@ org.korsakow.domain.Event = Class.register('org.korsakow.domain.Event', org.kors
 	setup: function (env) {
 		var This = this;
 		this.trigger.setup(function triggeredRule () {
+			// TODO check the predicate
 			This.rule.execute(env);
 		});
+	},
+	cancel: function (env) {
+		this.trigger.cancel();
 	}
 });
 
@@ -430,6 +434,13 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 	executeSnu: function(snu) {
 		
 		this.view.empty();
+
+		if(this.currentSnu) {
+			for (var i = 0; i < this.currentSnu.events.length; ++i) {
+				this.currentSnu.events[i].cancel();
+			}
+		}
+
 		this.currentSnu = snu;
 
 		if(this.currentSnu.lives > 0){
