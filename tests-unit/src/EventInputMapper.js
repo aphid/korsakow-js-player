@@ -4,16 +4,26 @@
 	describe("org.korsakow.domain.EventInputMapper", function() {
 		it("should map an event XML node to an Event object", function specEventMap () {
 			var data = createExampleEvent();
-//			var dao = mock(org.korsakow.domain.Dao.create)(data);
-			var dao = new org.korsakow.domain.Dao.create(data);
+			var dao = mock(org.korsakow.domain.Dao.create);
+//			var dao = new org.korsakow.domain.Dao.create(data);
 			var mapper = new org.korsakow.domain.EventInputMapper(dao);
+
+			var event_id = 35;
+
+			var pred = {id: 254};
+			var trigger = new org.korsakow.domain.trigger.SnuTime(253, 20);
+			var rule = new org.korsakow.domain.rule.KeywordLookup(118, ['couple'], 'org.korsakow.domain.rule.KeywordLookup');
+
+			when(dao).find(findMatcher(event_id, 'Trigger')).thenReturn([trigger]);
+			when(dao).find(findMatcher(event_id, 'Rule')).thenReturn([rule]);
+			when(dao).find(findMatcher(event_id, 'Predicate')).thenReturn([pred]);
+
 			var event = mapper.map(data);
 
-			expect(event.id).toEqual(35);
-			expect(event.trigger.id).toEqual(253);
-			expect(event.trigger.time).toEqual(20);
-			expect(event.predicate.id).toEqual(254);
-			expect(event.rule.id).toEqual(118);
+			expect(event.id).toEqual(event_id);
+			expect(event.trigger.id).toEqual(trigger.id);
+			expect(event.predicate.id).toEqual(pred.id);
+			expect(event.rule.id).toEqual(rule.id);
 		});
 	});
 
@@ -45,4 +55,17 @@
 		jnode.append(rule_node);
 		return jnode;
 	}
+
+	function findMatcher(id, path) {
+		return new JsHamcrest.SimpleMatcher({
+			matches: function (obj) {
+				var result = (obj.parent == id) && (obj.path == path);
+				return result;
+			},
+			describeTo: function (description) {
+				description.append('hello');
+			}
+		});
+	}
+
 })();
