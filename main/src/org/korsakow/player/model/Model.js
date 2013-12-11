@@ -430,15 +430,18 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 			channel.audio.volume(channel.audio.volume());
 		}
 	},
+	cancelEvents: function () {
+		for (var i = 0; i < this.currentSnu.events.length; ++i) {
+			this.currentSnu.events[i].cancel();
+		}
+	},
 	
 	executeSnu: function(snu) {
 		
 		this.view.empty();
 
 		if(this.currentSnu) {
-			for (var i = 0; i < this.currentSnu.events.length; ++i) {
-				this.currentSnu.events[i].cancel();
-			}
+			this.cancelEvents();
 		}
 
 		this.currentSnu = snu;
