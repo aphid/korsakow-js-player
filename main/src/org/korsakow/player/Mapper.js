@@ -6,8 +6,6 @@
  * Mapper: knows how to create a domain object from an XML node
  * 
  */
-try {
-
 NS('org.korsakow.domain.rule');
 NS('org.korsakow.domain.widget');
 
@@ -708,5 +706,3 @@ org.korsakow.domain.InputMapperFactory.register("org.korsakow.widget.MasterVolum
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.rule.KeywordLookup", org.korsakow.domain.KeywordLookupInputMapper);
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.rule.ExcludeKeywords", org.korsakow.domain.ExcludeKeywordsInputMapper);
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.rule.Search", org.korsakow.domain.SearchInputMapper);
-
-}catch(e){alert(e);throw e;}

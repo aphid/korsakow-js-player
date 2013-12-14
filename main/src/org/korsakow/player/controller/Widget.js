@@ -1,5 +1,3 @@
-try {
-
 NS('org.korsakow.controller.widget');
 
 var W = org.korsakow.WrapCallback;
@@ -561,4 +559,3 @@ org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.To
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.Scrubber", org.korsakow.controller.ScrubberWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.FullscreenButton", org.korsakow.controller.FullscreenButtonWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.MasterVolume", org.korsakow.controller.MasterVolumeWidgetController);
-}catch(e) {alert(e);throw e;}
