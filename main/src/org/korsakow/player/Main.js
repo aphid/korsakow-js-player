@@ -1,4 +1,3 @@
-try {
 /* Custom jQuery selector
  * 
  * Compares the text content
@@ -712,5 +711,3 @@ org.korsakow.Fade.fade = function(opts) {
 	t.start();
 	return t;
 };
-
-}catch(e){alert(e);throw e;}

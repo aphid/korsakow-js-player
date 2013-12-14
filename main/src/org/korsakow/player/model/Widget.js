@@ -1,5 +1,3 @@
-try {
-
 NS('org.korsakow.domain.widget');
 
 
@@ -127,5 +125,3 @@ org.korsakow.domain.widget.SubtitleCuePoint = Class.register('org.korsakow.domai
 		this.endTime = endTime;
 	}
 });
-
-}catch(e){alert(e);throw e;}

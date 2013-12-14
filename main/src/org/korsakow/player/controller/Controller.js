@@ -1,5 +1,3 @@
-try {
-
 NS('org.korsakow.controller');
 
 var W = org.korsakow.WrapCallback;
@@ -29,7 +27,6 @@ org.korsakow.controller.AbstractController = Class.register('org.korsakow.contro
 	setup: function(env) {
 	}
 });
-
 
 /* Handles creating an interface's view based on it's widgets.
  * 
@@ -121,5 +118,3 @@ function start(dao) {
 	view.append(splashScreenUI.element);
 	
 }
-
-}catch(e){alert(e);throw e;}

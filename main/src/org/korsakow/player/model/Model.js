@@ -1,5 +1,3 @@
-try {
-
 NS('org.korsakow.domain.rule');
 
 /* Parent class for all domain objects (models)
@@ -444,7 +442,3 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 		return "[org.korsakow.Environment]";
 	}
 });
-
-
-
-}catch(e){alert(e);throw e;}
