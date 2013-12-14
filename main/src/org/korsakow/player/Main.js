@@ -22,17 +22,6 @@ $.expr[":"].tagName = function(obj, index, meta, stack){
 	return (obj.tagName || "") == meta[3];
 };
 
-/* Browser compatibility as per http://tokenposts.blogspot.com.au/2012/04/javascript-objectkeys-browser.html
- */
-if(!Object.keys) Object.keys = function(o){
-	if (o !== Object(o))
-		throw new TypeError('Object.keys called on non-object');
-	var ret=[];
-	for(var p in o) if(Object.prototype.hasOwnProperty.call(o,p)) ret.push(p);
-	return ret;
-};
-/* */
-
 /* NameSpace
  * 
  * Creates a hierarchy of objects matching the given path,
@@ -422,30 +411,6 @@ org.korsakow.FullScreenAPI = Class.register('org.korsakow.FullScreenAPI',org.kor
 		else return null;
 	}
 });
-
-/* This class is poorly named. It actually has utility methods.
- * 
- */
-org.korsakow.Assert = Class.register('org.korsakow.Assert', org.korsakow.Object, {
-	/* Returns whether the argument is a javascript array
-	 */
-	isArray: function(a) {
-		// http://stackoverflow.com/questions/1058427/how-to-detect-if-a-variable-is-an-array
-		return Object.prototype.toString.call(obj) === '[object Array]';
-	},
-	/* Returns whether the argument is a Map
-	 * 
-	 * We consider a map/dictionary to be a POJsO
-	 */
-	isMap: function(m) {
-		if (typeof(m) != "Object")
-			return false;
-		if (m instanceof org.korsakow.Object)
-			return false;
-		return true;
-	}
-});
-org.korsakow.assert = new org.korsakow.Assert(); // singleton
 
 /* Ties a function to an object.
  * 

@@ -7,6 +7,7 @@ module.exports = function(grunt) {
         	player: {
         		src: [
         		      // TODO: review where order of concat matters
+        		      'main/src/org/korsakow/player/Polyfill.js',
         		      'main/src/org/korsakow/player/Main.js',
         		      'main/src/org/**/*.js'],
         		dest: 'dist/lib/korsakow_player.js'
