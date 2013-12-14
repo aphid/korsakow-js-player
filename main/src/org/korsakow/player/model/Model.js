@@ -163,6 +163,7 @@ org.korsakow.domain.rule.Search = Class.register('org.korsakow.domain.rule.Searc
 		$.each(this.rules, function(i, rule) {
 			rule.execute(env, searchResults);
 		});
+
 		searchResults.results.sort(function(a, b) {
 			if (b.score == a.score)
 				return Math.random()>0.5?1:-1;
@@ -171,15 +172,12 @@ org.korsakow.domain.rule.Search = Class.register('org.korsakow.domain.rule.Searc
 		return searchResults;
 	},
 	processSearchResults: function(env, searchResults) {
-		// TODO: this logic feels like it belongs in a controller
-		// or something other than a model class
-		
 		var previews = env.getWidgetsOfType('org.korsakow.widget.SnuAutoLink');
+
 		// TODO: support for keeplinks
 		jQuery.each(previews, function(i, preview) {
 			preview.clear();
 		});
-		
 		for (var i = 0; (i < searchResults.results.length) && previews.length && (this.maxLinks == null || i < this.maxLinks); ++i) {
 			var snu = searchResults.results[i].snu;
 			var preview = previews.shift();
