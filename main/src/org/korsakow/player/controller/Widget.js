@@ -255,12 +255,11 @@ org.korsakow.controller.PlayTimeWidgetController = Class.register('org.korsakow.
 		
 		
 		var mainMedia = env.getMainMediaWidget();
-		var vid = mainMedia.view;
-		vid.bind("timeupdate", function() {
-			playTimeContent.html(org.korsakow.Utility.formatTime(vid.currentTime()));
+		var mediaUI = mainMedia.view;
+		mediaUI.bind("timeupdate", function() {
+			playTimeContent.html(org.korsakow.Utility.formatTime(mediaUI.currentTime()));
 		});
 		this.element.append(playTimeContent);
-
 	}
 });
 

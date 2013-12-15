@@ -448,7 +448,6 @@ org.korsakow.domain.Player = Class.register('org.korsakow.domain.Player', {
 
 /* Browser compatible wrapper around the HTML5 <audio> element.
  * 
- * TODO: move this to the UI package next to ImageUI and VideoUI
  */
 org.korsakow.Audio = Class.register('org.korsakow.domain.Audio', {
 	initialize: function($super, url, vol) {

@@ -5,10 +5,24 @@
  */
 NS('org.korsakow.ui');
 
+org.korsakow.ui.MediaUI = Class.register('org.korsakow.ui.MediaUI', {
+	initialize: function($super) {
+		$super();
+	},
+	bind: function() {
+		this.element.bind.apply(this.element, arguments);
+	},
+	play: function () { },
+	pause: function() { },
+	paused: function() { },
+	ended: function() { },
+	currentTime: function() { }
+});
+
 /* Wrapper around HTML images.
  * 
  */
-org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', {
+org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow.ui.MediaUI, {
 	initialize: function($super, opts) {
 		$super();
 		this.element = jQuery("<img />");
@@ -16,9 +30,6 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', {
 			this.element.attr("src", opts.src);
 		this.isPlaying = false;
 		this.isEnded = false;
-	},
-	bind: function() {
-		this.element.bind.apply(this.element, arguments);
 	},
 	load: function(src) {
 		this.element.attr("src", src);
@@ -29,22 +40,20 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', {
 	play: function () { this.isPlaying = true; },
 	pause: function() { this.isPlaying = false; },
 	paused: function() { return !this.isPlaying; },
-	ended: function() { return this.isEnded; }
+	ended: function() { return this.isEnded; },
+	currentTime: function() { }
 });
 
 /* Wrapper around HTML videos.
  * 
  */
-org.korsakow.ui.VideoUI = Class.register('org.korsakow.ui.VideoUI', {
+org.korsakow.ui.VideoUI = Class.register('org.korsakow.ui.VideoUI', org.korsakow.ui.MediaUI, {
 	initialize: function($super, opts) {
 		$super();
 		this.element = jQuery("<video />");
 		if (opts && opts.src) {
 			alert('todo! VideoUI');
 		}
-	},
-	bind: function() {
-		this.element.bind.apply(this.element, arguments);
 	},
 	load: function(src) {
 		var This = this;
