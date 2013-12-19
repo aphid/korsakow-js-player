@@ -18,8 +18,15 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', {
 		this.isPlaying = false;
 		this.isEnded = false;
 	},
-	bind: function() {
-		this.element.bind.apply(this.element, arguments);
+	bind: function(eventType, cb) {
+		if (arguments.length > 0 && arguments[0] === 'timeupdate') {
+			// TODO make this nicer
+			cb.apply({
+				currentTime: 0
+			}, arguments);
+		} else {
+			this.element.bind.apply(this.element, arguments);
+		}
 	},
 	load: function(src) {
 		this.element.attr("src", src);

@@ -3,7 +3,7 @@ describe('org.korsakow.domain.trigger.SnuTime', function () {
 		var snutime = new org.korsakow.domain.trigger.SnuTime(1, 0.001);
 		var triggered = false;
 
-		var env1 = mkFakeEnv([0, 0.0005, 0.0011]);
+		var env1 = mkFakeEnv([0, 0.0005, 0.001]);
 
 		triggered = false;
 		snutime.setup(env1, function () {
@@ -65,18 +65,13 @@ describe('org.korsakow.domain.trigger.SnuTime', function () {
 			},
 			getMainMediaWidget: function () {
 				return {
-					element: {
-						find: function () {
-							return {
-								currentTime: 0,
-								bind: function (eventType, cb) {
-									var i = 0;
-									var curTime;
-									expect(eventType).toEqual('timeupdate');
-									envCallback = cb;
-									videl = this;
-								}
-							}
+					view: {
+						bind: function (eventType, cb) {
+							var i = 0;
+							var curTime;
+							expect(eventType).toEqual('timeupdate');
+							envCallback = cb;
+							videl = {currentTime: 0};
 						}
 					}
 				}

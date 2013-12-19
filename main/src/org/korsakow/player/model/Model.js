@@ -110,12 +110,12 @@ org.korsakow.domain.trigger.SnuTime = Class.register('org.korsakow.domain.trigge
 	},
 	setup: function (env, callback) {
 		var This = this,
-		    videl = env.getMainMediaWidget().element.find('video');
+		    videl = env.getMainMediaWidget().view;
 		videl.bind('timeupdate', function triggerTimeUpdate () {
 			var el = this;
 			var curTime = el.currentTime;
 			var ready = (This.done === false && This.cancelled === false);
-			if (curTime > This.time && ready) {
+			if (curTime >= This.time && ready) {
 				This.done = true;
 				callback();
 			}
