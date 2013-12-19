@@ -87,7 +87,7 @@ org.korsakow.domain.Event = Class.register('org.korsakow.domain.Event', org.kors
 	},
 	setup: function (env) {
 		var This = this;
-		this.trigger.setup(function triggeredRule () {
+		this.trigger.setup(env, function triggeredRule () {
 			// TODO check the predicate
 			This.rule.execute(env);
 		});
@@ -106,13 +106,23 @@ org.korsakow.domain.trigger.SnuTime = Class.register('org.korsakow.domain.trigge
 		this.id = id;
 		this.time = time;
 		this.cancelled = false;
+		this.done = false;
 	},
-	setup: function (callback) {
-		var This = this;
-		this.timeoutID = setTimeout(callback, this.time*1000);
+	setup: function (env, callback) {
+		var This = this,
+		    videl = env.getMainMediaWidget().element.find('video');
+		videl.bind('timeupdate', function triggerTimeUpdate () {
+			var el = this;
+			var curTime = el.currentTime;
+			var ready = (This.done === false && This.cancelled === false);
+			if (curTime > This.time && ready) {
+				This.done = true;
+				callback();
+			}
+		});
 	},
 	cancel: function () {
-		clearTimeout(this.timeoutID);
+		this.cancelled = true;
 	}
 });
 

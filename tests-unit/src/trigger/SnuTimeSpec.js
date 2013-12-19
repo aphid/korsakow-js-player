@@ -2,50 +2,86 @@ describe('org.korsakow.domain.trigger.SnuTime', function () {
 	it('should call a given callback after n milliseconds', function () {
 		var snutime = new org.korsakow.domain.trigger.SnuTime(1, 0.001);
 		var triggered = false;
-		runs(function() {
-			snutime.setup(function () {
-				triggered = true;
-			});
+
+		var env1 = mkFakeEnv([0, 0.0005, 0.0011]);
+
+		triggered = false;
+		snutime.setup(env1, function () {
+			triggered = true;
 		});
-		waitsFor(function () {
-			return triggered;
-		}, 5);
-		runs(function () {
-			expect(triggered).toEqual(true);
-		});
+		env1.run();
+
+		expect(triggered).toEqual(true);
 	});
 
 	it('should not call a given callback before n milliseconds', function () {
-		var snutime = new org.korsakow.domain.trigger.SnuTime(1, 0.1);
+		var snutime = new org.korsakow.domain.trigger.SnuTime(1, 0.001);
+
+		var env1 = mkFakeEnv([0, 0.0005]);
+
 		var triggered = false;
-		runs(function() {
-			snutime.setup(function () {
-				triggered = true;
-			});
-			setTimeout(function () {
-				expect(triggered).toEqual(false);
-			}, 50)
+		snutime.setup(env1, function () {
+			triggered = true;
 		});
+		env1.run();
+
+		expect(triggered).toEqual(false);
 	});
 
 	it('should not call a given callback if it is cancelled', function () {
 		var snutime = new org.korsakow.domain.trigger.SnuTime(1, 0.001);
+
+		var env1 = mkFakeEnv([0, 0.0005, 0.001]);
+
 		var triggered = false;
-		var verified = null;
-		runs(function() {
-			snutime.setup(function () {
-				console.log('oops');
-				triggered = true;
-			});
-			setTimeout(function () {
-				console.log('hello there');
-				verified = !triggered;
-			}, 10);
-			snutime.cancel();
+		snutime.setup(env1, function () {
+			triggered = true;
 		});
-		waitsFor(function () {
-			console.log('checkinchecking');
-			return verified;
-		}, 20);
+		env1.next();
+		env1.next();
+		snutime.cancel();
+		env1.next();
+
+		expect(triggered).toEqual(false);
 	});
+
+	// TODO Maybe clean this up.
+	function mkFakeEnv (timeUpdates) {
+		var envCallback = null;
+		var videl = null;
+		var thisEnv = {
+			timeUpdates: timeUpdates,
+			next: function () {
+				curTime = timeUpdates.shift();
+				videl.currentTime = curTime;
+				console.log(this);
+				envCallback.call(videl);
+			},
+			run: function () {
+				var tulength = timeUpdates.length;
+				for (i = 0; i < tulength; i++) {
+					this.next();
+				}
+			},
+			getMainMediaWidget: function () {
+				return {
+					element: {
+						find: function () {
+							return {
+								currentTime: 0,
+								bind: function (eventType, cb) {
+									var i = 0;
+									var curTime;
+									expect(eventType).toEqual('timeupdate');
+									envCallback = cb;
+									videl = this;
+								}
+							}
+						}
+					}
+				}
+			}
+		};
+		return thisEnv;
+	};
 });
