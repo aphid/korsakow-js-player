@@ -3,7 +3,6 @@
  * An attempt is made at creating a consistent API.
  * 
  */
-try {
 NS('org.korsakow.ui');
 
 org.korsakow.ui.MediaUI = Class.register('org.korsakow.ui.MediaUI', {
@@ -183,5 +182,3 @@ org.korsakow.ui.MediaUIFactory.instance = new org.korsakow.ui.MediaUIFactory();
 org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.Image", org.korsakow.ui.ImageUI);
 org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.Video", org.korsakow.ui.VideoUI);
 //org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.Sound", org.korsakow.ui.AudioUI);
-
-}catch(e){alert(e);throw e;}
