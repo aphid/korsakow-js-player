@@ -54,7 +54,6 @@ describe('org.korsakow.domain.trigger.SnuTime', function () {
 			next: function () {
 				curTime = timeUpdates.shift();
 				videl.currentTime = curTime;
-				console.log(this);
 				envCallback.call(videl);
 			},
 			run: function () {
