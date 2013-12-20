@@ -1,0 +1,13 @@
+language:
+  - node_js
+
+node_js:
+  - "0.10"
+
+# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+install:
+  - npm install
+
+# command to run tests, e.g. python setup.py test
+script:
+  - grunt
