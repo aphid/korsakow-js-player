@@ -105,12 +105,17 @@ org.korsakow.domain.trigger.SnuTime = Class.register('org.korsakow.domain.trigge
 		$super(id);
 		this.id = id;
 		this.time = time;
-		this.cancelled = false;
-		this.done = false;
 	},
 	setup: function (env, callback) {
 		var This = this,
 		    videl = env.getMainMediaWidget().view;
+
+		// This needs to happen inside setup() so if the same
+		// trigger is loaded for a new SNU it isn't already marked
+		// as done.
+		this.cancelled = false;
+		this.done = false;
+
 		videl.bind('timeupdate', function triggerTimeUpdate () {
 			var el = this;
 			var curTime = el.currentTime;

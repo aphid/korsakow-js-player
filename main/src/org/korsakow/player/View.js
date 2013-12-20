@@ -19,11 +19,11 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', {
 		this.isEnded = false;
 	},
 	bind: function(eventType, cb) {
+		var args = arguments;
 		if (arguments.length > 0 && arguments[0] === 'timeupdate') {
-			// TODO make this nicer
 			cb.apply({
 				currentTime: 0
-			}, arguments);
+			}, args);
 		} else {
 			this.element.bind.apply(this.element, arguments);
 		}
