@@ -7,6 +7,7 @@ node_js:
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
   - npm install
+  - npm install grunt
 
 # command to run tests, e.g. python setup.py test
 script:
