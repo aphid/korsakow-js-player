@@ -1,4 +1,3 @@
-try {
 /* Custom jQuery selector
  * 
  * Compares the text content
@@ -22,17 +21,6 @@ $.expr[":"].contenteq = function(obj, index, meta, stack){
 $.expr[":"].tagName = function(obj, index, meta, stack){
 	return (obj.tagName || "") == meta[3];
 };
-
-/* Browser compatibility as per http://tokenposts.blogspot.com.au/2012/04/javascript-objectkeys-browser.html
- */
-if(!Object.keys) Object.keys = function(o){
-	if (o !== Object(o))
-		throw new TypeError('Object.keys called on non-object');
-	var ret=[];
-	for(var p in o) if(Object.prototype.hasOwnProperty.call(o,p)) ret.push(p);
-	return ret;
-};
-/* */
 
 /* NameSpace
  * 
@@ -424,30 +412,6 @@ org.korsakow.FullScreenAPI = Class.register('org.korsakow.FullScreenAPI',org.kor
 	}
 });
 
-/* This class is poorly named. It actually has utility methods.
- * 
- */
-org.korsakow.Assert = Class.register('org.korsakow.Assert', org.korsakow.Object, {
-	/* Returns whether the argument is a javascript array
-	 */
-	isArray: function(a) {
-		// http://stackoverflow.com/questions/1058427/how-to-detect-if-a-variable-is-an-array
-		return Object.prototype.toString.call(obj) === '[object Array]';
-	},
-	/* Returns whether the argument is a Map
-	 * 
-	 * We consider a map/dictionary to be a POJsO
-	 */
-	isMap: function(m) {
-		if (typeof(m) != "Object")
-			return false;
-		if (m instanceof org.korsakow.Object)
-			return false;
-		return true;
-	}
-});
-org.korsakow.assert = new org.korsakow.Assert(); // singleton
-
 /* Ties a function to an object.
  * 
  * Returns a function wrapper that guarantees a specific value for "this"
@@ -484,7 +448,6 @@ org.korsakow.domain.Player = Class.register('org.korsakow.domain.Player', {
 
 /* Browser compatible wrapper around the HTML5 <audio> element.
  * 
- * TODO: move this to the UI package next to ImageUI and VideoUI
  */
 org.korsakow.Audio = Class.register('org.korsakow.domain.Audio', {
 	initialize: function($super, url, vol) {
@@ -712,5 +675,3 @@ org.korsakow.Fade.fade = function(opts) {
 	t.start();
 	return t;
 };
-
-}catch(e){alert(e);throw e;}

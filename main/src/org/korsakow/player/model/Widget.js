@@ -1,5 +1,3 @@
-try {
-
 NS('org.korsakow.domain.widget');
 
 
@@ -38,7 +36,7 @@ org.korsakow.domain.widget.FixedPreview = Class.register('org.korsakow.domain.wi
 	}
 });
 
-org.korsakow.domain.widget.InsertText= Class.register('org.korsakow.domain.widget.InsertText', org.korsakow.domain.Widget, {
+org.korsakow.domain.widget.InsertText = Class.register('org.korsakow.domain.widget.InsertText', org.korsakow.domain.Widget, {
 	initialize: function($super, id, keywords, type, x, y, width, height, fontColor, fontBackgroundColor, fontFamily, fontSize, fontStyle, fontWeight, textDecoration) {
 		$super(id, keywords, type, x, y, width, height);
 		this.fontColor = fontColor;
@@ -50,7 +48,7 @@ org.korsakow.domain.widget.InsertText= Class.register('org.korsakow.domain.widge
 		this.textDecoration = textDecoration;
 	}
 });
-org.korsakow.domain.widget.PlayTime= Class.register('org.korsakow.domain.widget.PlayTime', org.korsakow.domain.Widget, {
+org.korsakow.domain.widget.PlayTime = Class.register('org.korsakow.domain.widget.PlayTime', org.korsakow.domain.Widget, {
 	initialize: function($super, id, keywords, type, x, y, width, height, fontColor, fontFamily, fontSize, fontStyle, fontWeight, textDecoration) {
 		$super(id, keywords, type, x, y, width, height);
 		this.fontColor = fontColor;
@@ -63,7 +61,7 @@ org.korsakow.domain.widget.PlayTime= Class.register('org.korsakow.domain.widget.
 		
 	}
 });
-org.korsakow.domain.widget.TotalTime= Class.register('org.korsakow.domain.widget.TotalTime', org.korsakow.domain.Widget, {
+org.korsakow.domain.widget.TotalTime = Class.register('org.korsakow.domain.widget.TotalTime', org.korsakow.domain.Widget, {
 	initialize: function($super, id, keywords, type, x, y, width, height, fontColor, fontFamily, fontSize, fontStyle, fontWeight, textDecoration) {
 		$super(id, keywords, type, x, y, width, height);
 		this.fontColor = fontColor;
@@ -76,7 +74,7 @@ org.korsakow.domain.widget.TotalTime= Class.register('org.korsakow.domain.widget
 		
 	}
 });
-org.korsakow.domain.widget.Scrubber= Class.register('org.korsakow.domain.widget.Scrubber', org.korsakow.domain.Widget, {
+org.korsakow.domain.widget.Scrubber = Class.register('org.korsakow.domain.widget.Scrubber', org.korsakow.domain.Widget, {
 	initialize: function($super, id, keywords, type, x, y, width, height, backgroundColor, foregroundColor, interactive, loading, loadingColor, barWidth, barHeight) {
 		$super(id, keywords, type, x, y, width, height);
 		this.backgroundColor = backgroundColor;
@@ -127,5 +125,3 @@ org.korsakow.domain.widget.SubtitleCuePoint = Class.register('org.korsakow.domai
 		this.endTime = endTime;
 	}
 });
-
-}catch(e){alert(e);throw e;}

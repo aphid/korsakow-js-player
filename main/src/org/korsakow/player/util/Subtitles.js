@@ -1,4 +1,3 @@
-try {
 NS('org.korsakow.util');
 
 org.korsakow.util.SubtitleException = org.korsakow.Exception;
@@ -93,5 +92,3 @@ org.korsakow.util.StrSubtitleParser = Class.register('org.korsakow.SubtitleParse
 		return (parseInt(hh)*60*60 + parseInt(mm)*60 + parseInt(ss)) * 1000 + parseInt(ms);
 	}
 });
-
-}catch(e){alert(e);throw e;}

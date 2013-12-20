@@ -167,3 +167,99 @@ describe("org.korsakow.controller.PlayButtonWidgetController", function() {
 		
 	});
 });
+
+describe("org.korsakow.controller.PlayTimWidgetController", function() {
+
+	it("should update the view based MainMedia's time changes", function() {
+		var mainMediaWidget = mock(org.korsakow.controller.MainMediaWidgetController);
+		var mediaUI = mainMediaWidget.view = (new org.korsakow.ui.MediaUI());
+		mediaUI.element = jQuery('<div>x</div>');
+		mediaUI.currentTime = function(){return 123;};
+		
+		var env = mock(org.korsakow.Environment);
+		when(env).getMainMediaWidget().thenReturn(mainMediaWidget);
+
+		var controller = spy(new org.korsakow.controller.PlayTimeWidgetController({}));
+		controller.setup(env);
+		
+		mediaUI.element.trigger('timeupdate');
+		expect(controller.element.text()).toEqual("02:03");
+	});
+	
+	it("should display the time with the right styling", function() {
+		var model = {
+			fontBackgroundColor: 'rgb(171, 205, 239)',
+			fontFamily: 'myFont',
+			fontWeight: '200',
+			fontStyle: 'italic',
+			fontSize: '43',
+			textDecoration: 'underline'
+		};
+		
+		var mainMediaWidget = mock(org.korsakow.controller.MainMediaWidgetController);
+		var mediaUI = mainMediaWidget.view = (new org.korsakow.ui.MediaUI());
+		mediaUI.element = jQuery('<div>x</div>');
+		mediaUI.currentTime = function(){return 123;};
+		
+		var env = mock(org.korsakow.Environment);
+		when(env).getMainMediaWidget().thenReturn(mainMediaWidget);
+
+		var controller = spy(new org.korsakow.controller.PlayTimeWidgetController(model));
+		controller.setup(env);
+
+//		expect(controller.element.css('background-color')).toEqual(model.fontBackgroundColor);
+		expect(controller.element.css('font-family')).toEqual(model.fontFamily);
+		expect(controller.element.css('font-weight')).toEqual(model.fontWeight);
+		expect(controller.element.css('font-style')).toEqual(model.fontStyle);
+		expect(controller.element.css('font-size')).toEqual(model.fontSize + 'pt');
+		expect(controller.element.css('text-decoration')).toEqual(model.textDecoration);
+	});
+});
+
+describe("org.korsakow.controller.TotalTimWidgetController", function() {
+
+	it("should update the view based MainMedia's time changes", function() {
+		var mainMediaWidget = mock(org.korsakow.controller.MainMediaWidgetController);
+		var mediaUI = mainMediaWidget.view = (new org.korsakow.ui.MediaUI());
+		mediaUI.element = jQuery('<div>x</div>');
+		mediaUI.duration = function(){return 123;};
+		
+		var env = mock(org.korsakow.Environment);
+		when(env).getMainMediaWidget().thenReturn(mainMediaWidget);
+
+		var controller = spy(new org.korsakow.controller.TotalTimeWidgetController({}));
+		controller.setup(env);
+		
+		mediaUI.element.trigger('canplay');
+		expect(controller.element.text()).toEqual("02:03");
+	});
+	
+	it("should display the time with the right styling", function() {
+		var model = {
+			fontBackgroundColor: 'rgb(171, 205, 239)',
+			fontFamily: 'myFont',
+			fontWeight: '200',
+			fontStyle: 'italic',
+			fontSize: '43',
+			textDecoration: 'underline'
+		};
+		
+		var mainMediaWidget = mock(org.korsakow.controller.MainMediaWidgetController);
+		var mediaUI = mainMediaWidget.view = (new org.korsakow.ui.MediaUI());
+		mediaUI.element = jQuery('<div>x</div>');
+		mediaUI.currentTime = function(){return 123;};
+		
+		var env = mock(org.korsakow.Environment);
+		when(env).getMainMediaWidget().thenReturn(mainMediaWidget);
+
+		var controller = spy(new org.korsakow.controller.TotalTimeWidgetController(model));
+		controller.setup(env);
+
+//		expect(controller.element.css('background-color')).toEqual(model.fontBackgroundColor);
+		expect(controller.element.css('font-family')).toEqual(model.fontFamily);
+		expect(controller.element.css('font-weight')).toEqual(model.fontWeight);
+		expect(controller.element.css('font-style')).toEqual(model.fontStyle);
+		expect(controller.element.css('font-size')).toEqual(model.fontSize + 'pt');
+		expect(controller.element.css('text-decoration')).toEqual(model.textDecoration);
+	});
+});
