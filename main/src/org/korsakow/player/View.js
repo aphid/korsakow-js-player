@@ -31,6 +31,16 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		this.isPlaying = false;
 		this.isEnded = false;
 	},
+	bind: function(eventType, cb) {
+		var args = arguments;
+		if (arguments.length > 0 && arguments[0] === 'timeupdate') {
+			cb.apply({
+				currentTime: 0
+			}, args);
+		} else {
+			this.element.bind.apply(this.element, arguments);
+		}
+	},
 	load: function(src) {
 		this.element.attr("src", src);
 	},
@@ -54,6 +64,9 @@ org.korsakow.ui.VideoUI = Class.register('org.korsakow.ui.VideoUI', org.korsakow
 		if (opts && opts.src) {
 			alert('todo! VideoUI');
 		}
+	},
+	bind: function() {
+		this.element.bind.apply(this.element, arguments);
 	},
 	load: function(src) {
 		var This = this;

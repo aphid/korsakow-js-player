@@ -1,4 +1,5 @@
 NS('org.korsakow.domain.rule');
+NS('org.korsakow.domain.trigger');
 
 /* Parent class for all domain objects (models)
  * 
@@ -54,14 +55,14 @@ org.korsakow.domain.Image = Class.register('org.korsakow.domain.Image', org.kors
 });
 
 org.korsakow.domain.Snu = Class.register('org.korsakow.domain.Snu', org.korsakow.domain.DomainObject, {
-	initialize: function($super, id, name, keywords, mainMedia, previewMedia, interface, rules, lives, looping, starter, insertText, rating, backgroundSoundMode, backgroundSoundLooping, backgroundSoundMedia, backgroundSoundVolume) {
+	initialize: function($super, id, name, keywords, mainMedia, previewMedia, interface, events, lives, looping, starter, insertText, rating, backgroundSoundMode, backgroundSoundLooping, backgroundSoundMedia, backgroundSoundVolume) {
 		$super(id);
 		this.name = name;
 		this.keyword = keywords;
 		this.mainMedia = mainMedia;
 		this.previewMedia = previewMedia;
 		this.interface = interface;
-		this.rules = rules;
+		this.events = events;
 		this.lives = lives;
 		this.looping = looping;
 		this.start = starter;
@@ -73,6 +74,61 @@ org.korsakow.domain.Snu = Class.register('org.korsakow.domain.Snu', org.korsakow
 		this.backgroundSoundVolume = backgroundSoundVolume;
 	}
 });
+
+org.korsakow.domain.Event = Class.register('org.korsakow.domain.Event', org.korsakow.domain.DomainObject, {
+	initialize: function($super, id, predicate, trigger, rule) {
+		$super(id);
+		this.id = id;
+		this.predicate = predicate;
+		this.trigger = trigger;
+		this.rule = rule;
+	},
+	setup: function (env) {
+		var This = this;
+		this.trigger.setup(env, function triggeredRule () {
+			// TODO check the predicate
+			This.rule.execute(env);
+		});
+	},
+	cancel: function (env) {
+		this.trigger.cancel();
+	}
+});
+
+/**
+ * Executes an event's rules after <time> seconds.
+ */
+org.korsakow.domain.trigger.SnuTime = Class.register('org.korsakow.domain.trigger.SnuTime', org.korsakow.domain.DomainObject, {
+	initialize: function($super, id, time) {
+		$super(id);
+		this.id = id;
+		this.time = time;
+	},
+	setup: function (env, callback) {
+		var This = this,
+		    videl = env.getMainMediaWidget().view;
+
+		// This needs to happen inside setup() so if the same
+		// trigger is loaded for a new SNU it isn't already marked
+		// as done.
+		this.cancelled = false;
+		this.done = false;
+
+		videl.bind('timeupdate', function triggerTimeUpdate () {
+			var el = this;
+			var curTime = el.currentTime;
+			var ready = (This.done === false && This.cancelled === false);
+			if (curTime >= This.time && ready) {
+				This.done = true;
+				callback();
+			}
+		});
+	},
+	cancel: function () {
+		this.cancelled = true;
+	}
+});
+
 
 /* Parent class for rules
  * 
@@ -385,10 +441,20 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 			channel.audio.volume(channel.audio.volume());
 		}
 	},
+	cancelEvents: function () {
+		for (var i = 0; i < this.currentSnu.events.length; ++i) {
+			this.currentSnu.events[i].cancel();
+		}
+	},
 	
 	executeSnu: function(snu) {
 		
 		this.view.empty();
+
+		if(this.currentSnu) {
+			this.cancelEvents();
+		}
+
 		this.currentSnu = snu;
 
 		if(this.currentSnu.lives > 0){
@@ -431,8 +497,8 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 				break;
 		}
 		
-		for (var i = 0; i < snu.rules.length; ++i) {
-			snu.rules[i].execute(this);
+		for (var i = 0; i < snu.events.length; ++i) {
+			snu.events[i].setup(this);
 		}
 
 		// set all audio/video components to the appropriate volume

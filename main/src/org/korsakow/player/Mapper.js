@@ -7,6 +7,7 @@
  * 
  */
 NS('org.korsakow.domain.rule');
+NS('org.korsakow.domain.trigger');
 NS('org.korsakow.domain.widget');
 
 
@@ -199,6 +200,9 @@ org.korsakow.domain.Dao.create = function(data) {
 		'Snu': new org.korsakow.domain.SnuInputMapper(dao),
 		'Interface': new org.korsakow.domain.InterfaceInputMapper(dao),
 		'Widget': new org.korsakow.domain.WidgetInputMapper(dao),
+		'Event': new org.korsakow.domain.EventInputMapper(dao),
+		'Predicate': new org.korsakow.domain.PredicateInputMapper(dao),
+		'Trigger': new org.korsakow.domain.TriggerInputMapper(dao),
 		'Rule': new org.korsakow.domain.RuleInputMapper(dao),
 		'Project': new org.korsakow.domain.ProjectInputMapper(dao)
 	});
@@ -335,7 +339,7 @@ org.korsakow.domain.SnuInputMapper = Class.register('org.korsakow.domain.SnuInpu
 		var previewMedia = this.dao.findMediaById(this.parseInt(data, "previewMediaId"));
 		var interface = this.dao.findById(this.parseInt(data, "interfaceId"));
 		var starter = this.parseBoolean(data, "starter");
-		var rules = this.dao.find({parent:id, path: 'events/Event/Rule', ignoreError: true});
+		var events = this.dao.find({parent:id, path: 'events/Event'});
 		var lives = (function(){
 			var temp = data.children("lives");
 			if(temp == "NaN")
@@ -356,7 +360,7 @@ org.korsakow.domain.SnuInputMapper = Class.register('org.korsakow.domain.SnuInpu
 			} else
 				return null;
 		}).apply(this);
-		return new org.korsakow.domain.Snu(id, name, [], mainMedia, previewMedia, interface, rules, lives, looping, starter, insertText, rating,
+		return new org.korsakow.domain.Snu(id, name, [], mainMedia, previewMedia, interface, events, lives, looping, starter, insertText, rating,
 			backgroundSoundMode,backgroundSoundLooping, backgroundSoundMedia, backgroundSoundVolume);
 	}
 });
@@ -596,6 +600,57 @@ org.korsakow.domain.MasterVolumeInputMapper = Class.register('org.korsakow.domai
 	}
 });
 
+org.korsakow.domain.EventInputMapper = Class.register('org.korsakow.domain.EventInputMapper', org.korsakow.domain.InputMapper, {
+	initialize: function($super, dao) {
+		$super(dao);
+	},
+	map: function(data) {
+		var id = this.parseInt(data, "id");
+		var predicate = this.dao.find({parent: id, path: 'Predicate'})[0];
+		var trigger = this.dao.find({parent: id, path: 'Trigger'})[0];
+		var rule = this.dao.find({parent: id, path: 'Rule'})[0];
+		var event = new org.korsakow.domain.Event(id, predicate, trigger, rule);
+		return event;
+	}
+});
+
+org.korsakow.domain.PredicateInputMapper = Class.register('org.korsakow.domain.PredicateInputMapper', org.korsakow.domain.InputMapper, {
+	initialize: function($super, dao) {
+		$super(dao);
+	},
+	map: function(data) {
+		// TODO: map to an actual Predicate class.
+		var id = this.parseInt(data, "id");
+		var type = this.parseString(data, "type");
+		var pred = {id: id, type: type};
+		return pred;
+	}
+});
+
+org.korsakow.domain.TriggerInputMapper = Class.register('org.korsakow.domain.TriggerInputMapper', org.korsakow.domain.InputMapper, {
+	initialize: function($super, dao) {
+		$super(dao);
+	},
+	map: function(data) {
+		var type = this.parseString(data, "type");
+		var mapper = org.korsakow.domain.InputMapperFactory.create(type, this.dao);
+		var trigger = mapper.map(data);
+		return trigger;
+	}
+});
+
+org.korsakow.domain.trigger.SnuTimeInputMapper = Class.register('org.korsakow.domain.trigger.SnuTimeInputMapper', org.korsakow.domain.InputMapper, {
+	initialize: function($super, dao) {
+		$super(dao);
+	},
+	map: function(data) {
+		var id = this.parseInt(data, "id");
+		var time = this.parseInt(data, "time");
+		var trigger = new org.korsakow.domain.trigger.SnuTime(id, time);
+		return trigger;
+	}
+});
+
 //
 /**
  * This is actually a sort of MetaInputMapper in that it does a lookup for the actual mapper based on the rule's type
@@ -706,3 +761,4 @@ org.korsakow.domain.InputMapperFactory.register("org.korsakow.widget.MasterVolum
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.rule.KeywordLookup", org.korsakow.domain.KeywordLookupInputMapper);
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.rule.ExcludeKeywords", org.korsakow.domain.ExcludeKeywordsInputMapper);
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.rule.Search", org.korsakow.domain.SearchInputMapper);
+org.korsakow.domain.InputMapperFactory.register("org.korsakow.trigger.SnuTime", org.korsakow.domain.trigger.SnuTimeInputMapper);
