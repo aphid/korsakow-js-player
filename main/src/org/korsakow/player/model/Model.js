@@ -1,4 +1,5 @@
 NS('org.korsakow.domain.rule');
+NS('org.korsakow.domain.trigger');
 
 /* Parent class for all domain objects (models)
  * 
@@ -54,14 +55,14 @@ org.korsakow.domain.Image = Class.register('org.korsakow.domain.Image', org.kors
 });
 
 org.korsakow.domain.Snu = Class.register('org.korsakow.domain.Snu', org.korsakow.domain.DomainObject, {
-	initialize: function($super, id, name, keywords, mainMedia, previewMedia, interface, rules, lives, looping, starter, insertText, rating, backgroundSoundMode, backgroundSoundLooping, backgroundSoundMedia, backgroundSoundVolume) {
+	initialize: function($super, id, name, keywords, mainMedia, previewMedia, interface, events, lives, looping, starter, insertText, rating, backgroundSoundMode, backgroundSoundLooping, backgroundSoundMedia, backgroundSoundVolume) {
 		$super(id);
 		this.name = name;
 		this.keyword = keywords;
 		this.mainMedia = mainMedia;
 		this.previewMedia = previewMedia;
 		this.interface = interface;
-		this.rules = rules;
+		this.events = events;
 		this.lives = lives;
 		this.looping = looping;
 		this.start = starter;
@@ -74,113 +75,57 @@ org.korsakow.domain.Snu = Class.register('org.korsakow.domain.Snu', org.korsakow
 	}
 });
 
-/* Parent class for rules
- * 
- * TODO: is this class useful?
- */
-org.korsakow.domain.Rule = Class.register('org.korsakow.domain.Rule', org.korsakow.domain.DomainObject, {
-	initialize: function($super, id, keywords, type) {
+org.korsakow.domain.Event = Class.register('org.korsakow.domain.Event', org.korsakow.domain.DomainObject, {
+	initialize: function($super, id, predicate, trigger, rule) {
 		$super(id);
-		this.keywords = keywords;
-		this.type = type;
+		this.id = id;
+		this.predicate = predicate;
+		this.trigger = trigger;
+		this.rule = rule;
 	},
-	execute: function(env) {
-		
+	setup: function (env) {
+		var This = this;
+		this.trigger.setup(env, function triggeredRule () {
+			// TODO check the predicate
+			This.rule.execute(env);
+		});
+	},
+	cancel: function (env) {
+		this.trigger.cancel();
 	}
 });
 
-/* Finds SNUs that contain this rule's keywords. SNU's scores increases for
- * each keyword that matches.
+/**
+ * Executes an event's rules after <time> seconds.
  */
-org.korsakow.domain.rule.KeywordLookup = Class.register('org.korsakow.domain.rule.KeywordLookup', org.korsakow.domain.Rule, {
-	initialize: function($super, id, keywords, type) {
-		$super(id, keywords, type);
-		// TODO: assert type == org.korsakow.rule.KeywordLookup
+org.korsakow.domain.trigger.SnuTime = Class.register('org.korsakow.domain.trigger.SnuTime', org.korsakow.domain.DomainObject, {
+	initialize: function($super, id, time) {
+		$super(id);
+		this.id = id;
+		this.time = time;
 	},
-	/*
-	 * @param searchResults {org.korsakow.SearchResults}
-	 */
-	execute: function(env, searchResults) {
-		// for each time a snu appears in a list, increase its searchResults
-		// (thus, snus searchResults proportionally to the number of keywords
-		// they match)
-		var currentSnu = env.getCurrentSnu();
-		$.each(this.keywords, function(i, keyword) {
-			var dao = env.getDao();
-			var snus = dao.find({type: 'Snu', keyword: keyword.value});
+	setup: function (env, callback) {
+		var This = this,
+		    videl = env.getMainMediaWidget().view;
 
-			for (var j = 0; j < snus.length; ++j) {
-				var snu = snus[j];
-				if (snu == currentSnu || snu.lives === 0)
-					continue;
-				var result;
-				var index = searchResults.indexOfSnu(snu);
+		// This needs to happen inside setup() so if the same
+		// trigger is loaded for a new SNU it isn't already marked
+		// as done.
+		this.cancelled = false;
+		this.done = false;
 
-				if ( index == -1 ) {
-					result = new org.korsakow.SearchResult(snu, 0);
-					searchResults.results.push(result);
-				} else
-					result = searchResults.results[index];
-				result.score += env.getDefaultSearchResultIncrement() * snu.rating;
+		videl.bind('timeupdate', function triggerTimeUpdate () {
+			var el = this;
+			var curTime = el.currentTime;
+			var ready = (This.done === false && This.cancelled === false);
+			if (curTime >= This.time && ready) {
+				This.done = true;
+				callback();
 			}
 		});
-	}
-});
-/* Filters from the list any SNU that has any of this rule's keywords
- * 
- */
-org.korsakow.domain.rule.ExcludeKeywords = Class.register('org.korsakow.domain.rule.ExcludeKeywords', org.korsakow.domain.Rule, {
-	initialize: function($super, id, keywords, type) {
-		$super(id, keywords, type);
 	},
-	execute: function(env, searchResults) {
-		jQuery.each(this.keywords, function(i, keyword) {
-			var snusToExclude = env.getDao().find({type: 'Snu', keyword: keyword.value});
-			jQuery.each(snusToExclude, function(j, snu) {
-				searchResults.results.splice( searchResults.indexOfSnu(snu), 1 );
-			});
-		});
-	}
-});
-
-/* Performs a search by running a series of subrules. Results are displayed
- * in Preview widgets.
- */
-org.korsakow.domain.rule.Search = Class.register('org.korsakow.domain.rule.Search', org.korsakow.domain.Rule, {
-	initialize: function($super, id, keywords, type, rules, maxLinks) {
-		$super(id, keywords, type);
-		this.rules = rules;
-		this.maxLinks = maxLinks;
-	},
-	execute: function(env) {
-		var searchResults = this.doSearch(env);
-		this.processSearchResults(env, searchResults);
-	},
-	doSearch: function(env) {
-		var searchResults = new org.korsakow.SearchResults();
-		$.each(this.rules, function(i, rule) {
-			rule.execute(env, searchResults);
-		});
-
-		searchResults.results.sort(function(a, b) {
-			if (b.score == a.score)
-				return Math.random()>0.5?1:-1;
-			return b.score - a.score;
-		});
-		return searchResults;
-	},
-	processSearchResults: function(env, searchResults) {
-		var previews = env.getWidgetsOfType('org.korsakow.widget.SnuAutoLink');
-
-		// TODO: support for keeplinks
-		jQuery.each(previews, function(i, preview) {
-			preview.clear();
-		});
-		for (var i = 0; (i < searchResults.results.length) && previews.length && (this.maxLinks == null || i < this.maxLinks); ++i) {
-			var snu = searchResults.results[i].snu;
-			var preview = previews.shift();
-			preview.setSnu(snu);
-		}
+	cancel: function () {
+		this.cancelled = true;
 	}
 });
 
@@ -385,10 +330,20 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 			channel.audio.volume(channel.audio.volume());
 		}
 	},
+	cancelEvents: function () {
+		for (var i = 0; i < this.currentSnu.events.length; ++i) {
+			this.currentSnu.events[i].cancel();
+		}
+	},
 	
 	executeSnu: function(snu) {
 		
 		this.view.empty();
+
+		if(this.currentSnu) {
+			this.cancelEvents();
+		}
+
 		this.currentSnu = snu;
 
 		if(this.currentSnu.lives > 0){
@@ -431,8 +386,8 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 				break;
 		}
 		
-		for (var i = 0; i < snu.rules.length; ++i) {
-			snu.rules[i].execute(this);
+		for (var i = 0; i < snu.events.length; ++i) {
+			snu.events[i].setup(this);
 		}
 
 		// set all audio/video components to the appropriate volume
