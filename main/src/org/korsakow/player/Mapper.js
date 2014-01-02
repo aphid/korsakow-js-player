@@ -287,10 +287,21 @@ org.korsakow.domain.VideoInputMapper = Class.register('org.korsakow.domain.Video
 		$super(dao);
 	},
 	map: function(data) {
+		var This = this;
 		var id = this.parseInt(data, "id");
 		var filename = this.parseString(data, "filename");
 		filename = filename.substring(0, filename.lastIndexOf('.'));
-		return new org.korsakow.domain.Video(id, filename);
+
+		var subtitlesTag = data.children('subtitles');
+		var subtitlesFilename = (function () {
+			if (subtitlesTag.length === 0) {
+				return null;
+			} else {
+				return This.parseString(data, "subtitles");
+			}
+		})();
+
+		return new org.korsakow.domain.Video(id, filename, subtitlesFilename);
 	}
 });
 /*org.korsakow.domain.SoundInputMapper = Class.register('org.korsakow.domain.SoundInputMapper', org.korsakow.domain.InputMapper, {
