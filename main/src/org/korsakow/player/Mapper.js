@@ -171,6 +171,7 @@ org.korsakow.domain.Dao = Class.register('org.korsakow.domain.Dao', {
 				obj = mapper.map(datum);
 			} catch (e) {
 				if (opts.ignoreError) {
+					console.log(datum);
 					continue;
 				}
 				throw e;
@@ -611,6 +612,45 @@ org.korsakow.domain.MasterVolumeInputMapper = Class.register('org.korsakow.domai
 	}
 });
 
+org.korsakow.domain.SubtitlesInputMapper = Class.register('org.korsakow.domain.SubtitlesInputMapper', org.korsakow.domain.InputMapper, {
+	initialize: function($super, dao) {
+		$super(dao);
+	},
+	map: function(data) {
+		var type = this.parseString(data, "type");
+		var id = this.parseInt(data, "id");
+		var x = this.parseInt(data, "x");
+		var y = this.parseInt(data, "y");
+		var width = this.parseInt(data, "width");
+		var height = this.parseInt(data, "height");
+		var fontWeight = this.parseInt(data, "fontWeight");
+		var fontColor = this.parseInt(data, "fontColor");
+		var textDecoration = this.parseInt(data, "textDecoration");
+		var fontStyle = this.parseInt(data, "fontStyle");
+		var fontFamily = this.parseInt(data, "fontFamily");
+		var fontSize = this.parseInt(data, "fontSize");
+		var keywords = this.parseInt(data, "keywords");
+		var widget = new org.korsakow.domain.widget.Subtitles(
+			id,
+			keywords,
+			type,
+			x,
+			y,
+			width,
+			height,
+			{
+				fontWeight: fontWeight,
+				fontColor: fontColor,
+				textDecoration: textDecoration,
+				fontStyle: fontStyle,
+				fontFamily: fontFamily,
+				fontSize: fontSize
+			}
+		);
+		return widget;
+	}
+});
+
 org.korsakow.domain.EventInputMapper = Class.register('org.korsakow.domain.EventInputMapper', org.korsakow.domain.InputMapper, {
 	initialize: function($super, dao) {
 		$super(dao);
@@ -769,6 +809,7 @@ org.korsakow.domain.InputMapperFactory.register("org.korsakow.widget.Scrubber", 
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.widget.PlayButton", org.korsakow.domain.PlayButtonInputMapper);
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.widget.FullscreenButton", org.korsakow.domain.FullscreenButtonInputMapper);
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.widget.MasterVolume", org.korsakow.domain.MasterVolumeInputMapper);
+org.korsakow.domain.InputMapperFactory.register("org.korsakow.widget.Subtitles", org.korsakow.domain.SubtitlesInputMapper);
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.rule.KeywordLookup", org.korsakow.domain.KeywordLookupInputMapper);
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.rule.ExcludeKeywords", org.korsakow.domain.ExcludeKeywordsInputMapper);
 org.korsakow.domain.InputMapperFactory.register("org.korsakow.rule.Search", org.korsakow.domain.SearchInputMapper);
