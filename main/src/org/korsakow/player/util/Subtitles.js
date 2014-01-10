@@ -32,7 +32,13 @@ org.korsakow.util.StrSubtitleParser = Class.register('org.korsakow.SubtitleParse
 	 * @param lines: Array[String]
 	 */
 	parse: function(rawLines) {
+		// TODO don't hardcode fake subtitles.
 		var cuepoints = [];
+		cuepoints.push(new org.korsakow.util.SubtitleCuePoint('potato1', 0, 10, 'hey, I used to be pretty good at this game.'));
+		cuepoints.push(new org.korsakow.util.SubtitleCuePoint('potato2', 10, 4, "I can't believe it used to matter to me"));
+		cuepoints.push(new org.korsakow.util.SubtitleCuePoint('potato3', 14, 6, "Making the big shot. Winning the game."));
+		cuepoints.push(new org.korsakow.util.SubtitleCuePoint('potato4', 20, 5, "I really used to think there was something between us."));
+		return cuepoints;
 		var lines = rawLines.split( /(?:\r\n)|\n|\r/ ).map( jQuery.trim ); // the defacto standard seems to be CRLF but users have such a hard time with this so we're leanient
 		var line = 0;
 		var counter = 0;

@@ -453,36 +453,66 @@ org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.contr
 		$super(model);
 	},
 	setup: function($super, env){
-		$super(env);	
+		$super(env);
+		var This = this;
+		var snu = env.getCurrentSnu();
+		var media = snu.mainMedia;
+		var stFile = media.subtitlesFilename;
+		stFile = 'subtitle/test.srt';
+		if (stFile) {
+			this.parseSubtitles(stFile, function () {
+				var mainmedia = env.getMainMediaWidget();
+				var vid = mainmedia.view;
+				vid.bind('timeupdate', function (event) {
+					This.handleTimeUpdate(this.currentTime);
+				});
+			});
+		}
+
+		this.element.addClass("SubtitlesWidget");
+		alert('wut');
+		var mediaUI = this.view = env.createMediaUI(this.model.getClass().className);
+		this.element.append(mediaUI.element);
+	},
+	handleTimeUpdate: function (time) {
+		var i = 0;
+		var cuepoint;
+		var This = this;
+		var cuepoints = this.cuePoints.slice(0);
+		for (i = 0; i < cuepoints.length; i++) {
+			cuepoint = cuepoints[i];
+			if (cuepoint.time <= time && time < (cuepoint.time + cuepoint.duration)) {
+//				console.log(cuepoint.subtitle, cuepoint.time, cuepoint.duration);
+				this.view.updateText(cuepoint.subtitle);
+			}
+		}
 	},
 	getSubtitles: function (){
-		return this.model.subtitles; //Returns an array of subtitles
+		return this.model.subtitles;
 	},
-	parseSubtitles: function(filePath){
-		
+	parseSubtitles: function(filePath, cb){
+		var This = this;
 		var cuePoints = new Array();
-		
-			jQuery.ajax({
-				url: filePath,
-				success: function(data) {
+		jQuery.ajax({
+			url: 'data/' + filePath,
+			success: function(data) {
 				var lines = data.split(/(?:\r\n)|\n|\r/);
 				for(var i=0; i < lines.length; i++){
 					$.trim(lines[i]);
 				}
 				if(filePath.match("srt")){ //TODO create better regular expression
-					cuePoints = this.parseSRTCuePoints(lines);
-					var subtitles = cuePoints;
-					for(var i = 0; i < subtitles.length; i++){
-					$("#test").append(subtitles.name+"<br />");
-					}
-					return cuePoints;
+					var parser = new org.korsakow.util.StrSubtitleParser();
+					cuePoints = parser.parse(data);
 				}else if(filePath.match("k3")){
 					cuePoints = this.parseK3CuePoints(lines);
-					return cuePoints;
 				}else{
 					throw "Improper Parse File Type";
 				}
-			 	}}); //ajax request
+				cb();
+				This.cuePoints = cuePoints;
+				return cuePoints;
+			}
+		}); //ajax request
 			
 	},
 	parseSRTCuePoints: function(lineArray){
@@ -506,7 +536,7 @@ org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.contr
 					}
 				
 				//console.log(subLines);
-				subtitleCuePoint(lineArray[(i-1)], subLines, startT, endT);
+//				subtitleCuePoint(lineArray[(i-1)], subLines, startT, endT);
 				subLines.length = 0;
 			}
 		}
