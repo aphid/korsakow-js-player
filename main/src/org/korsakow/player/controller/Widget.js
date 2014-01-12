@@ -459,10 +459,10 @@ org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.contr
 		var media = snu.mainMedia;
 		var stFile = media.subtitlesFilename;
 		if (stFile) {
-			this.parseSubtitles(stFile, function () {
+			this.parseSubtitles(stFile, function onSubtitleDownload () {
 				var mainmedia = env.getMainMediaWidget();
 				var vid = mainmedia.view;
-				vid.bind('timeupdate', function (event) {
+				vid.bind('timeupdate', function subtitleTimeUpdate (event) {
 					This.handleTimeUpdate(this.currentTime);
 				});
 			});
