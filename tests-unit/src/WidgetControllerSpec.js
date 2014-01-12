@@ -216,7 +216,7 @@ describe("org.korsakow.controller.PlayTimWidgetController", function() {
 	});
 });
 
-describe("org.korsakow.controller.TotalTimWidgetController", function() {
+describe("org.korsakow.controller.TotalTimeWidgetController", function() {
 
 	it("should update the view based MainMedia's time changes", function() {
 		var mainMediaWidget = mock(org.korsakow.controller.MainMediaWidgetController);
