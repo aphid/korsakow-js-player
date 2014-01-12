@@ -458,7 +458,6 @@ org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.contr
 		var snu = env.getCurrentSnu();
 		var media = snu.mainMedia;
 		var stFile = media.subtitlesFilename;
-		stFile = 'subtitle/test.srt'; // TODO don't hardcode
 		if (stFile) {
 			this.parseSubtitles(stFile, function () {
 				var mainmedia = env.getMainMediaWidget();
