@@ -135,14 +135,19 @@ org.korsakow.ui.SubtitlesUI = Class.register('org.korsakow.ui.SubtitlesUI', {
 		this.element.css({
 			color: 'white'
 		});
+		this.currentText = [];
 	},
 	updateText: function(newText) {
-		var i;
+		this.currentText = newText;
+		this.render();
+	},
+	render: function () {
 		var lineElements = [];
+		var i;
 
-		for (i = 0; i < newText.length; i++) {
+		for (i = 0; i < this.currentText.length; i++) {
 			lineElements.push(
-				$('<p></p>').text(newText[i]).addClass('subtitleLine')
+				$('<p></p>').text(this.currentText[i]).addClass('subtitleLine')
 			);
 		}
 
