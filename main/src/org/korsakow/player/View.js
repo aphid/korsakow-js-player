@@ -135,27 +135,13 @@ org.korsakow.ui.SubtitlesUI = Class.register('org.korsakow.ui.SubtitlesUI', {
 		this.element.css({
 			color: 'white'
 		});
-		this.currentText = [];
 	},
-	updateText: function(newText) {
-		this.currentText = newText;
-		this.render();
-	},
-	render: function () {
-		var lineElements = [];
-		var i;
-
-		for (i = 0; i < this.currentText.length; i++) {
-			lineElements.push(
-				$('<p></p>').text(this.currentText[i]).addClass('subtitleLine')
-			);
-		}
-
+	text: function(text) {
 		this.element.children().remove();
 
-		for (i = 0; i < lineElements.length; i++) {
-			this.element.append(lineElements[i]);
-		}
+		this.element.appendtext.map(function(t) {
+			$('<p/>').html(t).addClass('subtitleLine')[0];
+		});
 	}
 });
 

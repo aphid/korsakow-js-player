@@ -459,10 +459,10 @@ org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.contr
 		var media = snu.mainMedia;
 		var stFile = media.subtitlesFilename;
 		if (stFile) {
-			this.parseSubtitles(stFile, function onSubtitleDownload () {
+			this.parseSubtitles(stFile, function onSubtitleDownload() {
 				var mainmedia = env.getMainMediaWidget();
 				var vid = mainmedia.view;
-				vid.bind('timeupdate', function subtitleTimeUpdate (event) {
+				vid.bind('timeupdate', function subtitleTimeUpdate(event) {
 					This.handleTimeUpdate(this.currentTime);
 				});
 			});
@@ -472,46 +472,44 @@ org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.contr
 		var mediaUI = this.view = env.createMediaUI(this.model.getClass().className);
 		this.element.append(mediaUI.element);
 	},
-	handleTimeUpdate: function (time) {
+	handleTimeUpdate: function(time) {
 		var i = 0;
 		var cuepoint;
-		var This = this;
 		var cuepoints = this.cuePoints.slice(0);
 		for (i = 0; i < cuepoints.length; i++) {
 			cuepoint = cuepoints[i];
 			if (cuepoint.time <= time && time < (cuepoint.time + cuepoint.duration)) {
-				this.view.updateText(cuepoint.subtitle);
+				this.view.text(cuepoint.subtitle);
 			}
 		}
 	},
-	getSubtitles: function (){
+	getSubtitles: function() {
 		return this.model.subtitles;
 	},
-	parseSubtitles: function(filePath, cb){
+	parseSubtitles: function(filePath, cb) {
 		var This = this;
 		var cuePoints = new Array();
 		jQuery.ajax({
 			url: 'data/' + filePath,
 			success: function(data) {
-				if(filePath.match("srt")){ //TODO create better regular expression
+				if (filePath.match(/[.]srt$/)) {
 					var parser = new org.korsakow.util.StrSubtitleParser();
 					cuePoints = parser.parse(data);
-				}else if(filePath.match("k3")){
+				} else if (filePath.match(/[.]txt$/)) {
 					cuePoints = this.parseK3CuePoints(data);
-				}else{
-					throw "Improper Parse File Type";
+				} else{
+					throw new Error("Don't know how to parse subtitles of type: " + filePath);
 				}
-				cb();
 				This.cuePoints = cuePoints;
-				return cuePoints;
+				cb();
 			}
 		}); //ajax request
 			
 	},
-	parseK3CuePoint: function(line){
-		//Need k3 example file to parse
+	parseK3CuePoint: function(line) {
+		throw new Error("K3 subtitles not yet supported");
 	},
-	getSubTime: function(timeStr){
+	getSubTime: function(timeStr) {
 		//this part is a little hard coded for my liking
 		hh = timeStr.slice(0,2);
 		mm = timeStr.slice(3,5);
@@ -528,7 +526,7 @@ org.korsakow.controller.SubtitlesCuePointController = Class.register('org.korsak
 	setup: function($super, env){
 		$super(env);
 	},
-	getName: function () {
+	getName: function() {
 		return this.model.name;
 	},
 	getStartTime: function(){
