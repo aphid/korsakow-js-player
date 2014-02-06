@@ -84,15 +84,7 @@ function start(dao) {
 		backgroundColor: env.project.backgroundColor?env.project.backgroundColor:null
 	});
 
-	var splashScreenUI = org.korsakow.ui.MediaUIFactory.create(env.project.splashScreenMedia.getClass().className);
-	splashScreenUI.load(env.resolvePath(env.project.splashScreenMedia.filename));
-	splashScreenUI.element.addClass('clickable').css({
-		width: '100%',
-		height: '100%'
-	});
-	splashScreenUI.element.click(W(function() {
-		$(this).remove();
-		
+	function playFirstSnu() {
 		// TODO: if no starter found, use any random SNU
 		env.executeSnu( dao.find({
 			type: "Snu",
@@ -102,7 +94,7 @@ function start(dao) {
 		})[0] );
 
 		//start BG music
-		if(env.project.backgroundSoundMedia){
+		if (env.project.backgroundSoundMedia) {
 			env.soundManager.playSound({
 				uri:env.resolvePath(env.project.backgroundSoundMedia.filename),
 				channel:"backgroundSound", // TODO: make into const
@@ -111,10 +103,23 @@ function start(dao) {
 				volume: env.project.backgroundSoundVolume
 			});
 		}
-	}));
+	};
+	
+	if (env.project.splashScreenMedia) {
+		var splashScreenUI = org.korsakow.ui.MediaUIFactory.create(env.project.splashScreenMedia.getClass().className);
+		splashScreenUI.load(env.resolvePath(env.project.splashScreenMedia.filename));
+		splashScreenUI.element.addClass('clickable').css({
+			width: '100%',
+			height: '100%'
+		});
+		splashScreenUI.element.click(W(function() {
+			$(this).remove();
+			playFirstSnu();
+		}));
+		
+		view.append(splashScreenUI.element);
+	} else
+		playFirstSnu();
 	
 	// TODO: handle spashscreen timeout
-	
-	view.append(splashScreenUI.element);
-	
 }

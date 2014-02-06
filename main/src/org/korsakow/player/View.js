@@ -135,27 +135,13 @@ org.korsakow.ui.SubtitlesUI = Class.register('org.korsakow.ui.SubtitlesUI', {
 		this.element.css({
 			color: 'white'
 		});
-		this.currentText = [];
 	},
-	updateText: function(newText) {
-		this.currentText = newText;
-		this.render();
-	},
-	render: function () {
-		var lineElements = [];
-		var i;
-
-		for (i = 0; i < this.currentText.length; i++) {
-			lineElements.push(
-				$('<p></p>').text(this.currentText[i]).addClass('subtitleLine')
-			);
-		}
-
+	text: function(text) {
 		this.element.children().remove();
 
-		for (i = 0; i < lineElements.length; i++) {
-			this.element.append(lineElements[i]);
-		}
+		this.element.append(text.map(function(t) {
+			return $('<p/>').html(t).addClass('subtitleLine')[0];
+		}));
 	}
 });
 
@@ -212,5 +198,4 @@ org.korsakow.ui.MediaUIFactory = Class.register("org.korsakow.ui.MediaUIFactory"
 org.korsakow.ui.MediaUIFactory.instance = new org.korsakow.ui.MediaUIFactory();
 org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.Image", org.korsakow.ui.ImageUI);
 org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.Video", org.korsakow.ui.VideoUI);
-org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.widget.Subtitles", org.korsakow.ui.SubtitlesUI);
 //org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.Sound", org.korsakow.ui.AudioUI);
