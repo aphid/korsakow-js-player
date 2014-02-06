@@ -766,12 +766,17 @@ org.korsakow.domain.ProjectInputMapper = Class.register('org.korsakow.domain.Pro
 		var name = this.parseString(data, "name");
 		var width = this.parseInt(data, "movieWidth");
 		var height = this.parseInt(data, "movieHeight");
-		var splashScreenMedia = this.dao.findById(this.parseInt(data, "splashScreenMediaId"));
+		var splashScreenMedia = (function() {
+			if (data.children("splashScreenMediaId").length) {
+				return this.dao.findById(this.parseInt(data, "splashScreenMediaId"));
+			} else
+				return null;
+		}).apply(this);
 		
 		var backgroundSoundVolume = 1.0;
 		var backgroundSoundLooping = true;
-		var backgroundSoundMedia = (function(){
-			if(data.children("backgroundSoundId").length){
+		var backgroundSoundMedia = (function() {
+			if(data.children("backgroundSoundId").length) {
 				backgroundSoundVolume = this.parseFloat(data, "backgroundSoundVolume");
 				backgroundSoundLooping = this.parseBoolean(data, "backgroundSoundLooping");
 				return this.dao.findById(this.parseInt(data, "backgroundSoundId"));

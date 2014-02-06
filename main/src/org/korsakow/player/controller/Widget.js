@@ -469,19 +469,15 @@ org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.contr
 		}
 
 		this.element.addClass("SubtitlesWidget");
-		var mediaUI = this.view = env.createMediaUI(this.model.getClass().className);
+		var mediaUI = this.view = new org.korsakow.ui.SubtitlesUI();
 		this.element.append(mediaUI.element);
 	},
 	handleTimeUpdate: function(time) {
-		var i = 0;
-		var cuepoint;
-		var cuepoints = this.cuePoints.slice(0);
-		for (i = 0; i < cuepoints.length; i++) {
-			cuepoint = cuepoints[i];
+		this.cuePoints.forEach(function(cuepoint) {
 			if (cuepoint.time <= time && time < (cuepoint.time + cuepoint.duration)) {
 				this.view.text(cuepoint.subtitle);
 			}
-		}
+		}, this);
 	},
 	getSubtitles: function() {
 		return this.model.subtitles;

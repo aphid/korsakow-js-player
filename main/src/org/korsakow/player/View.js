@@ -139,9 +139,9 @@ org.korsakow.ui.SubtitlesUI = Class.register('org.korsakow.ui.SubtitlesUI', {
 	text: function(text) {
 		this.element.children().remove();
 
-		this.element.appendtext.map(function(t) {
-			$('<p/>').html(t).addClass('subtitleLine')[0];
-		});
+		this.element.append(text.map(function(t) {
+			return $('<p/>').html(t).addClass('subtitleLine')[0];
+		}));
 	}
 });
 
@@ -198,5 +198,4 @@ org.korsakow.ui.MediaUIFactory = Class.register("org.korsakow.ui.MediaUIFactory"
 org.korsakow.ui.MediaUIFactory.instance = new org.korsakow.ui.MediaUIFactory();
 org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.Image", org.korsakow.ui.ImageUI);
 org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.Video", org.korsakow.ui.VideoUI);
-org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.widget.Subtitles", org.korsakow.ui.SubtitlesUI);
 //org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.Sound", org.korsakow.ui.AudioUI);
