@@ -37,8 +37,9 @@ org.korsakow.domain.Media = Class.register('org.korsakow.domain.Media', org.kors
 });
 
 org.korsakow.domain.Video = Class.register('org.korsakow.domain.Video', org.korsakow.domain.Media, {
-	initialize: function($super, id, filename) {
+	initialize: function($super, id, filename, subtitlesFilename) {
 		$super(id, filename);
+		this.subtitlesFilename = subtitlesFilename;
 	}
 });
 

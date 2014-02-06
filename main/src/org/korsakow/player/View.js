@@ -128,6 +128,37 @@ org.korsakow.ui.VideoUI = Class.register('org.korsakow.ui.VideoUI', org.korsakow
 	}
 });
 
+org.korsakow.ui.SubtitlesUI = Class.register('org.korsakow.ui.SubtitlesUI', {
+	initialize: function($super, opts) {
+		$super();
+		this.element = jQuery("<div></div>");
+		this.element.css({
+			color: 'white'
+		});
+		this.currentText = [];
+	},
+	updateText: function(newText) {
+		this.currentText = newText;
+		this.render();
+	},
+	render: function () {
+		var lineElements = [];
+		var i;
+
+		for (i = 0; i < this.currentText.length; i++) {
+			lineElements.push(
+				$('<p></p>').text(this.currentText[i]).addClass('subtitleLine')
+			);
+		}
+
+		this.element.children().remove();
+
+		for (i = 0; i < lineElements.length; i++) {
+			this.element.append(lineElements[i]);
+		}
+	}
+});
+
 /*org.korsakow.ui.AudioUI = Class.create({
 	initialize: function(opts) {
 		this.element = jQuery("<audio />");
@@ -181,4 +212,5 @@ org.korsakow.ui.MediaUIFactory = Class.register("org.korsakow.ui.MediaUIFactory"
 org.korsakow.ui.MediaUIFactory.instance = new org.korsakow.ui.MediaUIFactory();
 org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.Image", org.korsakow.ui.ImageUI);
 org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.Video", org.korsakow.ui.VideoUI);
+org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.widget.Subtitles", org.korsakow.ui.SubtitlesUI);
 //org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.Sound", org.korsakow.ui.AudioUI);

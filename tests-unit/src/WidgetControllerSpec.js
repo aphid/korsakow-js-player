@@ -216,7 +216,7 @@ describe("org.korsakow.controller.PlayTimWidgetController", function() {
 	});
 });
 
-describe("org.korsakow.controller.TotalTimWidgetController", function() {
+describe("org.korsakow.controller.TotalTimeWidgetController", function() {
 
 	it("should update the view based MainMedia's time changes", function() {
 		var mainMediaWidget = mock(org.korsakow.controller.MainMediaWidgetController);
@@ -261,5 +261,42 @@ describe("org.korsakow.controller.TotalTimWidgetController", function() {
 		expect(controller.element.css('font-style')).toEqual(model.fontStyle);
 		expect(controller.element.css('font-size')).toEqual(model.fontSize + 'pt');
 		expect(controller.element.css('text-decoration')).toEqual(model.textDecoration);
+	});
+});
+
+describe("org.korsakow.controller.SubtitlesController", function() {
+	it("should update the view based MainMedia's time changes", function() {
+		var mainMediaWidget = mock(org.korsakow.controller.MainMediaWidgetController);
+		var mediaUI = mainMediaWidget.view = (new org.korsakow.ui.MediaUI());
+		mediaUI.element = jQuery('<div>x</div>');
+		mediaUI.duration = function(){return 123;};
+		var model = mock(org.korsakow.domain.widget.Subtitles);
+		
+		var env = mock(org.korsakow.Environment);
+		var snu = mock(org.korsakow.domain.Snu);
+		when(env).getCurrentSnu().thenReturn(snu);
+		when(model).getClass().thenReturn({className: 'org.korsakow.domain.widget.Subtitles'});
+
+		var subtitleView = mock(org.korsakow.ui.SubtitlesUI);
+
+		when(env).createMediaUI('org.korsakow.domain.widget.Subtitles').thenReturn(subtitleView);
+		var mainMedia = mock(org.korsakow.domain.Video);
+		snu.mainMedia = mainMedia;
+		mainMedia.subtitlesFilename = 'subtitle/test.srt';
+		when(env).getMainMediaWidget().thenReturn(mainMediaWidget);
+
+		var controller = spy(new org.korsakow.controller.SubtitlesController(model));
+		controller.setup(env);
+
+		waitsFor(function () {
+			// wait for the subtitles to be populated.
+			return controller.cuePoints && controller.cuePoints.length > 0;
+		}, "should download the subtitle file", 100);
+
+		runs(function () {
+			mediaUI.element[0].currentTime = 11;
+			mediaUI.element.trigger('timeupdate');
+			verify(subtitleView).updateText(JsHamcrest.Matchers.equivalentArray(["heh, I used to be pretty good at this game.", "wow such lines much subtitle"]));
+		});
 	});
 });

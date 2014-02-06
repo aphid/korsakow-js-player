@@ -107,10 +107,10 @@ org.korsakow.domain.widget.PlayButton = Class.register('org.korsakow.domain.widg
 });
 
 org.korsakow.domain.widget.Subtitles = Class.register('org.korsakow.domain.widget.Subtitles', org.korsakow.domain.Widget, {
-	initialize: function($super, id, keywords, type, x, y, width, height, subtitleCueArray) {
+	initialize: function($super, id, keywords, type, x, y, width, height, font) {
 		$super(id, keywords, type, x, y, width, height);
 		this.subtitles = new Array();
-		this.subtitles = subtitleCueArray.slice(0);
+		this.font = font;
 	}
 });
 
