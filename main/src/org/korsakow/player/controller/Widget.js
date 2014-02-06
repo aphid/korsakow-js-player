@@ -507,28 +507,6 @@ org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.contr
 	}
 });
 
-org.korsakow.controller.SubtitlesCuePointController = Class.register('org.korsakow.controller.SubtitlesCuePointController', org.korsakow.controller.AbstractWidgetController, {
-	initialize: function($super, model) {
-		$super(model);
-	},
-	setup: function($super, env){
-		$super(env);
-	},
-	getName: function() {
-		return this.model.name;
-	},
-	getStartTime: function(){
-		return this.model.startTime;
-	},
-	getEndTime: function(){
-		return this.model.endTime;
-	},
-	getSubtitles: function(){
-		return this.model.subtitles;
-	}
-});
-
-org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.SubtitleCuePoint", org.korsakow.controller.SubtitlesCuePointController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.Subtitles", org.korsakow.controller.SubtitlesController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.MainMedia", org.korsakow.controller.MainMediaWidgetController);
 org.korsakow.controller.WidgetControllerFactory.register("org.korsakow.widget.SnuAutoLink", org.korsakow.controller.PreviewWidgetController);
