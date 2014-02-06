@@ -504,14 +504,6 @@ org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.contr
 	},
 	parseK3CuePoint: function(line) {
 		throw new Error("K3 subtitles not yet supported");
-	},
-	getSubTime: function(timeStr) {
-		//this part is a little hard coded for my liking (stumbly)
-		hh = timeStr.slice(0,2);
-		mm = timeStr.slice(3,5);
-		ss = timeStr.slice(6,8);
-		ms = timeStr.slice(9);
-		return ((hh*60*60) + (mm*60) + (ss * 1000) + ms);	 
 	}
 });
 
