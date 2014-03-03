@@ -106,7 +106,7 @@ function start(dao) {
 	};
 	
 	if (env.project.splashScreenMedia) {
-		var splashScreenUI = org.korsakow.ui.MediaUIFactory.create(env.project.splashScreenMedia.getClass().className);
+		var splashScreenUI = env.createMediaUI(env.project.splashScreenMedia.getClass().className, env.project.splashScreenMedia);
 		splashScreenUI.load(env.resolvePath(env.project.splashScreenMedia.filename));
 		splashScreenUI.element.addClass('clickable').css({
 			width: '100%',
