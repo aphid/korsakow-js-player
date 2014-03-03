@@ -71,7 +71,7 @@ org.korsakow.controller.MainMediaWidgetController = Class.register('org.korsakow
 		var media = snu.mainMedia;
 		
 		this.element.addClass("MainMediaWidget");
-		var mediaUI = this.view = env.createMediaUI(media.getClass().className);
+		var mediaUI = this.view = env.createMediaUI(media.getClass().className, media);
 		this.element.append(mediaUI.element);
 		mediaUI.element.css({
 			width: "100%",
@@ -123,7 +123,7 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 	setSnu: function(snu) {
 		this.clear();
 		var media = snu.previewMedia;
-		var mediaUI = this.env.createMediaUI(media.getClass().className);
+		var mediaUI = this.env.createMediaUI(media.getClass().className, media);
 		this.element.append(mediaUI.element);
 		mediaUI.element.css({
 			width: "100%",
