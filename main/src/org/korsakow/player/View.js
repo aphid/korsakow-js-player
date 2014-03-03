@@ -23,11 +23,9 @@ org.korsakow.ui.MediaUI = Class.register('org.korsakow.ui.MediaUI', {
  * 
  */
 org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow.ui.MediaUI, {
-	initialize: function($super, opts) {
+	initialize: function($super, model) {
 		$super();
 		this.element = jQuery("<img />");
-		if (opts && opts.src)
-			this.element.attr("src", opts.src);
 		this.isPlaying = false;
 		this.isEnded = false;
 	},
@@ -58,12 +56,9 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
  * 
  */
 org.korsakow.ui.VideoUI = Class.register('org.korsakow.ui.VideoUI', org.korsakow.ui.MediaUI, {
-	initialize: function($super, opts) {
+	initialize: function($super, model) {
 		$super();
 		this.element = jQuery("<video />");
-		if (opts && opts.src) {
-			alert('todo! VideoUI');
-		}
 	},
 	bind: function() {
 		this.element.bind.apply(this.element, arguments);
