@@ -310,8 +310,8 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 		
 		this.applyGlobalVolume();
 	},
-	createMediaUI: function(className) {
-		return org.korsakow.ui.MediaUIFactory.create(className);
+	createMediaUI: function(className, opts) {
+		return org.korsakow.ui.MediaUIFactory.create(className, opts);
 	},
 	applyGlobalVolume: function(){
 		var vol = org.korsakow.Audio.globalVolume;
