@@ -50,8 +50,9 @@ org.korsakow.domain.Sound = Class.register('org.korsakow.domain.Sound', org.kors
 });
 
 org.korsakow.domain.Image = Class.register('org.korsakow.domain.Image', org.korsakow.domain.Media, {
-	initialize: function($super, id, filename) {
+	initialize: function($super, id, filename, duration) {
 		$super(id, filename);
+		this.duration = duration;
 	}
 });
 

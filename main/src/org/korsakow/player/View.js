@@ -28,7 +28,7 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		this.element = jQuery("<img />");
 		this.isPlaying = false;
 		this.isEnded = false;
-		this.element.prop('duration', 5) //for testing;
+		this.element.prop('duration', model.duration);
 		this.isPlaying = false;
 		this.updateInterval = 16; //ms
 		this.isEnded = false;
@@ -38,13 +38,7 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 	},
 	bind: function(eventType, cb) {
 		var args = arguments;
-		if (arguments.length > 0 && arguments[0] === 'timeupdate') {
-			cb.apply({
-				currentTime: 0
-			}, args);
-		} else {
-			this.element.bind.apply(this.element, arguments);
-		}
+		this.element.bind.apply(this.element, arguments);
 		this.element.trigger( "loadedmetadata" );
 		this.element.trigger( "loadeddata" );
 		this.element.trigger( "canplay" );
@@ -75,6 +69,8 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		if (this.currentTime() >= this.duration()){
 			this.element.trigger("ended");
 			this.isEnded = true;
+			this.element.prop("paused", true);
+			console.log("Played for " + this.duration());
 			clearInterval(this.interval);
 		}
 	},
