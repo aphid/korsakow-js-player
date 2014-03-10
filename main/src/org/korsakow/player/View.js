@@ -28,6 +28,13 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		this.element = jQuery("<img />");
 		this.isPlaying = false;
 		this.isEnded = false;
+		this.element.prop('duration', 5) //for testing;
+		this.isPlaying = false;
+		this.updateInterval = 16; //ms
+		this.isEnded = false;
+		this.element.prop('currentTime', 0);
+		this.element.prop('paused', true);
+		this.startTime = 0;
 	},
 	bind: function(eventType, cb) {
 		var args = arguments;
@@ -38,18 +45,54 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		} else {
 			this.element.bind.apply(this.element, arguments);
 		}
+		this.element.trigger( "loadedmetadata" );
+		this.element.trigger( "loadeddata" );
+		this.element.trigger( "canplay" );
+		this.element.trigger( "canplaythrough" );
 	},
 	load: function(src) {
 		this.element.attr("src", src);
+		//only main widget should 'play' -- surely not most elegant solution to this
+		if (this.element.hasClass("MainMediaWidget")){
+			this.play();
+		}
 	},
 	source: function() {
 		return this.element.attr("src");
 	},
-	play: function () { this.isPlaying = true; },
-	pause: function() { this.isPlaying = false; },
+	play: function() {
+		this.isPlaying = true;
+		this.element.prop("paused", false);
+		this.element.trigger("playing");
+		this.startTime = Date.now();
+		var that = this;
+		this.interval = setInterval( function() { that.imagePlay(); }, that.updateInterval );
+	},
+	imagePlay: function(){
+		this.currentTime(this.currentTime() + (( Date.now() - this.startTime ) / 1000)) ;
+		this.startTime = Date.now();
+		this.element.trigger("timeupdate");
+		if (this.currentTime() >= this.duration()){
+			this.element.trigger("ended");
+			this.isEnded = true;
+			clearInterval(this.interval);
+		}
+	},
+	pause: function() { 
+		this.isPlaying = false;
+		this.element.trigger("paused");
+		this.prop("paused", true);
+	},
 	paused: function() { return !this.isPlaying; },
 	ended: function() { return this.isEnded; },
-	currentTime: function() { }
+	currentTime: function(x) {
+		if (typeof x != "undefined")
+			this.element.prop('currentTime', x);
+		return this.element.prop('currentTime');
+	},
+	duration: function(){
+		return this.element.prop('duration');
+	}
 });
 
 /* Wrapper around HTML videos.
