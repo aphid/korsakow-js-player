@@ -45,21 +45,20 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 	},
 	load: function(src) {
 		this.element.attr("src", src);
-		//only main widget should 'play' -- surely not most elegant solution to this
-		if (this.element.hasClass("MainMediaWidget")){
-			this.play();
-		}
 	},
 	source: function() {
 		return this.element.attr("src");
 	},
 	play: function() {
+		if (this.isPlaying === true){
+			return false;
+		}
 		this.isPlaying = true;
 		this.element.prop("paused", false);
 		this.element.trigger("playing");
 		this.startTime = Date.now();
 		var that = this;
-		this.interval = setInterval( function() { that.imagePlay(); }, that.updateInterval );
+		this.interval = setInterval(function() { that.imagePlay(); }, that.updateInterval);
 	},
 	imagePlay: function(){
 		this.currentTime(this.currentTime() + (( Date.now() - this.startTime ) / 1000)) ;
@@ -69,11 +68,13 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 			this.element.trigger("ended");
 			this.isEnded = true;
 			this.element.prop("paused", true);
-			//console.log("Played for " + this.duration());
 			clearInterval(this.interval);
 		}
 	},
 	pause: function() { 
+		if (this.isPlaying === false){
+			return false;
+		}
 		this.isPlaying = false;
 		this.element.trigger("paused");
 		this.prop("paused", true);
@@ -110,6 +111,10 @@ org.korsakow.ui.VideoUI = Class.register('org.korsakow.ui.VideoUI', org.korsakow
 			{
 				type: 'video/ogg',
 				src: src + '.ogv'
+			},
+			{
+				type: 'video/webm',
+				src: src + '.webm'
 			},
 			{
 				type: 'video/mp4',
