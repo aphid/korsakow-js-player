@@ -273,13 +273,28 @@ describe("org.korsakow.controller.SubtitlesController", function() {
 		var model = mock(org.korsakow.domain.widget.Subtitles);
 		
 		var env = mock(org.korsakow.Environment);
+		when(env).resolvePath().then(function(x) { return x; });
+		env.ajax = function(opts) {
+			var data = ['' +
+				'1',
+				'00:00:01,478 --> 00:00:04,020',
+				'heh, I used to be pretty good at this game.',
+				'',
+				'2',
+				'00:00:05,045 --> 00:00:09,545',
+				'wow such lines much subtitle',
+				'',
+				''].join('\r\n');
+
+			opts.success(data);
+		};
 		var snu = mock(org.korsakow.domain.Snu);
 		when(env).getCurrentSnu().thenReturn(snu);
 		when(model).getClass().thenReturn({className: 'org.korsakow.domain.widget.Subtitles'});
 
 		var subtitleView = mock(org.korsakow.ui.SubtitlesUI);
 
-		when(env).createMediaUI('org.korsakow.domain.widget.Subtitles').thenReturn(subtitleView);
+		when(env).createMediaUI('org.korsakow.domain.Subtitles').thenReturn(subtitleView);
 		var mainMedia = mock(org.korsakow.domain.Video);
 		snu.mainMedia = mainMedia;
 		mainMedia.subtitlesFilename = 'subtitle/test.srt';
@@ -294,9 +309,13 @@ describe("org.korsakow.controller.SubtitlesController", function() {
 		}, "should download the subtitle file", 100);
 
 		runs(function () {
-			mediaUI.element[0].currentTime = 11;
+			mediaUI.element[0].currentTime = 2;
 			mediaUI.element.trigger('timeupdate');
-			verify(subtitleView).updateText(JsHamcrest.Matchers.equivalentArray(["heh, I used to be pretty good at this game.", "wow such lines much subtitle"]));
+			verify(subtitleView).text(["heh, I used to be pretty good at this game."]);
+
+			mediaUI.element[0].currentTime = 7;
+			mediaUI.element.trigger('timeupdate');
+			verify(subtitleView).text(["wow such lines much subtitle"]);
 		});
 	});
 });
