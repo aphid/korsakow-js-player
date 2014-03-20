@@ -253,6 +253,9 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 	resolvePath: function(path) {
 		return 'data/' + path;
 	},
+	ajax: function(opts) {
+		return jQuery.ajax(opts);
+	},
 	getProject: function() {
 		return this.project;
 	},

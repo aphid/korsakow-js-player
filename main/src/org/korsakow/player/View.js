@@ -238,4 +238,5 @@ org.korsakow.ui.MediaUIFactory = Class.register("org.korsakow.ui.MediaUIFactory"
 org.korsakow.ui.MediaUIFactory.instance = new org.korsakow.ui.MediaUIFactory();
 org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.Image", org.korsakow.ui.ImageUI);
 org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.Video", org.korsakow.ui.VideoUI);
+org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.Subtitles", org.korsakow.ui.SubtitlesUI);
 //org.korsakow.ui.MediaUIFactory.register("org.korsakow.domain.Sound", org.korsakow.ui.AudioUI);

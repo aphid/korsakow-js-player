@@ -457,7 +457,11 @@ org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.contr
 		var This = this;
 		var snu = env.getCurrentSnu();
 		var media = snu.mainMedia;
-		var stFile = media.subtitlesFilename;
+		this.element.addClass("SubtitlesWidget");
+		var mediaUI = this.view = env.createMediaUI('org.korsakow.domain.Subtitles');
+		this.element.append(mediaUI.element);
+
+		var stFile = env.resolvePath(media.subtitlesFilename);
 		if (stFile) {
 			this.parseSubtitles(stFile, function onSubtitleDownload() {
 				var mainmedia = env.getMainMediaWidget();
@@ -468,10 +472,7 @@ org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.contr
 			});
 		}
 
-		this.element.addClass("SubtitlesWidget");
-		var mediaUI = this.view = new org.korsakow.ui.SubtitlesUI();
-		this.element.append(mediaUI.element);
-	},
+},
 	handleTimeUpdate: function(time) {
 		this.cuePoints.forEach(function(cuepoint) {
 			if (cuepoint.time <= time && time < (cuepoint.time + cuepoint.duration)) {
@@ -485,8 +486,8 @@ org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.contr
 	parseSubtitles: function(filePath, cb) {
 		var This = this;
 		var cuePoints = new Array();
-		jQuery.ajax({
-			url: 'data/' + filePath,
+		this.env.ajax({
+			url: filePath,
 			success: function(data) {
 				if (filePath.match(/[.]srt$/)) {
 					var parser = new org.korsakow.util.StrSubtitleParser();
