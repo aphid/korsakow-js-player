@@ -31,7 +31,11 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		this.startTime = 0;
 		this.updateInterval = 16; //ms
 		this.element.prop('currentTime', 0);
-		this.element.prop('duration', model.duration);
+		if (model !== undefined){
+			this.element.prop('duration', model.duration);
+		} else {
+			this.element.prop('duration', 5);
+		}
 		this.element.prop('paused', true);
 	},
 	bind: function(eventType, cb) {
