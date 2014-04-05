@@ -29,7 +29,7 @@ describe("org.korsakow.controller.MainMediaWidgetController", function() {
 			playfired = true;
 		});
 		img.bind("ended", function(){
-			emdedfired = true;
+			endedfired = true;
 		});
 		img.bind("play", function(){
 			pausedfired = true;
