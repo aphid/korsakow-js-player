@@ -21,13 +21,23 @@ describe("org.korsakow.controller.MainMediaWidgetController", function() {
 		controller.setup(env);
 		
 		var img = controller.element.find("img");
-		
+		var playfired, endedfired, pausedfired;
 		expect(img.attr('src')).toEqual(image.filename);
 		expect(img.prop.paused === true);
 		expect(mediaUI.currentTime()).toEqual(0);
+		img.bind("play", function(){
+			playfired = true;
+		});
+		img.bind("emded", function(){
+			emdedfired = true;
+		});
+		img.bind("play", function(){
+			pausedfired = true;
+		});
 		verify(mediaUI).play();
 		var value, flag;
 		waits(50);
+		expect(playfired === true);
 		runs(function() {
 			expect(mediaUI.currentTime()).toBeGreaterThan(0);
 		});
@@ -37,7 +47,9 @@ describe("org.korsakow.controller.MainMediaWidgetController", function() {
 			//allow for a frame or two of miss, per common browser behavior.
 			expect(mediaUI.duration() - mediaUI.currentTime()).toBeLessThan(0.1);
 			expect(img.prop.ended === true);
+			expect(endedfired === true);
 			expect(img.prop.paused === true);
+			expect(pausedfired === true);
 		});
   	});
     
