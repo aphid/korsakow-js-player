@@ -28,7 +28,7 @@ describe("org.korsakow.controller.MainMediaWidgetController", function() {
 		img.bind("play", function(){
 			playfired = true;
 		});
-		img.bind("emded", function(){
+		img.bind("ended", function(){
 			emdedfired = true;
 		});
 		img.bind("play", function(){
