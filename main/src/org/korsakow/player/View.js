@@ -31,6 +31,7 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		this.startTime = 0;
 		this.updateInterval = 16; //ms
 		this.element.prop('currentTime', 0);
+		this.element.prop('ended', false);
 		if (model !== undefined){
 			this.element.prop('duration', model.duration);
 		} else {
@@ -57,9 +58,10 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		if (this.isPlaying === true){
 			return false;
 		}
+		this.element.trigger("play");
+		this.element.trigger("playing");
 		this.isPlaying = true;
 		this.element.prop("paused", false);
-		this.element.trigger("playing");
 		this.startTime = Date.now();
 		var that = this;
 		this.interval = setInterval(function() { that.imagePlay(); }, that.updateInterval);
@@ -69,7 +71,9 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		this.startTime = Date.now();
 		this.element.trigger("timeupdate");
 		if (this.currentTime() >= this.duration()){
+			this.element.prop("ended", true);
 			this.element.trigger("ended");
+			this.element.trigger("pause");
 			this.isEnded = true;
 			this.element.prop("paused", true);
 			clearInterval(this.interval);
