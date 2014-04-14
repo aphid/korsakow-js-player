@@ -52,6 +52,31 @@ org.korsakow.domain.rule.KeywordLookup = Class.register('org.korsakow.domain.rul
 		});
 	}
 });
+
+
+/* This Search rule finds a random SNU with the 'ender' property equal to TRUE and adds it to the search results.
+ * 
+ */
+org.korsakow.domain.rule.LookupEndfilm = Class.register('org.korsakow.domain.rule.LookupEndfilm', org.korsakow.domain.Rule, {
+	initialize: function($super, id, keywords, type) {
+		$super(id, keywords, type);
+	},
+	execute: function(env, searchResults) {
+		var snus = env.getDao().find({type: 'Snu', ender: true});
+		var enders = [];
+		//for some reason non-ender snus are making it through the find function.
+		jQuery.each(snus, function(j, snu) {
+			if (snu.ender === true){
+				enders.push(snu);	
+			}
+		});
+		searchResults.results.push( enders[Math.floor(Math.random()*enders.length)]);
+
+	
+	}
+});
+
+
 /* Filters from the list any SNU that has any of this rule's keywords
  * 
  */
