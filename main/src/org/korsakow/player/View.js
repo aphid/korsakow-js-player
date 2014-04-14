@@ -38,18 +38,19 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 			this.element.prop('duration', 5);
 		}
 		this.element.prop('paused', true);
+
 	},
 	bind: function(eventType, cb) {
 		var args = arguments;
 		this.element.bind.apply(this.element, arguments);
-		this.element.trigger('loadedmetadata');
-		this.element.trigger('loadeddata');
-		this.element.trigger('canplay');
-		this.element.trigger('canplaythrough'); 
-		this.element.prop('readystate', 4);
 	},
 	load: function(src) {
 		this.element.attr("src", src);
+		this.element.trigger("canplay");
+		this.element.trigger("loadedmetadata");
+		this.element.trigger("canplaythrough");
+		this.element.prop("readyState", 4);
+
 	},
 	source: function() {
 		return this.element.attr("src");
@@ -58,13 +59,13 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		if (this.isPlaying === true){
 			return false;
 		}
-		this.element.trigger("play");
-		this.element.trigger("playing");
 		this.isPlaying = true;
 		this.element.prop("paused", false);
 		this.startTime = Date.now();
 		var that = this;
 		this.interval = setInterval(function() { that.imagePlay(); }, that.updateInterval);
+		this.element.trigger("play");
+		this.element.trigger("playing");
 	},
 	imagePlay: function(){
 		this.currentTime(this.currentTime() + (( Date.now() - this.startTime ) / 1000)) ;
@@ -85,7 +86,7 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		}
 		this.isPlaying = false;
 		this.element.trigger("paused");
-		this.prop("paused", true);
+		this.element.prop("paused", true);
 	},
 	paused: function() { return !this.isPlaying; },
 	ended: function() { return this.isEnded; },

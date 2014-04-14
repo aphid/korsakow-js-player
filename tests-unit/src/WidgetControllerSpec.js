@@ -21,20 +21,17 @@ describe("org.korsakow.controller.MainMediaWidgetController", function() {
 		controller.setup(env);
 		
 		var img = controller.element.find("img");
+		mediaUI.pause();
 		var playfired = false, endedfired = false, pausedfired = false;
 		expect(img.attr('src')).toEqual(image.filename);
-		expect(img.prop.paused === true);
+		expect(img.prop('paused') === true);
 		expect(mediaUI.currentTime()).toEqual(0);
+		//for some reason neither of the above are firing, so getting it from timeupdate, which is
 		img.bind("playing", function(){
 			playfired = true;
 		});
 		img.bind("play", function(){
 			playfired = true;
-		});
-		//for some reason neither of the above are firing, so getting it from timeupdate, which is
-		img.bind("timeupdate", function(){
-			playfired = true;
-			img.unbind("timeupdate");
 		});
 		img.bind("pause", function(){
 			pausedfired = true;
@@ -42,6 +39,7 @@ describe("org.korsakow.controller.MainMediaWidgetController", function() {
 		img.bind("ended", function(){
 			endedfired = true;
 		});
+		mediaUI.play();
 		var value, flag;
 		waits(50);
 		runs(function() {
