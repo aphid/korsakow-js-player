@@ -33,14 +33,10 @@ describe("org.korsakow.domain.rule.KeywordLookup", function() {
 
 		var env = mock(org.korsakow.Environment);
 		when(env).getDao().thenReturn(dao);
-		when(env).getCurrentSnu().thenReturn(nonEnderSnus[0]);
-
 		var rule = new org.korsakow.domain.rule.LookupEndfilm(1, makeKeywords(['anything']), '');
 		var results = new org.korsakow.SearchResults();
 		rule.execute(env, results);
-		
 		expect(results.results.length).toEqual(1);
-		console.log(results);
 		expect(results.results[0].id).toBeGreaterThan(2);
 		expect(results.results[0].id).toBeLessThan(6);
 

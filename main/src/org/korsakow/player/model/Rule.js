@@ -62,13 +62,11 @@ org.korsakow.domain.rule.LookupEndfilm = Class.register('org.korsakow.domain.rul
 		$super(id, keywords, type);
 	},
 	execute: function(env, searchResults) {
-		var snus = env.getDao().find({type: 'Snu', ender: true});
+		var snus = env.getDao().find({props: { ender: true }, type: 'Snu'});
 		var enders = [];
 		//for some reason non-ender snus are making it through the find function.
 		jQuery.each(snus, function(j, snu) {
-			if (snu.ender === true){
-				enders.push(snu);	
-			}
+			enders.push(snu);	
 		});
 		searchResults.results.push( enders[Math.floor(Math.random()*enders.length)]);
 
