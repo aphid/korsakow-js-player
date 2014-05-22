@@ -68,6 +68,9 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		this.element.trigger("playing");
 	},
 	imagePlay: function(){
+		if (this.isPlaying !== true){
+			return false;
+		}
 		this.currentTime(this.currentTime() + (( Date.now() - this.startTime ) / 1000)) ;
 		this.startTime = Date.now();
 		this.element.trigger("timeupdate");
