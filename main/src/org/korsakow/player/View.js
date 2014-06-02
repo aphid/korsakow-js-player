@@ -32,7 +32,9 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		this.updateInterval = 16; //ms
 		this.element.prop('currentTime', 0);
 		this.element.prop('ended', false);
-		if (model !== undefined){
+		//first check required for test
+		if (typeof model != "undefined" && typeof model.duration != "undefined"){
+			console.log("dur is " + model.duration);
 			this.element.prop('duration', model.duration);
 		} else {
 			this.element.prop('duration', 5);
@@ -59,6 +61,7 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		if (this.isPlaying === true){
 			return false;
 		}
+		console.log("playing");
 		this.isPlaying = true;
 		this.element.prop("paused", false);
 		this.startTime = Date.now();
@@ -87,12 +90,16 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		if (this.isPlaying === false){
 			return false;
 		}
+		clearInterval(this.interval);
 		this.isPlaying = false;
 		this.element.trigger("paused");
 		this.element.prop("paused", true);
+		console.log("pausing at " + this.currentTime());
 	},
 	paused: function() { return !this.isPlaying; },
-	ended: function() { return this.isEnded; },
+	ended: function() { 
+		return this.isEnded;
+	},
 	currentTime: function(x) {
 		if (typeof x != "undefined"){
 			this.element.prop('currentTime', x);

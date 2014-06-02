@@ -46,7 +46,15 @@ describe("org.korsakow.controller.MainMediaWidgetController", function() {
 			expect(playfired).toEqual(true);
 			expect(mediaUI.currentTime()).toBeGreaterThan(0);
 		});
-		
+		var sometime = mediaUI.currentTime();
+		mediaUI.pause();
+		waits(50);
+		runs(function(){
+			console.log(mediaUI.currentTime() - sometime);
+			expect ((mediaUI.currentTime() - sometime)).toBeLessThan(0.3);
+		});
+		waits(50);
+		mediaUI.play();
 		//this slows down all the testing :[
 		waits(mediaUI.duration() * 1000 + 1000);
 		runs(function() {
