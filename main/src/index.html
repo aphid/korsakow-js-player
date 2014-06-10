@@ -31,17 +31,16 @@ body {
 	padding: 0;
 }
 </style>
-<script type="text/javascript" src="lib/jquery.js"></script>
-<script type="text/javascript" src="lib/prototype.class.js"></script>
-<script type="text/javascript" src="lib/korsakow_player.js"></script>
+<script type="text/javascript" src="data/lib/jquery.js"></script>
+<script type="text/javascript" src="data/lib/prototype.class.js"></script>
+<script type="text/javascript" src="data/lib/korsakow_player.js"></script>
 
 <script type="text/javascript">
-//parseSubtitles("test.srt");
 window.onerror = function(errorMsg, url, lineNumber) {
 	alert("Unhandled Exception at\n" + url + " (" + lineNumber + ")\n" + errorMsg);
 };
 
-$( function() {
+jQuery( function() {
 	jQuery.ajax({
 		url: "data/project.xml",
 		success: function(data) {
@@ -52,7 +51,6 @@ $( function() {
 	});
 
 });
-
 </script>
 </head>
 <body>

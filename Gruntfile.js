@@ -12,7 +12,7 @@ module.exports = function(grunt) {
         		      'main/src/org/korsakow/player/model/Model.js',
         		      'main/src/org/korsakow/player/controller/Controller.js',
         		      'main/src/org/**/*.js'],
-        		dest: 'dist/lib/korsakow_player.js'
+        		dest: 'dist/player/data/lib/korsakow_player.js'
         	},
         	tests: {
         		src: ['tests-unit/src/**/*.js'],
@@ -25,22 +25,22 @@ module.exports = function(grunt) {
         			expand: true,
         			cwd: 'main/src',
     				src: 'lib/*',
-    				dest: 'dist/'
+    				dest: 'dist/player/data/'
     			}, {
         			expand: true,
         			cwd: 'main/src',
     				src: 'css/*',
-    				dest: 'dist/'
+    				dest: 'dist/player/data/'
     			}, {
         			expand: true,
         			cwd: 'main/src',
     				src: 'images/*',
-    				dest: 'dist/'
+    				dest: 'dist/player/data/'
     			}, {
         			expand: true,
         			cwd: 'main/src',
     				src: 'index.html',
-    				dest: 'dist/'
+    				dest: 'dist/player/'
     			}]
         	},
         	tests: {
