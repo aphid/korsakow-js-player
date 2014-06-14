@@ -74,5 +74,6 @@ module.exports = function(grunt) {
   
     // Default task(s).
     grunt.registerTask('default', ['concat', 'copy']);
+    grunt.registerTask('dist', ['concat', 'copy']);
 
 };
