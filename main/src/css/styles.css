@@ -1,3 +1,25 @@
+body {
+	background-color: $backgroundColor$;
+	position: relative;
+}
+
+.clickable {
+	cursor: pointer;
+}
+
+.widget {
+	position: absolute;
+}
+
+.interface {
+	margin: auto auto;
+	position: relative; /* because widgets are absolute */
+}
+.InsertText p {
+	margin: 0;
+	padding: 0;
+}
+
 .PlayButton {background-image:url('../images/control_pause.png');}
 .PlayButton.paused {background-image:url('../images/control_play.png');}
 
