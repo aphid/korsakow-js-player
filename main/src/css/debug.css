@@ -1,0 +1,15 @@
+body {
+	background-color: red;
+}
+
+#view {
+	border: solid blue 1px;
+}
+
+.interface {
+	border: solid green 1px;
+}
+
+.widget {
+	border: solid red 1px;
+}
