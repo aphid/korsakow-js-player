@@ -257,6 +257,46 @@ org.korsakow.Logger = Class.register('org.korsakow.Logger', org.korsakow.Object,
 
 org.korsakow.log = new org.korsakow.Logger();
 
+org.korsakow.TimeoutFactory = Class.register('org.korsakow.TimeoutFactory', org.korsakow.Object, {
+	initialize: function($super) {
+		$super();
+	},
+	create: function(func, delay) {
+		return setTimeout(func, delay);
+	},
+	clear: function(id) {
+		clearTimeout(id);
+	}
+});
+org.korsakow.Timeout = new org.korsakow.TimeoutFactory();
+
+org.korsakow.IntervalFactory = Class.register('org.korsakow.IntervalFactory', org.korsakow.Object, {
+	initialize: function($super) {
+		$super();
+	},
+	create: function(func, delay) {
+		return setInterval(func, delay);
+	},
+	clear: function(id) {
+		clearInterval(id);
+	}
+});
+org.korsakow.Interval = new org.korsakow.IntervalFactory();
+
+org.korsakow.setTimeout = function(func, delay) {
+	return org.korsakow.Timeout.create.apply(org.korsakow.Timeout, arguments);
+};
+org.korsakow.clearTimeout = function(func, delay) {
+	return org.korsakow.Timeout.clear.apply(org.korsakow.Timeout, arguments);
+};
+
+org.korsakow.setInterval = function(func, delay) {
+	return org.korsakow.Interval.create.apply(org.korsakow.Interval, arguments);
+};
+org.korsakow.clearInterval = function(func, delay) {
+	return org.korsakow.Interval.clear.apply(org.korsakow.Interval, arguments);
+};
+
 org.korsakow.Utility = Class.register('org.korsakow.Utility', org.korsakow.Object, {
 	initialize: function($super){
 		$super();
@@ -579,22 +619,13 @@ org.korsakow.Audio.errorToString = function(e) {
 	}
 };
 
-/*
- * Utility class for time functions
- */
-org.korsakow.Time = Class.register('org.korsakow.Time', {
+org.korsakow.Date = Class.register('org.korsakow.Date', org.korsakow.Object, {
 });
-
 /* Gets the current data/time in milliseconds.
- * 
- * TODO: why call it getTimer? why not getTime or just time()
- * 
  */
-org.korsakow.getTimer =
-org.korsakow.Time.getTimer = function() {
-	return new Date().getTime() - org.korsakow.Time.init;
+org.korsakow.Date.now = function() {
+	return Date.now();
 };
-org.korsakow.Time.init = new Date().getTime();
 
 /* Interpolates a value over a period of time at a fixed rate.
  * 
@@ -617,7 +648,7 @@ org.korsakow.Tween = Class.register('org.korsakow.Tween', {
 	start: function() {
 		if (this.running) return;
 		this.running = true;
-		prev = org.korsakow.Time.getTimer();
+		prev = org.korsakow.Date.now();
 		this.timeout = setInterval(org.korsakow.ftor(this, this.onTimer), Math.min(50, this.duration));
 	},
 	stop: function() {
@@ -634,7 +665,7 @@ org.korsakow.Tween = Class.register('org.korsakow.Tween', {
 		this.timeout = null;
 	},
 	onTimer: function() {
-		var now = org.korsakow.Time.getTimer();
+		var now = org.korsakow.Date.now();
 		this.time = (now-prev);
 		this.prev = now;
 		if (this.time > this.duration)

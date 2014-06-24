@@ -30,16 +30,12 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		this.isEnded = false;
 		this.startTime = 0;
 		this.updateInterval = 16; //ms
-		this.element.prop('currentTime', 0);
-		this.element.prop('ended', false);
-		//first check required for test
-		if (typeof model != "undefined" && typeof model.duration != "undefined"){
-			console.log("dur is " + model.duration);
-			this.element.prop('duration', model.duration);
+		this._currentTime = 0;
+		if (typeof model.duration != "undefined"){
+			this._duration = model.duration;
 		} else {
-			this.element.prop('duration', 5);
+			this._duration = 5000;
 		}
-		this.element.prop('paused', true);
 
 	},
 	bind: function(eventType, cb) {
@@ -61,12 +57,10 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		if (this.isPlaying === true){
 			return false;
 		}
-		console.log("playing");
 		this.isPlaying = true;
-		this.element.prop("paused", false);
-		this.startTime = Date.now();
+		this.startTime = org.korsakow.Date.now();
 		var that = this;
-		this.interval = setInterval(function() { that.imagePlay(); }, that.updateInterval);
+		this.interval = org.korsakow.setInterval(function() { that.imagePlay(); }, that.updateInterval);
 		this.element.trigger("play");
 		this.element.trigger("playing");
 	},
@@ -74,15 +68,14 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		if (this.isPlaying === false){
 			return false;
 		}
-		this.currentTime(this.currentTime() + (( Date.now() - this.startTime ) / 1000)) ;
-		this.startTime = Date.now();
+		this.currentTime(this.currentTime() + (( org.korsakow.Date.now() - this.startTime ))) ;
+		this.startTime = org.korsakow.Date.now();
 		this.element.trigger("timeupdate");
 		if (this.currentTime() >= this.duration()){
-			this.element.prop("ended", true);
 			this.element.trigger("ended");
 			this.element.trigger("pause");
 			this.isEnded = true;
-			this.element.prop("paused", true);
+			this.isPlaying = false;
 			clearInterval(this.interval);
 		}
 	},
@@ -90,11 +83,10 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		if (this.isPlaying === false){
 			return false;
 		}
-		clearInterval(this.interval);
+		org.korsakow.clearInterval(this.interval);
+		this.interval = null;
 		this.isPlaying = false;
 		this.element.trigger("paused");
-		this.element.prop("paused", true);
-		console.log("pausing at " + this.currentTime());
 	},
 	paused: function() { return !this.isPlaying; },
 	ended: function() { 
@@ -102,13 +94,13 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 	},
 	currentTime: function(x) {
 		if (typeof x != "undefined"){
-			this.element.prop('currentTime', x);
+			this._currentTime = x;
 			this.element.trigger("seeked");
 		}
-		return this.element.prop('currentTime');
+		return this._currentTime;
 	},
 	duration: function(){
-		return this.element.prop('duration');
+		return this._duration;
 	}
 });
 
@@ -153,7 +145,7 @@ org.korsakow.ui.VideoUI = Class.register('org.korsakow.ui.VideoUI', org.korsakow
 	play: function() {
 		var This = this;
 		// firefox 7 needs async between append <source> & play
-		setTimeout(function() {
+		org.korsakow.setTimeout(function() {
 			This.element[0].play();
 		});
 	},
@@ -176,11 +168,11 @@ org.korsakow.ui.VideoUI = Class.register('org.korsakow.ui.VideoUI', org.korsakow
 	},
 	currentTime: function(x) {
 		if (typeof x != "undefined")
-			this.element.prop('currentTime', x);
-		return this.element.prop('currentTime');
+			this.element.prop('currentTime', Math.floor(x/1000));
+		return Math.floor(this.element.prop('currentTime')*1000);
 	},
 	duration: function() {
-		return this.element.prop('duration');
+		return Math.floor(this.element.prop('duration')*1000);
 	},
 	source: function() {
 		return this.element.find("source").attr("src");

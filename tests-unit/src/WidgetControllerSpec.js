@@ -4,11 +4,12 @@ describe("org.korsakow.controller.MainMediaWidgetController", function() {
 	
 	it("should work", function() {
 		var image = new org.korsakow.domain.Image();
+		image.duration = 1;
 		image.filename = "my/test/file.name";
 		var currentSnu = new org.korsakow.domain.Snu();
 		currentSnu.mainMedia = image;
 		
-		var mediaUI = spy(new org.korsakow.ui.ImageUI());
+		var mediaUI = spy(new org.korsakow.ui.ImageUI(image));
 		
 		var env = {
 			resolvePath: function(s) { return s; },
@@ -26,6 +27,7 @@ describe("org.korsakow.controller.MainMediaWidgetController", function() {
 		expect(img.attr('src')).toEqual(image.filename);
 		expect(img.prop('paused') === true);
 		expect(mediaUI.currentTime()).toEqual(0);
+		
 		//for some reason neither of the above are firing, so getting it from timeupdate, which is
 		img.bind("playing", function(){
 			playfired = true;
@@ -40,32 +42,17 @@ describe("org.korsakow.controller.MainMediaWidgetController", function() {
 			endedfired = true;
 		});
 		mediaUI.play();
-		var value, flag;
-		waits(50);
-		runs(function() {
-			expect(playfired).toEqual(true);
-			expect(mediaUI.currentTime()).toBeGreaterThan(0);
-		});
-		var sometime = mediaUI.currentTime();
-		mediaUI.pause();
-		waits(50);
-		runs(function(){
-			console.log(mediaUI.currentTime() - sometime);
-			expect ((mediaUI.currentTime() - sometime)).toBeLessThan(0.3);
-		});
-		waits(50);
-		mediaUI.play();
-		//this slows down all the testing :[
-		waits(mediaUI.duration() * 1000 + 1000);
-		runs(function() {
-			//allow for a frame or two of miss, per common browser behavior.
-			expect(mediaUI.duration() - mediaUI.currentTime()).toBeLessThan(0.1);
-			expect(img.prop("ended")).toEqual(true);
-			expect(endedfired).toEqual(true);
-			expect(img.prop("paused")).toEqual(true);
-			expect(pausedfired).toEqual(true);
 
-		});
+		org.korsakow.mock.flushTimers(100);
+		expect(playfired).toEqual(true);
+		expect(mediaUI.currentTime()).toBeGreaterThan(0);
+
+		//allow for a frame or two of miss, per common browser behavior.
+		expect(mediaUI.duration() - mediaUI.currentTime()).toBeLessThan(10);
+		expect(mediaUI.ended()).toEqual(true);
+		expect(endedfired).toEqual(true);
+		expect(mediaUI.paused()).toEqual(true);
+		expect(pausedfired).toEqual(true);
   	});
     
 });
@@ -76,7 +63,7 @@ describe("org.korsakow.controller.PreviewWidgetController", function() {
 		var image = new org.korsakow.domain.Image();
 		image.filename = "my/test/file.name";
 		
-		var mediaUI = new org.korsakow.ui.ImageUI();
+		var mediaUI = new org.korsakow.ui.ImageUI(image);
 		
 		var snu = spy(new org.korsakow.domain.Snu);
 		snu.previewMedia = image;
@@ -108,7 +95,7 @@ describe("org.korsakow.controller.FixedPreviewWidgetController", function() {
 		var snu = new org.korsakow.domain.Snu();
 		snu.previewMedia = image;
 		
-		var mediaUI = new org.korsakow.ui.ImageUI();
+		var mediaUI = new org.korsakow.ui.ImageUI(image);
 		
 		var dao = mock(org.korsakow.domain.Dao);
 		when(dao.findById)().thenReturn(snu);
@@ -172,8 +159,9 @@ describe("org.korsakow.controller.InsertTextWidgetController", function() {
 describe("org.korsakow.controller.PlayButtonWidgetController", function() {
 
 	it("should toggle the MainMediaWidget's play state on click", function() {
+		var image = new org.korsakow.domain.Image();
 		var mainMediaWidget = mock(org.korsakow.controller.MainMediaWidgetController);
-		mainMediaWidget.view = new org.korsakow.ui.ImageUI();
+		mainMediaWidget.view = new org.korsakow.ui.ImageUI(image);
 		
 		var env = mock(org.korsakow.Environment);
 		when(env).getMainMediaWidget().thenReturn(mainMediaWidget);
@@ -186,8 +174,9 @@ describe("org.korsakow.controller.PlayButtonWidgetController", function() {
 	});
 	
 	it("should change state to reflect the MainMedia", function() {
+		var image = new org.korsakow.domain.Image();
 		var mainMediaWidget = mock(org.korsakow.controller.MainMediaWidgetController);
-		var mediaUI = mainMediaWidget.view = spy(new org.korsakow.ui.ImageUI());
+		var mediaUI = mainMediaWidget.view = spy(new org.korsakow.ui.ImageUI(image));
 		
 		var env = mock(org.korsakow.Environment);
 		when(env).getMainMediaWidget().thenReturn(mainMediaWidget);
