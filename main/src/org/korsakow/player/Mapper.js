@@ -325,7 +325,12 @@ org.korsakow.domain.ImageInputMapper = Class.register('org.korsakow.domain.Image
 	map: function(data) {
 		var id = this.parseInt(data, "id");
 		var filename = this.parseString(data, "filename");
-		return new org.korsakow.domain.Image(id, filename);
+		if (data.children("duration").length === 0){
+			duration = 5;
+		} else {
+			duration = this.parseFloat(data, "duration");
+		}
+		return new org.korsakow.domain.Image(id, filename, duration);
 	}
 });
 

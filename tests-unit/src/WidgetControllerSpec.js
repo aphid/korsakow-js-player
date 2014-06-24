@@ -21,9 +21,53 @@ describe("org.korsakow.controller.MainMediaWidgetController", function() {
 		controller.setup(env);
 		
 		var img = controller.element.find("img");
+		mediaUI.pause();
+		var playfired = false, endedfired = false, pausedfired = false;
 		expect(img.attr('src')).toEqual(image.filename);
-		verify(mediaUI).play();
-	});
+		expect(img.prop('paused') === true);
+		expect(mediaUI.currentTime()).toEqual(0);
+		//for some reason neither of the above are firing, so getting it from timeupdate, which is
+		img.bind("playing", function(){
+			playfired = true;
+		});
+		img.bind("play", function(){
+			playfired = true;
+		});
+		img.bind("pause", function(){
+			pausedfired = true;
+		});
+		img.bind("ended", function(){
+			endedfired = true;
+		});
+		mediaUI.play();
+		var value, flag;
+		waits(50);
+		runs(function() {
+			expect(playfired).toEqual(true);
+			expect(mediaUI.currentTime()).toBeGreaterThan(0);
+		});
+		var sometime = mediaUI.currentTime();
+		mediaUI.pause();
+		waits(50);
+		runs(function(){
+			console.log(mediaUI.currentTime() - sometime);
+			expect ((mediaUI.currentTime() - sometime)).toBeLessThan(0.3);
+		});
+		waits(50);
+		mediaUI.play();
+		//this slows down all the testing :[
+		waits(mediaUI.duration() * 1000 + 1000);
+		runs(function() {
+			//allow for a frame or two of miss, per common browser behavior.
+			expect(mediaUI.duration() - mediaUI.currentTime()).toBeLessThan(0.1);
+			expect(img.prop("ended")).toEqual(true);
+			expect(endedfired).toEqual(true);
+			expect(img.prop("paused")).toEqual(true);
+			expect(pausedfired).toEqual(true);
+
+		});
+  	});
+    
 });
 
 describe("org.korsakow.controller.PreviewWidgetController", function() {
