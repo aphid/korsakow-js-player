@@ -36,30 +36,32 @@ org.korsakow.controller.AbstractWidgetController = Class.register('org.korsakow.
 		$super(model);
 	},
 	setup: function($super, env) {
-		$super();
-		this.env = env;
-		this.element.addClass("widget");
-	}
-});
-/*
-var VideoWidgetController = Class.register('VideoWidgetController', AbstractWidgetController, {
-	initialize: function($super, model, filename) {
-		$super(model);
-	},
-	setup: function() {
-		this.element = jQuery("<div />")
-			.addClass("widget videoWidget");
-		this.element.append("<Video />");
-		var filename = env.resolvePath(this.filename.replace(/flv$/, "ogv"));
-		vid.append("<source />")
-			.attr("src", filename)
-			.attr("type", "video/ogg")
+		$super(env);
+		this.element
+			.addClass("widget")
+			.css({
+				left: this.model.x,
+				top: this.model.y,
+				width: this.model.width,
+				height: this.model.height
+			})
 			;
-		vid.play();
-		$("#view").append(this.element);
+
+		var W = function(p) {
+			return (100*p/env.project.width) + '%'; 
+		};
+		var H = function(p) {
+			return (100*p/env.project.height) + '%'; 
+		};
+		
+		this.element.css({
+			left: W(this.model.x),
+			top: H(this.model.y),
+			width: W(this.model.width),
+			height: H(this.model.height)
+		});
 	}
 });
-*/
 
 org.korsakow.controller.MainMediaWidgetController = Class.register('org.korsakow.controller.MainMediaWidgetController', org.korsakow.controller.AbstractWidgetController, {
 	initialize: function($super, model) {
@@ -70,7 +72,7 @@ org.korsakow.controller.MainMediaWidgetController = Class.register('org.korsakow
 		var snu = env.getCurrentSnu();
 		var media = snu.mainMedia;
 		
-		this.element.addClass("MainMediaWidget");
+		this.element.addClass("MainMedia");
 		var mediaUI = this.view = env.createMediaUI(media.getClass().className, media);
 		this.element.append(mediaUI.element);
 		mediaUI.element.css({
@@ -105,7 +107,7 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 	setup: function($super, env) {
 		$super(env);
 
-		this.element.addClass("PreviewWidget").addClass('clickable');
+		this.element.addClass("Preview");
 		var This = this;
 		this.element.click(W(function() {
 			if (!This.snu) // TODO: only bind click when This.snu!=null
@@ -318,12 +320,14 @@ org.korsakow.controller.ScrubberWidgetController = Class.register('org.korsakow.
 			'margin' : (this.model.height-this.model.barHeight)/2 + "px 0px 0px 0px",
 			'width' : this.model.barWidth + "px",
 			'height' : this.model.barHeight + "px",
-			'background-color' : this.model.loadingColor
+			'background-color' : this.model.loadingColor,
+			'position': 'absolute'
 		});
 		var scrubberProgress = jQuery("<div>").addClass('progress').css({
 			'width' : this.model.barWidth + "px",
 			'height' : this.model.barHeight + "px",
-			'background-color' : this.model.foregroundColor
+			'background-color' : this.model.foregroundColor,
+			'position': 'absolute'
 		});
 		
 		//Buffering
@@ -335,12 +339,8 @@ org.korsakow.controller.ScrubberWidgetController = Class.register('org.korsakow.
 			}, false);
 		}
 		
-		//Playhead / Current Progress
-//		vid.element[0].addEventListener('timeupdate', function() {
-//			alert(111)
-//		});
 		vid.bind("timeupdate", function() {
-			var newWidth = vid.currentTime() / vid.duration() * This.model.width + "px";
+			var newWidth = 100 * vid.currentTime() / vid.duration() + "%";
 			scrubberProgress.css({
 				'width' : newWidth
 			});
@@ -378,8 +378,8 @@ org.korsakow.controller.ScrubberWidgetController = Class.register('org.korsakow.
 			});
 		}
 		
-		scrubberBuffer.append(scrubberProgress);
 		this.element.append(scrubberBuffer);
+		this.element.append(scrubberProgress);
 	}
 });
 
@@ -395,7 +395,6 @@ org.korsakow.controller.FullscreenButtonWidgetController = Class.register('org.k
 		var This = this;
 		this.element.click(function() {
 			var element = env.view;
-			//var element = env.getMainMediaWidget().element.find('video')[0];
 			if (This.element.hasClass('closed')) {
 				fs.requestFullScreen(element[0]);
 				This.element.removeClass('closed');

@@ -93,7 +93,7 @@ org.korsakow.WrapCallback = function(f) {
 		try {
 			return f.apply(this, arguments);
 		} catch (e) {
-			alert('Uncaught exception in anonymous function: ' + e.fileName + "(" + e.lineNumber + "): " + e);
+			org.korsakow.log.error('Uncaught exception in anonymous function: ' + e.fileName + "(" + e.lineNumber + "): " + e);
 			throw e;
 		}
 	};
@@ -242,16 +242,16 @@ org.korsakow.Logger = Class.register('org.korsakow.Logger', org.korsakow.Object,
 		$super();
 	},
 	debug: function() {
-		console.log(arguments);
+		console.log('DEBUG', arguments);
 	},
 	info: function() {
-		console.log(arguments);
+		console.log('INFO', arguments);
 	},
 	warn: function() {
-		console.log(arguments);
+		console.log('WARN', arguments);
 	},
 	error: function() {
-		console.log(arguments);
+		console.log('ERROR', arguments);
 	}
 });
 
@@ -504,7 +504,7 @@ org.korsakow.Audio = Class.register('org.korsakow.domain.Audio', {
 		/*.attr('src', url)
 		.attr('type', 'audio/ogg')*/
 		.bind('error', function(event) {
-			alert('Audio error: ' + org.korsakow.Audio.errorToString(event.currentTarget.error.code) + "\n" + org.korsakow.Exception.getStackString());
+			console.log.error('Audio error: ' + org.korsakow.Audio.errorToString(event.currentTarget.error.code) + "\n" + org.korsakow.Exception.getStackString());
 		});
 		// TODO: better handling of browser-specific media formats
 		$.each([

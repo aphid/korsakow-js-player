@@ -1,8 +1,17 @@
-body {
-	position: relative;
+html, body {
+	background-color: black;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
 }
 
-.clickable {
+#view {
+	width: 100%;
+	height: 100%;
+}
+
+.SplashScreen {
 	cursor: pointer;
 }
 
@@ -14,25 +23,50 @@ body {
 	margin: auto auto;
 	position: relative; /* because widgets are absolute */
 }
+
 .InsertText p {
 	margin: 0;
 	padding: 0;
 }
 
-.PlayButton {background-image:url('../images/control_pause.png');}
-.PlayButton.paused {background-image:url('../images/control_play.png');}
+.PlayButton {
+	background-image:url('../images/control_pause.png');
+	background-size:  contain;
+	background-repeat: no-repeat;
+	cursor: pointer;
+}
 
-.FullscreenButton {background-image:url('../images/fullscreenbw.png');}
-.FullscreenButton:hover {background-image:url('../images/fullscreenbw_over.png');}
+.PlayButton.paused {
+	background-image:url('../images/control_play.png');
+	background-size:  contain;
+	background-repeat: no-repeat;
+	cursor: pointer;
+}
+
+.FullscreenButton {
+	background-image:url('../images/fullscreenbw.png');
+	background-size:  contain;
+	background-repeat: no-repeat;
+	cursor: pointer;
+}
+.FullscreenButton:hover {
+	background-image:url('../images/fullscreenbw_over.png');
+}
+
+.Preview {
+	cursor: pointer;
+}
 
 .MasterVolume {
 	background: url('../images/mastervolume_scale.png') repeat-x;
+	cursor: pointer;
 }
-.volumeSlider{
+
+.MasterVolume .volumeSlider {
 	pointer-events:none;
 }
 
-.volumeSlider{
+.MasterVolume .volumeSlider {
 	background-color:#bbb;
 	border:none;
 	border-radius:4px;
@@ -45,6 +79,6 @@ body {
 	-webkit-box-shadow:-2px -2px 10px rgba(0,0,0,.25) inset, 2px 2px 10px white inset;
 }
 
-.subtitleLine {
+.SubtitlesUI .subtitleLine {
 	margin: 2px 2px 2px 2px;
 }

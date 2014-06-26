@@ -254,19 +254,19 @@ org.korsakow.domain.InputMapper = Class.register('org.korsakow.domain.InputMappe
 		this.dao = dao;
 	},
 	parseInt: function(data, prop) {
-		return PU.parseInt(data.children(prop), this.getClass().className + "." + prop);
+		return PU.parseInt(data.children(prop), this.getClass().className + "." + prop + ':' + data.children('id').text());
 	},
 	parseFloat: function(data, prop) {
-		return PU.parseFloat(data.children(prop), this.getClass().className + "." + prop);
+		return PU.parseFloat(data.children(prop), this.getClass().className + "." + prop + ':' + data.children('id').text());
 	},
 	parseString: function(data, prop) {
-		return PU.parseString(data.children(prop), this.getClass().className + "." + prop);
+		return PU.parseString(data.children(prop), this.getClass().className + "." + prop + ':' + data.children('id').text());
 	},
 	parseBoolean: function(data, prop) {
-		return PU.parseBoolean(data.children(prop), this.getClass().className + "." + prop);
+		return PU.parseBoolean(data.children(prop), this.getClass().className + "." + prop + ':' + data.children('id').text());
 	},
 	parseColor: function(data, prop) {
-		return PU.parseColor(data.children(prop), this.getClass().className + "." + prop);
+		return PU.parseColor(data.children(prop), this.getClass().className + "." + prop + ':' + data.children('id').text());
 	}
 });
 
@@ -353,7 +353,13 @@ org.korsakow.domain.SnuInputMapper = Class.register('org.korsakow.domain.SnuInpu
 		var id = this.parseInt(data, "id");
 		var name = this.parseString(data, "name");
 		var mainMedia = this.dao.findMediaById(this.parseInt(data, "mainMediaId"));
-		var previewMedia = this.dao.findMediaById(this.parseInt(data, "previewMediaId"));
+		var previewMedia = (function() {
+			if (data.children("previewMediaId").length) {
+				return this.dao.findMediaById(this.parseInt(data, "previewMediaId"));
+			} else {
+				return null;
+			}
+		}).apply(this);
 		var interface = this.dao.findById(this.parseInt(data, "interfaceId"));
 		var starter = this.parseBoolean(data, "starter");
 		var events = this.dao.find({parent:id, path: 'events/Event'});

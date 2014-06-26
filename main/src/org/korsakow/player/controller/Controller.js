@@ -15,16 +15,10 @@ org.korsakow.controller.AbstractController = Class.register('org.korsakow.contro
 		this.element = null;
 		this.env = null;
 
-		this.element = jQuery("<div />")
-		.css({
-			left: this.model.x,
-			top: this.model.y,
-			width: this.model.width,
-			height: this.model.height
-		})
-		;
-},
+		this.element = jQuery("<div />");
+	},
 	setup: function(env) {
+		this.env = env;
 	}
 });
 
@@ -38,10 +32,11 @@ var InterfaceController = org.korsakow.controller.InterfaceController = Class.re
 	},
 	setup: function($super, env) {
 		$super(env);
+
 		this.element.addClass("interface")
 			.css({
-				width: env.getProject().width,
-				height: env.getProject().height,
+				width: '100%',
+				height: '100%',
 				'background-color': this.model.backgroundColor?this.model.backgroundColor:null
 			});
 
@@ -51,7 +46,7 @@ var InterfaceController = org.korsakow.controller.InterfaceController = Class.re
 			try {
 				widgetController = org.korsakow.controller.WidgetControllerFactory.create(widget);
 			} catch (e) {
-				alert("Error: " + e);
+				org.korsakow.log.error(e);
 				throw e;
 			}
 			this.controllers.push(widgetController);
@@ -70,20 +65,37 @@ function start(dao) {
 	var env = new org.korsakow.Environment(view, dao);
 
 	env.project = dao.find({type: "Project"})[0];
-	//env.searchResults = dao.find({type: "Snu"});
-	//env.currentSnu = dao.find({type: "Snu"})[0];
-	//var interf = dao.find({type:"Interface"})[0];
-	//loadInterface(interf);
 	
-	
-	
-	
-	view.css({
-		width: env.project.width,
-		height: env.project.height,
-		backgroundColor: env.project.backgroundColor?env.project.backgroundColor:null
-	});
+	function aspect() {
+		var doc = jQuery(window);
+		
+		var css = {};
+		
+		var containerWidth = doc.width();
+		var containerHeight = doc.height();
+		var projWidth = env.project.width;
+		var projHeight = env.project.height;
+		
+		var scale = Math.min(containerWidth/projWidth, containerHeight/projHeight);
+		
+		css.width = projWidth*scale;
+		css.height = projHeight*scale;
+		css['padding-left'] = (containerWidth-css.width)/2;
+		css['padding-top'] = (containerHeight-css.height)/2;
+		
+		view.css(css);
+	}
 
+	function throttledResize(fn) {
+		var timeout;
+		return function() {
+			org.korsakow.Timeout.clear(timeout);
+			timeout = org.korsakow.Timeout.create(fn, 500);
+		};
+	}
+	jQuery(window).resize(throttledResize(aspect));
+	aspect();
+	
 	function playFirstSnu() {
 		// TODO: if no starter found, use any random SNU
 		env.executeSnu( dao.find({
@@ -108,7 +120,7 @@ function start(dao) {
 	if (env.project.splashScreenMedia) {
 		var splashScreenUI = env.createMediaUI(env.project.splashScreenMedia.getClass().className, env.project.splashScreenMedia);
 		splashScreenUI.load(env.resolvePath(env.project.splashScreenMedia.filename));
-		splashScreenUI.element.addClass('clickable').css({
+		splashScreenUI.element.addClass('SplashScreen').css({
 			width: '100%',
 			height: '100%'
 		});

@@ -26,6 +26,8 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 	initialize: function($super, model) {
 		$super();
 		this.element = jQuery("<img />");
+		this.element.addClass("ImageUI");
+		
 		this.isPlaying = false;
 		this.isEnded = false;
 		this.startTime = 0;
@@ -111,6 +113,7 @@ org.korsakow.ui.VideoUI = Class.register('org.korsakow.ui.VideoUI', org.korsakow
 	initialize: function($super, model) {
 		$super();
 		this.element = jQuery("<video />");
+		this.element.addClass("VideoUI");
 	},
 	bind: function() {
 		this.element.bind.apply(this.element, arguments);
@@ -176,6 +179,11 @@ org.korsakow.ui.VideoUI = Class.register('org.korsakow.ui.VideoUI', org.korsakow
 	},
 	source: function() {
 		return this.element.find("source").attr("src");
+	},
+	volume: function(x) {
+		if (typeof x != "undefined")
+			this.element.prop("volume", x);
+		return this.element.prop("volume");
 	}
 });
 
@@ -183,6 +191,7 @@ org.korsakow.ui.SubtitlesUI = Class.register('org.korsakow.ui.SubtitlesUI', {
 	initialize: function($super, opts) {
 		$super();
 		this.element = jQuery("<div></div>");
+		this.element.addClass("SubtitlesUI");
 		this.element.css({
 			color: 'white'
 		});

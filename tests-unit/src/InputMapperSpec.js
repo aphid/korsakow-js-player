@@ -8,10 +8,10 @@ describe("org.korsakow.domain.InputMapper", function() {
 	function testFailure(parser) {
 		var mapper = new org.korsakow.domain.InputMapper();
 		parser = ftor(mapper, mapper[parser]);
-		var input = $();
+		var input = $('<elem><id>123</id></elem>');
 		var actual = function() { return mapper.parseInt(input, "test"); };
 		
-		expect(actual).toThrow(new Error("Not found: " + mapper.getClass().className + ".test"));
+		expect(actual).toThrow(new Error("Not found: " + mapper.getClass().className + ".test:123"));
 	}
 	
 	it("should parse an int", function() {

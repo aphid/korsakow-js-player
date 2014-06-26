@@ -108,7 +108,7 @@ org.korsakow.domain.trigger.SnuTime = Class.register('org.korsakow.domain.trigge
 	},
 	setup: function (env, callback) {
 		var This = this,
-		    videl = env.getMainMediaWidget().view;
+			mainMediaUI = env.getMainMediaWidget().view;
 
 		// This needs to happen inside setup() so if the same
 		// trigger is loaded for a new SNU it isn't already marked
@@ -116,9 +116,8 @@ org.korsakow.domain.trigger.SnuTime = Class.register('org.korsakow.domain.trigge
 		this.cancelled = false;
 		this.done = false;
 
-		videl.bind('timeupdate', function triggerTimeUpdate () {
-			var el = this;
-			var curTime = el.currentTime;
+		mainMediaUI.bind('timeupdate', function triggerTimeUpdate () {
+			var curTime = mainMediaUI.currentTime();
 			var ready = (This.done === false && This.cancelled === false);
 			if (curTime >= This.time && ready) {
 				This.done = true;
@@ -251,7 +250,7 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 		return 1;
 	},
 	resolvePath: function(path) {
-		return 'data/' + path;
+		return path ? 'data/' + path : path;
 	},
 	ajax: function(opts) {
 		return jQuery.ajax(opts);

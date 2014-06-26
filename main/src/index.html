@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
 <title>$title$</title>
 <link type="text/css" rel="stylesheet" href="data/css/base.css" />
 <link type="text/css" rel="stylesheet" href="data/css/generated.css" />
@@ -12,7 +13,7 @@
 
 <script type="text/javascript">
 window.onerror = function(errorMsg, url, lineNumber) {
-	alert("Unhandled Exception at\n" + url + " (" + lineNumber + ")\n" + errorMsg);
+	org.korsakow.log.error("Unhandled Exception at\n" + url + " (" + lineNumber + ")\n" + errorMsg);
 };
 
 jQuery( function() {
