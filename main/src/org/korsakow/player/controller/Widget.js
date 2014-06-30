@@ -316,43 +316,34 @@ org.korsakow.controller.ScrubberWidgetController = Class.register('org.korsakow.
 
 		var This = this;
 		
-		var scrubberBuffer = jQuery("<div>").addClass('buffer').css({
-			'margin' : (this.model.height-this.model.barHeight)/2 + "px 0px 0px 0px",
-			'width' : this.model.barWidth + "px",
-			'height' : this.model.barHeight + "px",
+		var bufferBar = jQuery("<div>").addClass('buffer').css({
+			'left': 0,
 			'background-color' : this.model.loadingColor,
+			'height': this.model.barHeight,
 			'position': 'absolute'
 		});
-		var scrubberProgress = jQuery("<div>").addClass('progress').css({
+
+		var positionBar = jQuery("<div>").addClass('progress').css({
+			'left': 0,
+			'background-color' : this.model.foregroundColor,
 			'width' : this.model.barWidth + "px",
 			'height' : this.model.barHeight + "px",
-			'background-color' : this.model.foregroundColor,
 			'position': 'absolute'
 		});
 		
-		//Buffering
-		if (this.model.loading) {
-			vid.bind("progress", function() {
-				scrubberBuffer.css({
-					'width': vid.buffered() / vid.duration() * This.model.width + "px"
-				});
-			}, false);
-		}
+		vid.bind("progress", function() {
+			bufferBar.css({
+				'width': (100 * vid.buffered() / vid.duration()) + "%"
+			});
+		});
 		
 		vid.bind("timeupdate", function() {
-			var newWidth = 100 * vid.currentTime() / vid.duration() + "%";
-			scrubberProgress.css({
-				'width' : newWidth
+			var pos = (100 * vid.currentTime() / vid.duration()) + "%";
+			positionBar.css({
+				'left' : pos
 			});
-			//in case loading is false, we need to push the buffer container as well
-			if (!This.model.loading) {
-				scrubberBuffer.css({
-					'width' : newWidth
-				});
-			}
 		});
 		
-		//Scrub
 		if (this.model.interactive) {
 			var positionMoved = function(e) {
 				if (vid.ended()) {
@@ -378,8 +369,8 @@ org.korsakow.controller.ScrubberWidgetController = Class.register('org.korsakow.
 			});
 		}
 		
-		this.element.append(scrubberBuffer);
-		this.element.append(scrubberProgress);
+		this.element.append(bufferBar);
+		this.element.append(positionBar);
 	}
 });
 

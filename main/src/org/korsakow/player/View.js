@@ -166,8 +166,8 @@ org.korsakow.ui.VideoUI = Class.register('org.korsakow.ui.VideoUI', org.korsakow
 		var b = this.element.prop('buffered');
 		var len = b.length;
 		for (var i = 0; i < len; ++i)
-			total += b.end(i);
-		return total;
+			total += b.end(i) - b.start(i);
+		return total * 1000;
 	},
 	currentTime: function(x) {
 		if (typeof x != "undefined")
