@@ -39,6 +39,20 @@ var InterfaceController = org.korsakow.controller.InterfaceController = Class.re
 				height: '100%',
 				'background-color': this.model.backgroundColor?this.model.backgroundColor:null
 			});
+		
+		if (this.model.backgroundImage) {
+			var imageUI = new org.korsakow.ui.ImageUI(this.model.backgroundImage);
+			imageUI.element.addClass("backgroundImage")
+				.css({
+					top: '0',
+					left: '0',
+					width: '100%',
+//					height: '100%',
+					position: 'absolute'
+				});
+			imageUI.load(env.resolvePath(this.model.backgroundImage.filename));
+			this.element.append(imageUI.element);
+		}
 
 		for (var i = 0; i < this.model.widgets.length; ++i) {
 			var widget = this.model.widgets[i];
@@ -54,84 +68,3 @@ var InterfaceController = org.korsakow.controller.InterfaceController = Class.re
 		}
 	}
 });
-
-/* Bootstraps the application.
- * 
- * @param dao an {org.korsakow.domain.Dao}
- */
-function start(dao) {
-	var view = jQuery("#view");
-	view.empty();
-	var env = new org.korsakow.Environment(view, dao);
-
-	env.project = dao.find({type: "Project"})[0];
-	
-	function aspect() {
-		var doc = jQuery(window);
-		
-		var css = {};
-		
-		var containerWidth = doc.width();
-		var containerHeight = doc.height();
-		var projWidth = env.project.width;
-		var projHeight = env.project.height;
-		
-		var scale = Math.min(containerWidth/projWidth, containerHeight/projHeight);
-		
-		css.width = projWidth*scale;
-		css.height = projHeight*scale;
-		css['padding-left'] = (containerWidth-css.width)/2;
-		css['padding-top'] = (containerHeight-css.height)/2;
-		
-		view.css(css);
-	}
-
-	function throttledResize(fn) {
-		var timeout;
-		return function() {
-			org.korsakow.Timeout.clear(timeout);
-			timeout = org.korsakow.Timeout.create(fn, 500);
-		};
-	}
-	jQuery(window).resize(throttledResize(aspect));
-	aspect();
-	
-	function playFirstSnu() {
-		// TODO: if no starter found, use any random SNU
-		env.executeSnu( dao.find({
-			type: "Snu",
-			props: {
-				starter: true
-			}
-		})[0] );
-
-		//start BG music
-		if (env.project.backgroundSoundMedia) {
-			env.soundManager.playSound({
-				uri:env.resolvePath(env.project.backgroundSoundMedia.filename),
-				channel:"backgroundSound", // TODO: make into const
-				fade:0,
-				loop: env.project.backgroundSoundLooping,
-				volume: env.project.backgroundSoundVolume
-			});
-		}
-	};
-	
-	if (env.project.splashScreenMedia) {
-		var splashScreenUI = env.createMediaUI(env.project.splashScreenMedia.getClass().className, env.project.splashScreenMedia);
-		splashScreenUI.load(env.resolvePath(env.project.splashScreenMedia.filename));
-		splashScreenUI.element.addClass('SplashScreen').css({
-			width: '100%',
-			height: '100%'
-		});
-		splashScreenUI.element.click(W(function() {
-			$(this).remove();
-			playFirstSnu();
-		}));
-		
-		view.append(splashScreenUI.element);
-	} else
-		playFirstSnu();
-	
-	// TODO: handle spashscreen timeout
-}

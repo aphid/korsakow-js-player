@@ -404,8 +404,14 @@ org.korsakow.domain.InterfaceInputMapper = Class.register('org.korsakow.domain.I
 			} else
 				return null;
 		}).apply(this);
+		var backgroundImage = (function() {
+			if (data.children("backgroundImageId").length) {
+				return this.dao.findById(this.parseInt(data, "backgroundImageId"));
+			} else
+				return null;
+		}).apply(this);
 		var backgroundColor = data.children("backgroundColor").length?this.parseColor(data, "backgroundColor"):null;
-		return new org.korsakow.domain.Interface(id, name, keywords, widgets, clickSound, backgroundColor);
+		return new org.korsakow.domain.Interface(id, name, keywords, widgets, clickSound, backgroundColor, backgroundImage);
 	}
 });
 
@@ -803,7 +809,13 @@ org.korsakow.domain.ProjectInputMapper = Class.register('org.korsakow.domain.Pro
 				return null;
 		}).apply(this);
 		var backgroundColor = data.children("backgroundColor").length?this.parseColor(data, "backgroundColor"):null;
-		return new org.korsakow.domain.Project(id, name, width, height, splashScreenMedia, backgroundSoundMedia, backgroundSoundVolume, backgroundSoundLooping, clickSound, backgroundColor);
+		var backgroundImage = (function() {
+			if (data.children("backgroundImageId").length) {
+				return this.dao.findById(this.parseInt(data, "backgroundImageId"));
+			} else
+				return null;
+		}).apply(this);
+		return new org.korsakow.domain.Project(id, name, width, height, splashScreenMedia, backgroundSoundMedia, backgroundSoundVolume, backgroundSoundLooping, clickSound, backgroundColor, backgroundImage);
 
 	}
 });

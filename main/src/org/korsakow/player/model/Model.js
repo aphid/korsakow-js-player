@@ -131,18 +131,19 @@ org.korsakow.domain.trigger.SnuTime = Class.register('org.korsakow.domain.trigge
 });
 
 org.korsakow.domain.Interface = Class.register('org.korsakow.domain.Interface', org.korsakow.domain.DomainObject, {
-	initialize: function($super, id, name, keywords, widgets, clickSound, backgroundColor) {
+	initialize: function($super, id, name, keywords, widgets, clickSound, backgroundColor, backgroundImage) {
 		$super(id);
 		this.name = name;
 		this.keyword = keywords;
 		this.widgets = widgets;
 		this.clickSound = clickSound;
 		this.backgroundColor = backgroundColor;
+		this.backgroundImage = backgroundImage;
 	}
 });
 
 org.korsakow.domain.Project = Class.register('org.korsakow.domain.Project', org.korsakow.domain.DomainObject, {
-	initialize: function($super, id, name, width, height, splashScreenMedia, backgroundSoundMedia, backgroundSoundVolume, backgroundSoundLooping, clickSound, backgroundColor) {
+	initialize: function($super, id, name, width, height, splashScreenMedia, backgroundSoundMedia, backgroundSoundVolume, backgroundSoundLooping, clickSound, backgroundColor, backgroundImage) {
 		$super(id);
 		this.name = name;
 		this.width = width;
@@ -153,6 +154,7 @@ org.korsakow.domain.Project = Class.register('org.korsakow.domain.Project', org.
 		this.backgroundSoundVolume = backgroundSoundVolume;
 		this.clickSound = clickSound;
 		this.backgroundColor = backgroundColor;
+		this.backgroundImage = backgroundImage;
 	}
 });
 
@@ -342,7 +344,7 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 	
 	executeSnu: function(snu) {
 		
-		this.view.empty();
+		this.view.find('.interface').remove();
 
 		if(this.currentSnu) {
 			this.cancelEvents();
