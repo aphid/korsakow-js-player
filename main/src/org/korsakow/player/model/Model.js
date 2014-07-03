@@ -120,6 +120,7 @@ org.korsakow.domain.trigger.SnuTime = Class.register('org.korsakow.domain.trigge
 			var curTime = mainMediaUI.currentTime();
 			var ready = (This.done === false && This.cancelled === false);
 			if (curTime >= This.time && ready) {
+				org.korsakow.log.debug('SnuTime triggered at: ' + curTime/1000 + 's');
 				This.done = true;
 				callback();
 			}
@@ -343,6 +344,8 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 	},
 	
 	executeSnu: function(snu) {
+		
+		org.korsakow.log.debug('Executing SNU: ' + snu.name);
 		
 		this.view.find('.interface').remove();
 

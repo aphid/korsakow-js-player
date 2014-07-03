@@ -27,6 +27,8 @@ org.korsakow.domain.rule.KeywordLookup = Class.register('org.korsakow.domain.rul
 	 * @param searchResults {org.korsakow.SearchResults}
 	 */
 	execute: function(env, searchResults) {
+		org.korsakow.log.debug('KeywordLookup: ' + this.keywords);
+		
 		// for each time a snu appears in a list, increase its searchResults
 		// (thus, snus searchResults proportionally to the number of keywords
 		// they match)
