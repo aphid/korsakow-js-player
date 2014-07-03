@@ -25,8 +25,9 @@ org.korsakow.ui.MediaUI = Class.register('org.korsakow.ui.MediaUI', {
 org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow.ui.MediaUI, {
 	initialize: function($super, model) {
 		$super();
-		this.element = jQuery("<img />");
-		this.element.addClass("ImageUI");
+		
+		this.element = jQuery("<img />")
+			.addClass("ImageUI");
 		
 		this.isPlaying = false;
 		this.isEnded = false;

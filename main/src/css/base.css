@@ -83,3 +83,14 @@ html, body {
 .SubtitlesUI .subtitleLine {
 	margin: 2px 2px 2px 2px;
 }
+
+.vertical-center:before {
+	content: '';
+	display: inline-block;
+	height: 100%;
+	vertical-align: middle;
+}
+
+.ImageUI {
+	vertical-align: middle;
+}

@@ -77,16 +77,23 @@ function start(dao) {
 	if (env.project.splashScreenMedia) {
 		var splashScreenUI = env.createMediaUI(env.project.splashScreenMedia.getClass().className, env.project.splashScreenMedia);
 		splashScreenUI.load(env.resolvePath(env.project.splashScreenMedia.filename));
-		splashScreenUI.element.addClass('SplashScreen').css({
-			width: '100%',
-			height: '100%'
-		});
+		splashScreenUI.element.addClass('SplashScreen');
 		splashScreenUI.element.click(W(function() {
-			$(this).remove();
+			centerContainer.remove();
 			playFirstSnu();
 		}));
 		
-		view.append(splashScreenUI.element);
+		var centerContainer = jQuery('<div/>')
+			.addClass('vertical-center')
+			.css({
+			width: '100%',
+			height: '100%',
+			'text-align': 'center',
+		});
+		centerContainer.append(splashScreenUI.element);
+		view.append(centerContainer);
+		
+//		view.append(splashScreenUI.element);
 	} else
 		playFirstSnu();
 	
