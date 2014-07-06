@@ -110,7 +110,7 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 		this.element.addClass("Preview");
 		var This = this;
 		this.element.click(W(function() {
-			if (!This.snu) // TODO: only bind click when This.snu!=null
+			if (!This.snu)
 				return;
 			if (env.getClickSound())
 				env.soundManager.playSound({
@@ -118,7 +118,6 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 					channel: "clickSound",
 					fade: 1000
 				});
-			// TODO: unbind click as a safeguard?
 			env.executeSnu(This.snu);
 		}));
 	},

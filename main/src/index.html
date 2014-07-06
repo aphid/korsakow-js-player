@@ -22,7 +22,8 @@ jQuery( function() {
 		success: function(data) {
 			var K = NS("org.korsakow.domain");
 			var dao = K.Dao.create(jQuery(data));
-			start(dao);
+			var bootstrap = new org.korsakow.Bootstrap(dao);
+			bootstrap.start();
 	 	}
 	});
 
