@@ -305,18 +305,6 @@ org.korsakow.domain.VideoInputMapper = Class.register('org.korsakow.domain.Video
 		return new org.korsakow.domain.Video(id, filename, subtitlesFilename);
 	}
 });
-/*org.korsakow.domain.SoundInputMapper = Class.register('org.korsakow.domain.SoundInputMapper', org.korsakow.domain.InputMapper, {
-	initialize: function($super, dao) {
-		alert("init");
-		$super(dao);
-	},
-	map: function(data) {
-		var id = this.parseInt(data, "id");
-		var filename = this.parseString(data, "filename");
-		filename = filename.substring(0, filename.lastIndexOf('.'));
-		return new org.korsakow.domain.Sound(id, filename);
-	}
-});*/
 
 org.korsakow.domain.ImageInputMapper = Class.register('org.korsakow.domain.ImageInputMapper', org.korsakow.domain.InputMapper, {
 	initialize: function($super, dao) {
@@ -325,11 +313,13 @@ org.korsakow.domain.ImageInputMapper = Class.register('org.korsakow.domain.Image
 	map: function(data) {
 		var id = this.parseInt(data, "id");
 		var filename = this.parseString(data, "filename");
-		if (data.children("duration").length === 0){
-			duration = 5;
-		} else {
-			duration = this.parseFloat(data, "duration");
-		}
+		var duration = (function() {
+			if (data.children("duration").length) {
+				return this.parseFloat(data, "duration");
+			} else {
+				return undefined;
+			}
+		})();
 		return new org.korsakow.domain.Image(id, filename, duration);
 	}
 });

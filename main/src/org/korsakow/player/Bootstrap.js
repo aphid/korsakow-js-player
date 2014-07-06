@@ -99,13 +99,17 @@ org.korsakow.Bootstrap = Class.register('org.korsakow.Bootstrap',org.korsakow.Ob
 		};
 		
 		if (env.project.splashScreenMedia) {
+			function dismiss() {
+				centerContainer.remove();
+				playFirstSnu();
+			}
+			
 			var splashScreenUI = env.createMediaUI(env.project.splashScreenMedia.getClass().className, env.project.splashScreenMedia);
 			splashScreenUI.load(env.resolvePath(env.project.splashScreenMedia.filename));
 			splashScreenUI.element.addClass('SplashScreen');
-			splashScreenUI.element.click(W(function() {
-				centerContainer.remove();
-				playFirstSnu();
-			}));
+
+			splashScreenUI.element.click(W(dismiss));
+			splashScreenUI.bind('ended', W(dismiss));
 			
 			var centerContainer = jQuery('<div/>')
 				.addClass('vertical-center')
@@ -116,10 +120,10 @@ org.korsakow.Bootstrap = Class.register('org.korsakow.Bootstrap',org.korsakow.Ob
 			});
 			centerContainer.append(splashScreenUI.element);
 			view.append(centerContainer);
+			
+			splashScreenUI.play();
 		} else
 			playFirstSnu();
-		
-		// TODO: handle spashscreen timeout
 	}
 
 });

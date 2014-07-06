@@ -34,7 +34,7 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		this.startTime = 0;
 		this.updateInterval = 16; //ms
 		this._currentTime = 0;
-		if (typeof model.duration != "undefined"){
+		if (typeof model.duration !== "undefined") {
 			this._duration = model.duration;
 		} else {
 			this._duration = 5000;
