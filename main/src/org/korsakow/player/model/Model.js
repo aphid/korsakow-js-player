@@ -85,12 +85,15 @@ org.korsakow.domain.Event = Class.register('org.korsakow.domain.Event', org.kors
 		this.trigger = trigger;
 		this.rule = rule;
 	},
-	setup: function (env) {
+	setup: function(env) {
 		var This = this;
 		this.trigger.setup(env, function triggeredRule () {
 			// TODO check the predicate
 			This.rule.execute(env);
 		});
+	},
+	destroy: function() {
+		this.cancel();
 	},
 	cancel: function (env) {
 		this.trigger.cancel();
@@ -357,10 +360,15 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 		
 		org.korsakow.log.debug('Executing SNU: ' + snu.name);
 		
-		this.view.find('.interface').remove();
-
-		if(this.currentSnu) {
+		if (this.currentSnu) {
 			this.cancelEvents();
+			this.currentSnu = null;
+		}
+		if (this.currentInterface) {
+			this.currentInterfaceController.element.remove();
+			this.currentInterfaceController.destroy();
+			this.currentInterfaceController = null;
+			this.currentInterface = null;
 		}
 
 		this.currentSnu = snu;

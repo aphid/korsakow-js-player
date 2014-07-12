@@ -19,6 +19,13 @@ org.korsakow.controller.AbstractController = Class.register('org.korsakow.contro
 	},
 	setup: function(env) {
 		this.env = env;
+	},
+	destroy: function() {
+		this.env = null;
+		this.element.unbind();
+		this.element.remove();
+		this.element.empty();
+		this.element = jQuery('<div />');
 	}
 });
 
@@ -65,5 +72,12 @@ var InterfaceController = org.korsakow.controller.InterfaceController = Class.re
 			this.controllers.push(widgetController);
 			this.element.append(widgetController.element);
 		}
+	},
+	destroy: function($super) {
+		this.controllers.forEach(function(ctrl) {
+			ctrl.destroy();
+		});
+		this.controllers = [];
+		$super();
 	}
 });
