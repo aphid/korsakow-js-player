@@ -295,6 +295,35 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 	getMainMediaWidget: function(){
 		return this.getWidgetsOfType("org.korsakow.widget.MainMedia")[0];
 	},
+	getLastSnu: function(){
+		if (!window.localStorage){
+			org.korsakow.log.debuyg("localStorage not available");
+			return false;
+		} else if (localStorage.getItem("lastSnu") === null) {
+			org.korsakow.log.debug('no snu in localstorage');
+			return false;
+		} else {
+			org.korsakow.log.debug('getting previous snu' + localStorage.getItem("lastSnu"));
+			return localStorage.getItem("lastSnu");	
+		}
+	},
+	setLastSnu: function(snu){
+		if (!window.localStorage){
+			org.korsakow.log.debug("localStorage not available");
+			return false;
+		} else {
+			org.korsakow.log.debug("setting a snu in localstorage");
+			localStorage.setItem("lastSnu", snu);
+		}
+	},
+	clearLastSnu: function(){
+		if (!window.localStorage){
+			org.korsakow.log.debu("localStorage not available");
+			return false;
+		} else {
+			localStorage.removeItem("lastSnu");
+		}
+	},
 	getClickSound: function() {
 		if (this.currentSnu && this.currentSnu.clickSound)
 			return this.currentSnu.clickSound;

@@ -12,6 +12,27 @@ html, body {
 	position: relative;
 }
 
+#continueScreen{
+	display: none;
+	width: 100%;
+	height: 100%;
+	background: black;
+	color: papayaWhip;
+	text-align: center;
+	box-sizing: border-box;
+	position: relative;
+}
+
+#buttonContainer{
+	margin-top: 35%;
+	width: auto;
+}
+
+#buttonContainer button{
+	padding-right: 15px;
+	display: inline-block;
+}
+
 .SplashScreen {
 	cursor: pointer;
 }
