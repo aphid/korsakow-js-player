@@ -234,7 +234,7 @@ org.korsakow.SoundManager = Class.register('org.korsakow.SoundManager', {
 });
 
 org.korsakow.Environment = Class.register('org.korsakow.Environment', {
-	initialize: function(view, dao) {
+	initialize: function(view, dao, localStorage) {
 		this.currentSnu = null;
 		this.currentInterface = null;
 		this.project = null;
@@ -245,6 +245,7 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 		this.view = view;
 		this.dao = dao;
 		this.soundManager = new org.korsakow.SoundManager();
+		this.localStorage = localStorage;
 	},
 	getDao: function() {
 		return this.dao;
@@ -295,34 +296,14 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 	getMainMediaWidget: function(){
 		return this.getWidgetsOfType("org.korsakow.widget.MainMedia")[0];
 	},
-	getLastSnu: function(){
-		if (!window.localStorage){
-			org.korsakow.log.debuyg("localStorage not available");
-			return false;
-		} else if (localStorage.getItem("lastSnu") === null) {
-			org.korsakow.log.debug('no snu in localstorage');
-			return false;
-		} else {
-			org.korsakow.log.debug('getting previous snu' + localStorage.getItem("lastSnu"));
-			return localStorage.getItem("lastSnu");	
-		}
+	getLastSnu: function() {
+		return this.localStorage.get('lastSnu');
 	},
-	setLastSnu: function(snu){
-		if (!window.localStorage){
-			org.korsakow.log.debug("localStorage not available");
-			return false;
-		} else {
-			org.korsakow.log.debug("setting a snu in localstorage");
-			localStorage.setItem("lastSnu", snu);
-		}
+	setLastSnu: function(snu) {
+		this.localStorage.set('lastSnu', snu);
 	},
-	clearLastSnu: function(){
-		if (!window.localStorage){
-			org.korsakow.log.debu("localStorage not available");
-			return false;
-		} else {
-			localStorage.removeItem("lastSnu");
-		}
+	clearLastSnu: function() {
+		this.localStorage.remove('lastSnu');
 	},
 	getClickSound: function() {
 		if (this.currentSnu && this.currentSnu.clickSound)
@@ -383,7 +364,8 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 		}
 
 		this.currentSnu = snu;
-
+		this.setLastSnu(snu.id);
+		
 		if(this.currentSnu.lives > 0){
 			--this.currentSnu.lives;
 		}

@@ -12,10 +12,8 @@ html, body {
 	position: relative;
 }
 
-#continueScreen{
+#continueScreen {
 	display: none;
-	width: 100%;
-	height: 100%;
 	background: black;
 	color: papayaWhip;
 	text-align: center;
@@ -23,13 +21,13 @@ html, body {
 	position: relative;
 }
 
-#buttonContainer{
-	margin-top: 35%;
-	width: auto;
+#continueScreen .buttonContainer{
+	padding-top: 35%;
 }
 
-#buttonContainer button{
-	padding-right: 15px;
+#continueScreen .buttonContainer button {
+	padding-left: 10px;
+	padding-right: 10px;
 	display: inline-block;
 }
 

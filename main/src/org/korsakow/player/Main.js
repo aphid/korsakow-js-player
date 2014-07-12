@@ -241,17 +241,20 @@ org.korsakow.Logger = Class.register('org.korsakow.Logger', org.korsakow.Object,
 	initialize: function($super) {
 		$super();
 	},
+	console: function(level, args) {
+		window.console && window.console.log.apply(window.console, [level].concat(jQuery.makeArray(args)));
+	},
 	debug: function() {
-		console.log('DEBUG', arguments);
+		this.console('DEBUG', arguments);
 	},
 	info: function() {
-		console.log('INFO', arguments);
+		this.console('INFO', arguments);
 	},
 	warn: function() {
-		console.log('WARN', arguments);
+		this.console('WARN', arguments);
 	},
 	error: function() {
-		console.log('ERROR', arguments);
+		this.console('ERROR', arguments);
 	}
 });
 
