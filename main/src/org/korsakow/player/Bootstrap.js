@@ -90,14 +90,50 @@ org.korsakow.Bootstrap = Class.register('org.korsakow.Bootstrap',org.korsakow.Ob
 			}
 			
 			var startSnu = This.findStartSnu();
-			if (startSnu) {
-				org.korsakow.log.debug('Start Snu: ' + startSnu.name);
-				env.executeSnu(startSnu);
-			} else {
-				org.korsakow.log.warn('No start snu found');
+			var continuing = false;
+			if (env.getLastSnu()){
+				org.korsakow.log.debug('Loading stored Snu: ' + env.getLastSnu());
+				//test the last snu and make sure it's legit
+				var snu = This.dao.find({
+					type: "Snu",
+					props: { id: env.getLastSnu() }
+				})[0];
+				if (snu === undefined){
+					org.korsakow.log.debug("Couldn't find a valid snu");
+					env.clearLastSnu();
+					var continuing = false;
+					//proceed with startSnu
+				} else {
+					var continuing = true;
+					var contScr = jQuery("<div/>", { "id": "continueScreen" }).appendTo('#view').show();
+					var buttonContainer = jQuery("<div/>", { "id": "buttonContainer"}).appendTo(contScr);
+					jQuery("<p/>", { "text": "Would you like to continue from where you left off?"}).appendTo(buttonContainer);
+					var resetButton = jQuery("<button/>", { "text": "Reset", "id": "reset"});
+					var continueButton = jQuery("<button/>", { "text": "Continue", "id": "continue"});
+					resetButton.appendTo(buttonContainer);
+					continueButton.appendTo(buttonContainer);
+					resetButton.click(function(){
+						env.clearLastSnu();
+						contScr.remove();
+						env.executeSnu(startSnu);
+					});
+					continueButton.click(function(){
+						startSnu = snu;
+						contScr.remove();
+						env.executeSnu(startSnu);
+					});
+				}
+			}
+			
+			if (continuing === false){
+				if (startSnu) {
+					org.korsakow.log.debug('Start Snu: ' + startSnu.name);
+					env.executeSnu(startSnu);
+					} else {
+						org.korsakow.log.warn('No start snu found');
+					}
 			}
 		};
-		
 		if (env.project.splashScreenMedia) {
 			function dismiss() {
 				centerContainer.remove();

@@ -72,6 +72,8 @@ org.korsakow.controller.MainMediaWidgetController = Class.register('org.korsakow
 		var snu = env.getCurrentSnu();
 		var media = snu.mainMedia;
 		
+		env.setLastSnu(snu.id);
+		
 		this.element.addClass("MainMedia");
 		var mediaUI = this.view = env.createMediaUI(media.getClass().className, media);
 		this.element.append(mediaUI.element);
