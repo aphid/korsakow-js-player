@@ -29,7 +29,9 @@ org.korsakow.domain.Finder = Class.register('org.korsakow.domain.Finder', {
 	findById: function(id, opts) {
 		opts = opts || {};
 		var result = this.data;
-		result = result.find("id:contenteq(" + id + "):");
+		result = result.find("id").filter(function(i, elem) {
+			return $(elem).text() === id.toString();
+		});
 		result = result.parent();
 		return result;
 	},
@@ -53,8 +55,9 @@ org.korsakow.domain.Finder = Class.register('org.korsakow.domain.Finder', {
 		opts = opts || {};
 		var result = this.data;
 		if (opts.parent) {
-			result = result.find("id:contenteq("+opts.parent+"):")
-							.parent();
+			result = result.find("id").filter(function(i, elem) {
+				return $(elem).text() == opts.parent.toString(); // string conversion via == intentional
+			}).parent();
 			if (opts.list) {
 				opts.list = $(opts.list);
 				for (var i = 0; i < opts.list.length; ++i)
@@ -66,11 +69,11 @@ org.korsakow.domain.Finder = Class.register('org.korsakow.domain.Finder', {
 			var p = result;
 			while (opts.path.length) {
 				var path = opts.path.shift();
-				p = p.children("*:tagName(" + path + "):");
+				p = p.children(path);
 			}
 			result = p;
 		} else if (opts.type) {
-			result = result.find("*:tagName(" + opts.type + "):");
+			result = result.find(opts.type);
 		}
 		
 		if (opts.keyword) {

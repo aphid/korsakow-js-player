@@ -1,27 +1,3 @@
-/* Custom jQuery selector
- * 
- * Compares the text content
- * 
- * usage: $(document).find("id:contenteq(1234)");
- * 		would find all <id>1234</id>
- */
-$.expr[":"].contenteq = function(obj, index, meta, stack){
-	return (obj.textContent || obj.innerText || $(obj).text() || "") == meta[3];
-};
-
-/* Custom jQuery selector
- * 
- * Compares the tag name
- * 
- * usage: $(someElem).find("*:tagName(foo)");
- * 		would find all <foo> tags
- * 
- * TODO: why didn't we just do $().find("foo")?
- */
-$.expr[":"].tagName = function(obj, index, meta, stack){
-	return (obj.tagName || "") == meta[3];
-};
-
 /* NameSpace
  * 
  * Creates a hierarchy of objects matching the given path,
