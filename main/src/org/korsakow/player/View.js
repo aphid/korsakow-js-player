@@ -31,6 +31,7 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		
 		this.isPlaying = false;
 		this.isEnded = false;
+		this._loop = false;
 		this.startTime = 0;
 		this.updateInterval = 16; //ms
 		this._currentTime = 0;
@@ -71,15 +72,25 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 		if (this.isPlaying === false){
 			return false;
 		}
-		this.currentTime(this.currentTime() + (( org.korsakow.Date.now() - this.startTime ))) ;
+		this.currentTime(this.currentTime() + (( org.korsakow.Date.now() - this.startTime )));
 		this.startTime = org.korsakow.Date.now();
 		this.element.trigger("timeupdate");
-		if (this.currentTime() >= this.duration()){
+		if (this.currentTime() >= this.duration()) {
 			this.element.trigger("ended");
-			this.element.trigger("pause");
-			this.isEnded = true;
-			this.isPlaying = false;
-			clearInterval(this.interval);
+			this.element.trigger("pause"); // TODO: does this belong here?
+			if (this.loop()) {
+				var over = this.currentTime() - this.duration();
+				// TODO: dispatch events?
+				// 		safari 7.0.2: N/A
+				// 		chrome 35.0.1916.153: ended
+
+				this.currentTime(over % this.duration());
+			} else {
+				this.currentTime(this.duration());
+				this.isEnded = true;
+				this.isPlaying = false;
+				clearInterval(this.interval);
+			}
 		}
 	},
 	pause: function() { 
@@ -104,6 +115,11 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 	},
 	duration: function(){
 		return this._duration;
+	},
+	loop: function(x) {
+		if (typeof x != "undefined")
+			this._loop = x;
+		return this._loop;
 	}
 });
 
@@ -113,6 +129,7 @@ org.korsakow.ui.ImageUI = Class.register('org.korsakow.ui.ImageUI', org.korsakow
 org.korsakow.ui.VideoUI = Class.register('org.korsakow.ui.VideoUI', org.korsakow.ui.MediaUI, {
 	initialize: function($super, model) {
 		$super();
+		this.model = model;
 		this.element = jQuery("<video />");
 		this.element.addClass("VideoUI");
 	},
@@ -185,6 +202,11 @@ org.korsakow.ui.VideoUI = Class.register('org.korsakow.ui.VideoUI', org.korsakow
 		if (typeof x != "undefined")
 			this.element.prop("volume", x);
 		return this.element.prop("volume");
+	},
+	loop: function(x) {
+		if (typeof x != "undefined")
+			this.element.prop("loop", x);
+		return this.element.prop("loop");
 	}
 });
 

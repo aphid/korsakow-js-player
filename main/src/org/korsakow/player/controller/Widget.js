@@ -120,6 +120,23 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 				});
 			env.executeSnu(This.snu);
 		}));
+		this.element.hover(
+			function enter() {
+				console.log("enter", this.mediaUI);
+				if (this.mediaUI) {
+					this.mediaUI.play();
+				}
+			}.bind(this),
+			function leave() {
+				if (this.mediaUI) {
+					this.mediaUI.pause();
+				}
+			}.bind(this)
+		);
+	},
+	destroy: function($super) {
+		this.clear();
+		$super();
 	},
 	setSnu: function(snu) {
 		this.clear();
@@ -131,14 +148,13 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 			height: "100%"
 		});
 		mediaUI.load(this.env.resolvePath(media.filename));
-		
+		mediaUI.loop(true);
 		this.snu = snu;
 		this.mediaUI = mediaUI;
 	},
 	clear: function() {
 		if (this.mediaUI !== null) {
-			this.mediaUI.pause();
-			this.mediaUI = null;
+			this.mediaUI.pause(); 
 			this.element.empty();
 		}
 		this.mediaUI = null;

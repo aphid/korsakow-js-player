@@ -68,4 +68,29 @@ describe("org.korsakow.ui.ImageUI", function() {
 		expect(ui.currentTime()).toEqual(123);
 		verify(seeked);
 	});
+	it("should cap currentTime at duration", function() {
+		var image = new org.korsakow.domain.Image();
+		image.duration = 1000;
+		var ui = new org.korsakow.ui.ImageUI(image);
+		ui.loop(false);
+		ui.play();
+		
+		org.korsakow.mock.flushTimers(2000);
+		expect(ui.currentTime()).toEqual(1000);
+	});
+	it("should loop", function() {
+		var image = new org.korsakow.domain.Image();
+		image.duration = 1000;
+		var ui = new org.korsakow.ui.ImageUI(image);
+		ui.loop(true);
+		ui.play();
+		
+		org.korsakow.mock.flushTimers(600);
+		expect(ui.currentTime()).toBeGreaterThan(550);
+		expect(ui.currentTime()).toBeLessThan(650);
+		
+		org.korsakow.mock.flushTimers(600);
+		expect(ui.currentTime()).toBeGreaterThan(150);
+		expect(ui.currentTime()).toBeLessThan(250);
+	});
 });
