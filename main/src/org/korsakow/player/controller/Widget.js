@@ -138,20 +138,18 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 				});
 			env.executeSnu(This.snu);
 		}));
-		this.element.hover(
-			function enter() {
-				if (this.mediaUI) {
-					this.mediaUI.play();
-					this.shouldPlay = true;
-				}
-			}.bind(this),
-			function leave() {
-				if (this.mediaUI) {
-					this.mediaUI.pause();
-					this.shouldPlay = false;
-				}
-			}.bind(this)
-		);
+		this.element.bind('mouseenter touchstart', function() {
+			if (this.mediaUI) {
+				this.mediaUI.play();
+				this.shouldPlay = true;
+			}
+		}.bind(this));
+		this.element.bind('mouseleave touchend touchcancel', function() {
+			if (this.mediaUI) {
+				this.mediaUI.pause();
+				this.shouldPlay = stop;
+			}
+		}.bind(this));
 	},
 	destroy: function($super) {
 		this.clear();

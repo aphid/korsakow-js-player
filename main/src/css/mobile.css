@@ -1,0 +1,23 @@
+
+/*
+http://bjango.com/articles/min-device-pixel-ratio/
+Best effort iPad detection, sorry other devices.
+*/
+@media
+	(min-device-width: 768px)
+	and (max-device-width: 1024px)
+	and (-webkit-min-device-pixel-ratio: 1.0),
+
+	(min-device-width: 768px)
+	and (max-device-width: 1024px)
+	and (-webkit-min-device-pixel-ratio: 2.0)
+{
+
+	.widget {
+		/* Widgets are interactive in their own way, touch
+			selection interferes with this.
+		*/
+		-webkit-user-select: none;
+	}
+
+}
