@@ -2,6 +2,7 @@ describe("org.korsakow.controller", function() {
 	
 	var project;
 	var model;
+	var view;
 	
 	beforeEach(function() {
 		project = {
@@ -13,6 +14,8 @@ describe("org.korsakow.controller", function() {
 			x: 1, y: 1,
 			width: 1, height: 1
 		};
+		
+		view = jQuery('<div/>');
 	});
 	
 	describe("org.korsakow.controller.MainMediaWidgetController", function() {
@@ -33,7 +36,8 @@ describe("org.korsakow.controller", function() {
 				createMediaUI: function() {
 					return mediaUI;
 				},
-				project: project
+				project: project,
+				getView: function() { return view; }
 			};
 			
 			var controller = new org.korsakow.controller.MainMediaWidgetController(model);

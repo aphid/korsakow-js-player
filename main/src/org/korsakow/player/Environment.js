@@ -6,13 +6,16 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 		this.currentInterface = null;
 		this.project = null;
 		this.interfaceController = null;
+		this.currentMainMedia = null;
 		this.backgroundSoundUI = null;
-		// this.globalVolume = 1.0;
 		
 		this.view = view;
 		this.dao = dao;
 		this.soundManager = new org.korsakow.SoundManager();
 		this.localStorage = localStorage;
+	},
+	getView: function() {
+		return this.view;
 	},
 	getDao: function() {
 		return this.dao;
@@ -120,6 +123,36 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 		}
 	},
 	
+	togglePause: function() {
+		if (!this.currentMainMedia)
+			return;
+		
+		// TODO: toggle background sounds
+		
+		var findPreviews = function() {
+			return this.interfaceController.controllers.filter(function(ctrl) {
+				if (ctrl.model.type === 'org.korsakow.widget.SnuAutoLink' ||
+					ctrl.model.type === 'org.korsakow.widget.SnuFixedLink') {
+					return true;
+				}
+			});
+		}.bind(this);
+		
+		if (this.currentMainMedia.paused()) {
+			this.currentMainMedia.play();
+			this.view.prev('#pauseOverlay').hide();
+			findPreviews().forEach(function(p) {
+				p.resume();
+			});
+		} else {
+			this.currentMainMedia.pause();
+			this.view.prev('#pauseOverlay').show();
+			findPreviews().forEach(function(p) {
+				p.pause();
+			});
+		}
+	},
+	
 	executeSnu: function(snu) {
 		
 		org.korsakow.log.debug('Executing SNU: ' + snu.name);
@@ -129,11 +162,11 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 			this.currentSnu = null;
 		}
 		if (this.currentInterface) {
-			this.currentInterfaceController.element.remove();
-			this.currentInterfaceController.destroy();
-			this.currentInterfaceController = null;
+			this.interfaceController.destroy();
+			this.interfaceController = null;
 			this.currentInterface = null;
 		}
+		this.currentMainMedia = null;
 
 		this.currentSnu = snu;
 		this.setLastSnu(snu.id);
@@ -145,8 +178,16 @@ org.korsakow.Environment = Class.register('org.korsakow.Environment', {
 		this.currentInterface = this.currentSnu.interface;
 		this.interfaceController = new InterfaceController(this.currentInterface);
 		this.interfaceController.setup(this);
-		for (var j = 0; j < this.interfaceController.controllers.length; ++j)
-			this.interfaceController.controllers[j].setup(this);
+		for (var j = 0; j < this.interfaceController.controllers.length; ++j) {
+			var ctrl = this.interfaceController.controllers[j];
+			ctrl.setup(this);
+			if (ctrl.model.type === 'org.korsakow.widget.MainMedia') {
+				this.currentMainMedia = ctrl;
+			}
+		}
+		if (!this.currentMainMedia) {
+			org.korsakow.log.warn('Current interface has no MainMedia widget: ' + this.currentInterface);
+		}
 		
 		this.view.append(this.interfaceController.element);
 	
