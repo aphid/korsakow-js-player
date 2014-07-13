@@ -76,23 +76,29 @@ describe("org.korsakow.controller", function() {
 	});
 	
 	describe("org.korsakow.controller.PreviewWidgetController", function() {
-	
-		it("should show it's SNU's previewMedia", function() {
-			var image = new org.korsakow.domain.Image();
+		var image;
+		var mediaUI;
+		var snu;
+		var env;
+		beforeEach(function() {
+			image = new org.korsakow.domain.Image();
 			image.filename = "my/test/file.name";
 			
-			var mediaUI = new org.korsakow.ui.ImageUI(image);
+			mediaUI = new org.korsakow.ui.ImageUI(image);
 			
-			var snu = spy(new org.korsakow.domain.Snu);
+			snu = spy(new org.korsakow.domain.Snu);
 			snu.previewMedia = image;
 	
-			var env = {
+			env = {
 				resolvePath: function(s) { return s; },
 				createMediaUI: function() {
 					return mediaUI;
 				},
 				project: project
 			};
+		});
+		
+		it("should show it's SNU's previewMedia", function() {
 			var controller = spy(new org.korsakow.controller.PreviewWidgetController(model));
 			controller.setup(env);
 			controller.setSnu(snu);
@@ -103,6 +109,13 @@ describe("org.korsakow.controller", function() {
 			controller.clear();
 		});
 		
+		it("loop its media", function() {
+			var controller = spy(new org.korsakow.controller.PreviewWidgetController(model));
+			controller.setup(env);
+			controller.setSnu(snu);
+			
+			expect(mediaUI.loop()).toEqual(true);
+		});
 	});
 	
 	describe("org.korsakow.controller.FixedPreviewWidgetController", function() {
