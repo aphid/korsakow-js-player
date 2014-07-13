@@ -60,6 +60,9 @@ org.korsakow.controller.AbstractWidgetController = Class.register('org.korsakow.
 			width: W(this.model.width),
 			height: H(this.model.height)
 		});
+	},
+	destroy: function($super) {
+		$super();
 	}
 });
 
@@ -81,20 +84,34 @@ org.korsakow.controller.MainMediaWidgetController = Class.register('org.korsakow
 		})
 		.attr("loop", snu.looping?true:false);
 
-		//this.element.append(mediaUI.element);
 		mediaUI.load(env.resolvePath(media.filename));
 		mediaUI.play();
+		
+		// TODO: find a better place for this code to live
+		env.getView().bind('keydown', function(event) {
+			if (event.which == 32)
+				env.togglePause();
+		});
 	},
 	togglePlay: function() {
 		var video = this.view;
 		if (video.paused()) {
 			video.play();
 			return true;
-		}else{
+		} else {
 			video.pause();
 			return false;
 		}
 	},
+	paused: function() {
+		return this.view && this.view.paused();
+	},
+	play: function() {
+		this.view.play();
+	},
+	pause: function() {
+		this.view.pause();
+	}
 	
 });
 
@@ -108,6 +125,7 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 		$super(env);
 
 		this.element.addClass("Preview");
+		this.shouldPlay = false;
 		var This = this;
 		this.element.click(W(function() {
 			if (!This.snu)
@@ -122,14 +140,15 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 		}));
 		this.element.hover(
 			function enter() {
-				console.log("enter", this.mediaUI);
 				if (this.mediaUI) {
 					this.mediaUI.play();
+					this.shouldPlay = true;
 				}
 			}.bind(this),
 			function leave() {
 				if (this.mediaUI) {
 					this.mediaUI.pause();
+					this.shouldPlay = false;
 				}
 			}.bind(this)
 		);
@@ -159,6 +178,17 @@ org.korsakow.controller.PreviewWidgetController = Class.register('org.korsakow.c
 		}
 		this.mediaUI = null;
 		this.snu = null;
+	},
+	resume: function() {
+		if (this.shouldPlay) {
+			this.play();
+		}
+	},
+	play: function() {
+		this.mediaUI && this.mediaUI.play();
+	},
+	pause: function() {
+		this.mediaUI && this.mediaUI.pause();
 	}
 });
 

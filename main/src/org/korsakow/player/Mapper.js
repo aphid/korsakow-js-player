@@ -171,7 +171,6 @@ org.korsakow.domain.Dao = Class.register('org.korsakow.domain.Dao', {
 				obj = mapper.map(datum);
 			} catch (e) {
 				if (opts.ignoreError) {
-					console.log(datum);
 					continue;
 				}
 				throw e;
