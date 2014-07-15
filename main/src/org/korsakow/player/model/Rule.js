@@ -71,6 +71,20 @@ org.korsakow.domain.rule.ExcludeKeywords = Class.register('org.korsakow.domain.r
 	}
 });
 
+/* This Search rule finds a random SNU with the 'ender' property equal to TRUE and adds it to the search results.
+*
+*/
+	org.korsakow.domain.rule.LookupEndfilm = Class.register('org.korsakow.domain.rule.LookupEndfilm', org.korsakow.domain.Rule, {
+		initialize: function($super, id, keywords, type) {
+	$super(id, keywords, type);
+		},
+	execute: function(env, searchResults) {
+		var dao = env.getDao();
+		var snus = dao.find({props: { ender: true }, type: 'Snu'});
+		searchResults.results.push( snus[Math.floor(Math.random()*snus.length)]);
+	}
+});
+
 /* Performs a search by running a series of subrules. Results are displayed
  * in Preview widgets.
  */
