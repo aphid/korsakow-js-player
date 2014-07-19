@@ -139,7 +139,7 @@ org.korsakow.ui.VideoUI = Class.register('org.korsakow.ui.VideoUI', org.korsakow
 	load: function(src) {
 		var This = this;
 
-		$.each([
+		jQuery.each([
 			{
 				type: 'video/ogg',
 				src: src + '.ogv'
@@ -220,10 +220,12 @@ org.korsakow.ui.SubtitlesUI = Class.register('org.korsakow.ui.SubtitlesUI', {
 		});
 	},
 	text: function(text) {
+		text = jQuery.makeArray(text);
+		
 		this.element.children().remove();
 
 		this.element.append(text.map(function(t) {
-			return $('<p/>').html(t).addClass('subtitleLine')[0];
+			return jQuery('<p/>').html(t).addClass('subtitleLine');
 		}));
 	}
 });

@@ -434,7 +434,7 @@ org.korsakow.controller.MasterVolumeWidgetController = Class.register('org.korsa
 		this.element.addClass('MasterVolume').css({
 			'background-position' : "0px "+ (this.model.height - 21)/2 + "px"
 		});
-		var slider = $('<div>').addClass('volumeSlider').css({
+		var slider = jQuery('<div>').addClass('volumeSlider').css({
 			'position' : 'relative',
 			'width' : '10px',
 			'height' : '25px',
@@ -467,7 +467,7 @@ org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.contr
 	initialize: function($super, model) {
 		$super(model);
 	},
-	setup: function($super, env){
+	setup: function($super, env) {
 		$super(env);
 		var This = this;
 		var snu = env.getCurrentSnu();
@@ -484,18 +484,19 @@ org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.contr
 				vid.bind('timeupdate', function subtitleTimeUpdate(event) {
 					This.handleTimeUpdate(this.currentTime);
 				});
+				vid.bind('ended', function subtitleTimeUpdate(event) {
+					This.view.text('');
+				});
 			});
 		}
 		
 		this.applyStyles();
-
-},
+	},
 	handleTimeUpdate: function(time) {
-		this.cuePoints.forEach(function(cuepoint) {
-			if (cuepoint.time <= time && time < (cuepoint.time + cuepoint.duration)) {
-				this.view.text(cuepoint.subtitle);
-			}
-		}, this);
+		var cuepoint = this.cuePoints.find(function(cuepoint) {
+			return cuepoint.time <= time && time < (cuepoint.time + cuepoint.duration);
+		});
+		this.view.text(cuepoint ? cuepoint.subtitle : []);
 	},
 	getSubtitles: function() {
 		return this.model.subtitles;
