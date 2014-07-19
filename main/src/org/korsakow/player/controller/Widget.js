@@ -5,31 +5,7 @@ var W = org.korsakow.WrapCallback;
 /* Factory that creates widgets based on widgetId's. See the mapping at the bottom of file.
  * 
  */
-org.korsakow.controller.WidgetControllerFactory = Class.register('org.korsakow.controller.WidgetControllerFactory', {
-	initialize: function($super) {
-		$super();
-		this.registry = {};
-	},
-	register: function(id, clazz) {
-		if (!clazz)
-			throw new Error("Register WidgetController with null clazz: " + id);
-		this.registry[id] = clazz;
-	},
-	create: function(model) {
-		var clazz = this.registry[model.type];
-		if (!clazz)
-			throw new Error("No controller class registered for widget: '" + model.type + "'");
-		var obj = new clazz(model);
-		return obj;
-	}
-});
-org.korsakow.controller.WidgetControllerFactory.instance = new org.korsakow.controller.WidgetControllerFactory();
-org.korsakow.controller.WidgetControllerFactory.create = function() {
-	return org.korsakow.controller.WidgetControllerFactory.instance.create.apply(org.korsakow.controller.WidgetControllerFactory.instance, arguments);
-};
-org.korsakow.controller.WidgetControllerFactory.register = function() {
-	return org.korsakow.controller.WidgetControllerFactory.instance.register.apply(org.korsakow.controller.WidgetControllerFactory.instance, arguments);
-};
+org.korsakow.controller.WidgetControllerFactory = new org.korsakow.Factory();
 
 org.korsakow.controller.AbstractWidgetController = Class.register('org.korsakow.controller.AbstractWidgetController', org.korsakow.controller.AbstractController, {
 	initialize: function($super, model) {
@@ -60,9 +36,24 @@ org.korsakow.controller.AbstractWidgetController = Class.register('org.korsakow.
 			width: W(this.model.width),
 			height: H(this.model.height)
 		});
+		
+		this.applyStyles();
 	},
 	destroy: function($super) {
 		$super();
+	},
+	applyStyles: function() {
+		this.element.css({
+			'color': this.model.fontColor,
+			'background-color' : this.model.fontBackgroundColor,
+			'font-family': this.model.fontFamily,
+			'font-size': this.model.fontSize,
+			'font-weight': this.model.fontWeight,
+			'font-style': this.model.fontStyle,
+			'text-decoration': this.model.textDecoration,
+			'text-align': this.model.horizontalTextAlignment,
+			'vertical-align': this.model.verticalTextAlignment
+		});
 	}
 });
 
@@ -206,16 +197,7 @@ org.korsakow.controller.InsertTextWidgetController = Class.register('org.korsako
 		$super(env);
 
 		this.element.addClass("InsertText");
-		this.element.css({
-			'color' : this.model.fontColor,
-			'background-color' : this.model.fontBackgroundColor,
-			'font-family' : this.model.fontFamily,
-			'font-weight' : this.model.fontWeight,
-			'font-style' : this.model.fontStyle,
-			'font-size' : this.model.fontSize+"pt",
-			'text-decoration' : this.model.textDecoration
 
-		});
 		// TODO: maybe just use a DIV instead of P
 		var insertTextContent = jQuery("<p>").html(env.getCurrentSnu().insertText).css({
 			'width' : '100%',
@@ -493,7 +475,7 @@ org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.contr
 		this.element.addClass("SubtitlesWidget");
 		var mediaUI = this.view = env.createMediaUI('org.korsakow.domain.Subtitles');
 		this.element.append(mediaUI.element);
-
+		
 		var stFile = env.resolvePath(media.subtitlesFilename);
 		if (stFile) {
 			this.parseSubtitles(stFile, function onSubtitleDownload() {
@@ -504,6 +486,8 @@ org.korsakow.controller.SubtitlesController = Class.register('org.korsakow.contr
 				});
 			});
 		}
+		
+		this.applyStyles();
 
 },
 	handleTimeUpdate: function(time) {

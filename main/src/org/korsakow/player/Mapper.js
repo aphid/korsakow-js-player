@@ -174,6 +174,7 @@ org.korsakow.domain.Dao = Class.register('org.korsakow.domain.Dao', {
 				obj = mapper.map(datum);
 			} catch (e) {
 				if (opts.ignoreError) {
+					org.korsakow.log.warn("Ignoring error while mapping", e);
 					continue;
 				}
 				throw e;
@@ -388,6 +389,7 @@ org.korsakow.domain.InterfaceInputMapper = Class.register('org.korsakow.domain.I
 		var id = this.parseInt(data, "id");
 		var name = this.parseString(data, "name");
 		var keywords = [];
+		// TODO: a better way to gracefully handle unknown widgets than "ignoreError"
 		var widgets = this.dao.find({parent:id, path: 'widgets/Widget', ignoreError: true});
 		var clickSound = (function() {
 			if (data.children("clickSoundId").length) {
@@ -484,14 +486,14 @@ org.korsakow.domain.InsertTextInputMapper = Class.register('org.korsakow.domain.
 		var width = this.parseInt(data, "width");
 		var height = this.parseInt(data, "height");
 		var fontColor = this.parseString(data, "fontColor");
-		var fontBackgroundColor = this.parseString(data, "fontBackgroundColor");
+//		var fontBackgroundColor = this.parseString(data, "fontBackgroundColor");
 		var fontFamily = this.parseString(data, "fontFamily");
 		var fontSize = this.parseInt(data, "fontSize");
 		var fontStyle = this.parseString(data, "fontStyle");
 		var fontWeight = this.parseString(data, "fontWeight");
 		var textDecoration = this.parseString(data, "textDecoration");
 		
-		var widget = new org.korsakow.domain.widget.InsertText(id, [], type, x, y, width, height, fontColor, fontBackgroundColor, fontFamily, fontSize, fontStyle, fontWeight, textDecoration);
+		var widget = new org.korsakow.domain.widget.InsertText(id, [], type, x, y, width, height, fontColor, fontFamily, fontSize, fontStyle, fontWeight, textDecoration);
 		return widget;
 	}
 });

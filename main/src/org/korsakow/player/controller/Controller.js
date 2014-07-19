@@ -64,7 +64,7 @@ var InterfaceController = org.korsakow.controller.InterfaceController = Class.re
 			var widget = this.model.widgets[i];
 			var widgetController;
 			try {
-				widgetController = org.korsakow.controller.WidgetControllerFactory.create(widget);
+				widgetController = org.korsakow.controller.WidgetControllerFactory.create(widget.type, widget);
 			} catch (e) {
 				org.korsakow.log.error(e);
 				throw e;

@@ -37,10 +37,10 @@ org.korsakow.domain.widget.FixedPreview = Class.register('org.korsakow.domain.wi
 });
 
 org.korsakow.domain.widget.InsertText = Class.register('org.korsakow.domain.widget.InsertText', org.korsakow.domain.Widget, {
-	initialize: function($super, id, keywords, type, x, y, width, height, fontColor, fontBackgroundColor, fontFamily, fontSize, fontStyle, fontWeight, textDecoration) {
+	initialize: function($super, id, keywords, type, x, y, width, height, fontColor, fontFamily, fontSize, fontStyle, fontWeight, textDecoration) {
 		$super(id, keywords, type, x, y, width, height);
 		this.fontColor = fontColor;
-		this.fontBackgroundColor = fontBackgroundColor;
+		//this.fontBackgroundColor = fontBackgroundColor;
 		this.fontFamily = fontFamily;
 		this.fontSize = fontSize;
 		this.fontStyle = fontStyle;

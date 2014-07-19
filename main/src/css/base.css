@@ -47,6 +47,7 @@ html, body {
 
 .widget {
 	position: absolute;
+	overflow: hidden;
 }
 
 .interface {

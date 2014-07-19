@@ -208,10 +208,6 @@ org.korsakow.Factory = Class.register('org.korsakow.Factory', org.korsakow.Objec
 
 /* Wrapper around logging.
  * 
- * Currently trivially forwards to console, but eventually would check
- * if the browser even supports console and allow for the toggling of
- * the different log levels.
- * 
  */
 org.korsakow.Logger = Class.register('org.korsakow.Logger', org.korsakow.Object, {
 	initialize: function($super) {
@@ -483,7 +479,7 @@ org.korsakow.Audio = Class.register('org.korsakow.domain.Audio', {
 		/*.attr('src', url)
 		.attr('type', 'audio/ogg')*/
 		.bind('error', function(event) {
-			console.log.error('Audio error: ' + org.korsakow.Audio.errorToString(event.currentTarget.error.code) + "\n" + org.korsakow.Exception.getStackString());
+			org.korsakow.log.error('Audio error: ' + org.korsakow.Audio.errorToString(event.currentTarget.error.code) + "\n" + org.korsakow.Exception.getStackString());
 		});
 		// TODO: better handling of browser-specific media formats
 		$.each([
@@ -526,7 +522,7 @@ org.korsakow.Audio = Class.register('org.korsakow.domain.Audio', {
 			var t = org.korsakow.Utility.applyOperators(v, this.innerVolume);
 			// TODO: remove this debug code or clean it up
 			if (isNaN(t)) {
-				console.log(v,t);
+				org.korsakow.log.warn("Audio.volume, isNan(t)", v,t);
 			}
 			this.innerVolume = t;
 			this.elem[0].volume = t * org.korsakow.Audio.globalVolume;
